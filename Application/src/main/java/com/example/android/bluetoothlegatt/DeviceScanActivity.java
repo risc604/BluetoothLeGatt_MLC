@@ -51,6 +51,9 @@ public class DeviceScanActivity extends ListActivity
     private Handler mHandler;
     private HashMap<BluetoothDevice, Integer> bldDevices;
 
+    private static final int    REQUEST_ENABLE_BT = 1;
+    private static final long   SCAN_PERIOD = 10000;
+    private static final String mlcDeviceName = "3MW1-4B";
     private boolean stopFlag = false;
 
     @Override
@@ -144,7 +147,7 @@ public class DeviceScanActivity extends ListActivity
         //tomcat adds
         bldDevices = mLeDeviceListAdapter.getTotalInfo();
         final Intent    intent = new Intent(this, MLCIntentService.class);
-        
+
 
     }
 
