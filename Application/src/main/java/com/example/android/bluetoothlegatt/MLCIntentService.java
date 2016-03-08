@@ -1,6 +1,7 @@
 package com.example.android.bluetoothlegatt;
 
 import android.app.IntentService;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.ExpandableListView;
@@ -101,6 +103,16 @@ public class MLCIntentService extends IntentService
                 handleActionBaz(param1, param2);
             }
         }
+    }
+
+    @Override
+    public void onCreate(Bundle bundle)
+    {
+        super.onCreate();
+
+        Intent  intent = new Intent();
+        HashMap<BluetoothDevice, Integer> bleMap = (HashMap<BluetoothDevice, Integer>) intent.getSerializableExtra("ble");
+        Log.v("HasMap", String.valueOf(bleMap.get("ble")));
     }
 
     /**

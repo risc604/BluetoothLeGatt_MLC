@@ -49,7 +49,7 @@ public class DeviceScanActivity extends ListActivity
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning;
     private Handler mHandler;
-    private HashMap<BluetoothDevice, Integer> bldDevices;
+    private HashMap<BluetoothDevice, Integer> bleDevices;
 
     private static final int    REQUEST_ENABLE_BT = 1;
     private static final long   SCAN_PERIOD = 10000;
@@ -145,10 +145,10 @@ public class DeviceScanActivity extends ListActivity
         scanLeDevice(true);
 
         //tomcat adds
-        bldDevices = mLeDeviceListAdapter.getTotalInfo();
+        bleDevices = mLeDeviceListAdapter.getTotalInfo();
         final Intent    intent = new Intent(this, MLCIntentService.class);
-
-
+        intent.putExtra("ble", bleDevices);
+        startService(intent);
     }
 
     @Override
