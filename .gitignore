@@ -50,3 +50,7 @@ Temporary Items
 /.idea
 /Application
 /build
+/.gradle
+/.idea
+/build
+/SI
