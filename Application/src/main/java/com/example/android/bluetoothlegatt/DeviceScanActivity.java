@@ -295,6 +295,7 @@ public class DeviceScanActivity extends ListActivity
             return view;
         }
 
+        // disable touch screen to trigger ListView Item.
         @Override
         public boolean areAllItemsEnabled()
         {
