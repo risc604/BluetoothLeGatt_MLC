@@ -161,6 +161,7 @@ public class DeviceScanActivity extends ListActivity
         mLeDeviceListAdapter.clear();
     }
 
+    ///*
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id)
     {
@@ -176,6 +177,7 @@ public class DeviceScanActivity extends ListActivity
         }
         startActivity(intent);
     }
+    //*/
 
     private void scanLeDevice(final boolean enable)
     {
@@ -205,27 +207,27 @@ public class DeviceScanActivity extends ListActivity
     }
 
     // Adapter for holding devices found through scanning.
-    private class LeDeviceListAdapter extends BaseAdapter
+    private class LeDeviceListAdapter extends BaseAdapter implements com.example.android.bluetoothlegatt.LeDeviceListAdapter
     {
-        private ArrayList<BluetoothDevice> mLeDevices;
-        private ArrayList<HashMap<String, Integer>>  mLeDeviceRssi;
+        private final ArrayList<BluetoothDevice>  mLeDevices;
+        private final HashMap<BluetoothDevice, Integer>    rssiMap;
         private LayoutInflater mInflator;
 
         public LeDeviceListAdapter()
         {
             super();
             mLeDevices = new ArrayList<BluetoothDevice>();
-            mLeDeviceRssi = new ArrayList<HashMap<String, Integer>>();
+            rssiMap = new HashMap<BluetoothDevice, Integer>();
             mInflator = DeviceScanActivity.this.getLayoutInflater();
         }
 
         //public void addDevice(BluetoothDevice device)
         public void addDevice(BluetoothDevice device, int rssi)
         {
-            if (!mLeDevices.contains(device) )
+            if (!mLeDevices.contains(device) )  // for MLC BP
             {
                 mLeDevices.add(device);
-                mLeDeviceRssi.add(device.getName(), rssi);
+                rssiMap.put(device, rssi);
             }
         }
 
@@ -252,12 +254,6 @@ public class DeviceScanActivity extends ListActivity
         }
 
         @Override
-        public int getItemRssi(int position)
-        {
-            return (position);
-        }
-
-        @Override
         public long getItemId(int i)
         {
             return i;
@@ -274,6 +270,7 @@ public class DeviceScanActivity extends ListActivity
                 viewHolder = new ViewHolder();
                 viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
                 viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
+                viewHolder.deviceRssi = (TextView) view.findViewById(R.id.device_rssi);
                 view.setTag(viewHolder);
             } else
             {
@@ -287,9 +284,16 @@ public class DeviceScanActivity extends ListActivity
             else
                 viewHolder.deviceName.setText(R.string.unknown_device);
             viewHolder.deviceAddress.setText(device.getAddress());
+            viewHolder.deviceRssi.setText("" + rssiMap.get(device) + " dBm");
 
             return view;
         }
+
+        public int getRssi(BluetoothDevice device)
+        {
+            return rssiMap.get(device);
+        }
+
     }
 
     // Device scan callback.
@@ -320,5 +324,6 @@ public class DeviceScanActivity extends ListActivity
     {
         TextView deviceName;
         TextView deviceAddress;
+        TextView deviceRssi;
     }
 }
