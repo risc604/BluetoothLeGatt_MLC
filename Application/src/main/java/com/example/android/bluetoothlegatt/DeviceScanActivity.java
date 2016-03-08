@@ -139,6 +139,12 @@ public class DeviceScanActivity extends ListActivity
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
         scanLeDevice(true);
+
+        if (!mScanning)
+        {
+            Toast.makeText(this, "Scan BLE device OK", Toast.LENGTH_SHORT).show();  //debug.
+        }
+
     }
 
     @Override
@@ -287,6 +293,20 @@ public class DeviceScanActivity extends ListActivity
             viewHolder.deviceRssi.setText("" + rssiMap.get(device) + " dBm");
 
             return view;
+        }
+
+        @Override
+        public boolean areAllItemsEnabled()
+        {
+            //return super.areAllItemsEnabled();
+            return false;
+        }
+
+        @Override
+        public boolean isEnabled(int position)
+        {
+            //return super.isEnabled(position);
+            return false;
         }
 
         public int getRssi(BluetoothDevice device)
