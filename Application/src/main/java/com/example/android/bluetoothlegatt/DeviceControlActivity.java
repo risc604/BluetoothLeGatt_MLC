@@ -101,22 +101,30 @@ public class DeviceControlActivity extends Activity
         public void onReceive(Context context, Intent intent)
         {
             final String action = intent.getAction();
+
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action))
             {
                 mConnected = true;
                 updateConnectionState(R.string.connected);
                 invalidateOptionsMenu();
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action))
+            }
+            else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action))
             {
                 mConnected = false;
                 updateConnectionState(R.string.disconnected);
                 invalidateOptionsMenu();
                 clearUI();
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
+            }
+            else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
             {
+
+                //if (mBluetoothLeService.equals(mNotifyCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE)))
+                //    mNotifyCharacteristic.setValue(Utils.mlcTestFunction().toString());
+                //mBluetoothLeService.writeCharacteristic(mNotifyCharacteristic);
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
-            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
+            }
+            else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
             {
                 displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
@@ -131,8 +139,10 @@ public class DeviceControlActivity extends Activity
             new ExpandableListView.OnChildClickListener()
             {
                 @Override
-                public boolean onChildClick(ExpandableListView parent, View v,
-                                            int groupPosition,  int childPosition,
+                public boolean onChildClick(ExpandableListView parent,
+                                            View v,
+                                            int groupPosition,
+                                            int childPosition,
                                             long id)
                 {
                     if (mGattCharacteristics != null)
@@ -156,10 +166,17 @@ public class DeviceControlActivity extends Activity
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0)
                         {
                             mNotifyCharacteristic = characteristic;
+/*
+                            if (mBluetoothLeService.equals(mNotifyCharacteristic.equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE)))
+                            {
+                                mNotifyCharacteristic.setValue(Utils.mlcTestFunction());
+                                mBluetoothLeService.writeCharacteristic(mNotifyCharacteristic);
+                            }
+                            */
                             mBluetoothLeService.setCharacteristicNotification(characteristic, true);
                         }
 
-                       return true;
+                        return true;
                     }
                     return false;
                 }
@@ -182,10 +199,10 @@ public class DeviceControlActivity extends Activity
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
 
         // Sets up UI references.
-        ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
+        ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
         mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
-        mConnectionState = (TextView) findViewById(R.id.connection_state);
+        mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
         mDataField = (TextView) findViewById(R.id.data_value);
 
         getActionBar().setTitle(mDeviceName);
@@ -245,9 +262,11 @@ public class DeviceControlActivity extends Activity
             case R.id.menu_connect:
                 mBluetoothLeService.connect(mDeviceAddress);
                 return true;
+
             case R.id.menu_disconnect:
                 mBluetoothLeService.disconnect();
                 return true;
+
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -294,8 +313,7 @@ public class DeviceControlActivity extends Activity
         {
             HashMap<String, String> currentServiceData = new HashMap<String, String>();
             uuid = gattService.getUuid().toString();
-            currentServiceData.put(
-                    LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
+            currentServiceData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
             currentServiceData.put(LIST_UUID, uuid);
             gattServiceData.add(currentServiceData);
 
@@ -312,8 +330,7 @@ public class DeviceControlActivity extends Activity
                 charas.add(gattCharacteristic);
                 HashMap<String, String> currentCharaData = new HashMap<String, String>();
                 uuid = gattCharacteristic.getUuid().toString();
-                currentCharaData.put(
-                        LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
+                currentCharaData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
                 currentCharaData.put(LIST_UUID, uuid);
                 gattCharacteristicGroupData.add(currentCharaData);
             }

@@ -289,7 +289,7 @@ public class DeviceScanActivity extends ListActivity
                 viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
                 viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
                 viewHolder.deviceRssi = (TextView) view.findViewById(R.id.device_rssi);
-                viewHolder.totalDevices = (TextView) view.findViewById(R.id.totalDevices);
+                //viewHolder.totalDevices = (TextView) view.findViewById(R.id.textView);
                 view.setTag(viewHolder);
             }
             else
@@ -305,7 +305,7 @@ public class DeviceScanActivity extends ListActivity
                 viewHolder.deviceName.setText(R.string.unknown_device);
             viewHolder.deviceAddress.setText(device.getAddress());
             viewHolder.deviceRssi.setText("" + rssiMap.get(device) + " dBm");
-            viewHolder.totalDevices.setText(Integer.toString(getCount())+ " devices");
+            //viewHolder.totalDevices.setText(Integer.toString(getCount())+ " devices");
 
             Log.i("TAG", "Count: " + Integer.toString(++gvCount));
 
@@ -334,15 +334,15 @@ public class DeviceScanActivity extends ListActivity
         @Override
         public boolean areAllItemsEnabled()
         {
-            //return super.areAllItemsEnabled();
-            return false;
+            return super.areAllItemsEnabled();
+            //return false;
         }
 
         @Override
         public boolean isEnabled(int position)
         {
-            //return super.isEnabled(position);
-            return false;
+            return super.isEnabled(position);
+            //return false;
         }
 
         public int getRssi(BluetoothDevice device)
@@ -385,6 +385,6 @@ public class DeviceScanActivity extends ListActivity
         TextView deviceName;
         TextView deviceAddress;
         TextView deviceRssi;
-        TextView totalDevices;
+       // TextView totalDevices;
     }
 }

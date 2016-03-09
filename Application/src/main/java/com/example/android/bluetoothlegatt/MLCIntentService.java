@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.ExpandableListView;
@@ -105,8 +104,16 @@ public class MLCIntentService extends IntentService
         }
     }
 
+    //@Override
+    public void onCreate2()
+    {
+        super.onCreate();
+        Intent  intent = new Intent();
+
+    }
+
     @Override
-    public void onCreate(Bundle bundle)
+    public void onCreate(/*Bundle bundle*/)
     {
         super.onCreate();
 

@@ -39,10 +39,4 @@
         android:textSize="16sp" android:layout_gravity="center_horizontal"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"/>
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-              android:text="New Text" android:id="@+id/totalDevices"
-              android:layout_gravity="right|bottom"
-              android:textSize="14sp"
-              android:layout_marginTop="500dp"
-              android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
 </RelativeLayout><!-- From: file:/D:/java_workspace/BluetoothLeGatt_MLC/Application/src/main/res/layout/listitem_device.xml -->

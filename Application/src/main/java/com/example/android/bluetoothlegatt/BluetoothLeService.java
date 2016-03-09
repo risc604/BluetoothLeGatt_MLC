@@ -22,7 +22,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -31,7 +30,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.List;
 import java.util.UUID;
@@ -89,8 +87,8 @@ public class BluetoothLeService extends Service
                 // Attempts to discover services after successful connection.
                 Log.i(TAG, "Attempting to start service discovery:" +
                         mBluetoothGatt.discoverServices());
-
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED)
+            }
+            else if (newState == BluetoothProfile.STATE_DISCONNECTED)
             {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 mConnectionState = STATE_DISCONNECTED;
@@ -105,7 +103,8 @@ public class BluetoothLeService extends Service
             if (status == BluetoothGatt.GATT_SUCCESS)
             {
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
-            } else
+            }
+            else
             {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
@@ -182,7 +181,7 @@ public class BluetoothLeService extends Service
                 format = BluetoothGattCharacteristic.PERMISSION_WRITE;
                 Log.d(TAG, "Write format: " + Integer.toString(format));
                 //characteristic.setValue(byteCMD.toString()); //IntValue(format, 1);
-
+                characteristic.setValue(Utils.mlcTestFunction());
             }
             else
             {
@@ -383,8 +382,22 @@ public class BluetoothLeService extends Service
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
-        mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
 
+        if (characteristic.getUuid().equals(UUID_MLC_BLE_SERVICE_WRITE))
+        {
+
+            //Toast.makeText(this, "Notify write !!", Toast.LENGTH_SHORT).show();
+            characteristic.setValue(Utils.mlcTestFunction().toString());
+            //BluetoothGattCharacteristic.PERMISSION_WRITE;
+            //BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
+            //        UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_WRITE));
+
+            Log.d(TAG, "write data to BLE");
+            mBluetoothGatt.writeCharacteristic(characteristic);
+        }
+
+        mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+/*
         // This is specific to Heart Rate Measurement.
         if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid()))
         {
@@ -393,33 +406,9 @@ public class BluetoothLeService extends Service
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             mBluetoothGatt.writeDescriptor(descriptor);
         }
+*/
+        //if(UUID_MLC_BLE_SERVICE_WRITE.equals(characteristic.getUuid()))
 
-        if(UUID_MLC_BLE_SERVICE_WRITE.equals(characteristic.getUuid()))
-        {
-            byte[] byteCMD = new byte[12];  //{0x4d, 0xff, 0xc, 0x00, 04, 0x0f, 0x0c, 0x0a, 0x0f, 0x2b, 0x1e, 0xd9};
-
-            Toast.makeText(this, "Notify write !!", Toast.LENGTH_SHORT).show();
-            byteCMD[0] = (byte) 0x4d;
-            byteCMD[1] = (byte) 0xff;
-            byteCMD[2] = (byte) 0x0c;
-            byteCMD[3] = (byte) 0x00;
-            byteCMD[4] = (byte) 0x04;
-            byteCMD[5] = (byte) 0x0f;
-            byteCMD[6] = (byte) 0x0c;
-            byteCMD[7] = (byte) 0x0a;
-            byteCMD[8] = (byte) 0x0f;
-            byteCMD[9] = (byte) 0x2b;
-            byteCMD[10] = (byte) 0x1e;
-            //byteCMD[11] = (byte) 0xd9;
-
-            characteristic.setValue(byteCMD.toString());
-            //BluetoothGattCharacteristic.PERMISSION_WRITE;
-            //BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
-            //        UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_WRITE));
-
-            Log.d(TAG, "write data to BLE");
-            mBluetoothGatt.writeCharacteristic(characteristic);
-        }
 
     }
 
