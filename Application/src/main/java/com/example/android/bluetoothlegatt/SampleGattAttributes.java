@@ -26,8 +26,8 @@ public class SampleGattAttributes {
     public static String HEART_RATE_MEASUREMENT = "00002a37-0000-1000-8000-00805f9b34fb";
     public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
     public static String MLC_BLE_SEVICE = "0000fff0-0000-1000-8000-00805f9b34fb";
-    public static String MLC_BLE_SEVICE_WRITE = "0000fff1-0000-1000-8000-00805f9b34fb";
-    public static String MLC_BLE_SEVICE_READ = "0000fff2-0000-1000-8000-00805f9b34fb";
+    public static String MLC_BLE_SEVICE_WRITE = "0000fff2-0000-1000-8000-00805f9b34fb";
+    public static String MLC_BLE_SEVICE_READ = "0000fff1-0000-1000-8000-00805f9b34fb";
 
     static {
         // Sample Services.

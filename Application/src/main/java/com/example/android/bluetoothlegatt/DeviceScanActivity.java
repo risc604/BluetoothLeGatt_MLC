@@ -134,7 +134,7 @@ public class DeviceScanActivity extends ListActivity
         {
             if (!mBluetoothAdapter.isEnabled())
             {
-               Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
         }
@@ -145,10 +145,12 @@ public class DeviceScanActivity extends ListActivity
         scanLeDevice(true);
 
         //tomcat adds
+        /*
         bleDevices = mLeDeviceListAdapter.getTotalInfo();
         final Intent    intent = new Intent(this, MLCIntentService.class);
         intent.putExtra("ble", bleDevices);
         startService(intent);
+        */
     }
 
     @Override
@@ -218,8 +220,8 @@ public class DeviceScanActivity extends ListActivity
         }
 
 
-        if (stopFlag)
-            Toast.makeText(this, "Scan BLE device OK", Toast.LENGTH_SHORT).show();  //debug.
+        //if (stopFlag)
+        //    Toast.makeText(this, "Scan BLE device OK", Toast.LENGTH_SHORT).show();  //debug.
         invalidateOptionsMenu();
     }
 

@@ -117,11 +117,6 @@ public class DeviceControlActivity extends Activity
             }
             else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
             {
-
-                //if (mBluetoothLeService.equals(mNotifyCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE)))
-                //    mNotifyCharacteristic.setValue(Utils.mlcTestFunction().toString());
-                //mBluetoothLeService.writeCharacteristic(mNotifyCharacteristic);
-                // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
@@ -156,6 +151,9 @@ public class DeviceControlActivity extends Activity
                             // it first so it doesn't update the data field on the user interface.
                             if (mNotifyCharacteristic != null)
                             {
+                                if (mNotifyCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
+                                mNotifyCharacteristic.setValue(Utils.mlcTestFunction());
+
                                 mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, false);
                                 mNotifyCharacteristic = null;
                                 //Toast.makeText(v.getContext(), "Notify !!", Toast.LENGTH_SHORT).show();
@@ -166,16 +164,8 @@ public class DeviceControlActivity extends Activity
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0)
                         {
                             mNotifyCharacteristic = characteristic;
-/*
-                            if (mBluetoothLeService.equals(mNotifyCharacteristic.equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE)))
-                            {
-                                mNotifyCharacteristic.setValue(Utils.mlcTestFunction());
-                                mBluetoothLeService.writeCharacteristic(mNotifyCharacteristic);
-                            }
-                            */
                             mBluetoothLeService.setCharacteristicNotification(characteristic, true);
                         }
-
                         return true;
                     }
                     return false;
@@ -311,16 +301,22 @@ public class DeviceControlActivity extends Activity
         // Loops through available GATT Services.
         for (BluetoothGattService gattService : gattServices)
         {
+            //set service to ListArray.
             HashMap<String, String> currentServiceData = new HashMap<String, String>();
             uuid = gattService.getUuid().toString();
             currentServiceData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
             currentServiceData.put(LIST_UUID, uuid);
             gattServiceData.add(currentServiceData);
 
+            //debug
+            if (gattServiceData.equals(SampleGattAttributes.MLC_BLE_SEVICE))
+                Log.i("TAG", "gattService: "+gattServiceData.toString());
+
             ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
                     new ArrayList<HashMap<String, String>>();
             List<BluetoothGattCharacteristic> gattCharacteristics =
                     gattService.getCharacteristics();
+
             ArrayList<BluetoothGattCharacteristic> charas =
                     new ArrayList<BluetoothGattCharacteristic>();
 
@@ -328,11 +324,17 @@ public class DeviceControlActivity extends Activity
             for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics)
             {
                 charas.add(gattCharacteristic);
+                //set characteristic to ListArray.
                 HashMap<String, String> currentCharaData = new HashMap<String, String>();
                 uuid = gattCharacteristic.getUuid().toString();
+
                 currentCharaData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
                 currentCharaData.put(LIST_UUID, uuid);
                 gattCharacteristicGroupData.add(currentCharaData);
+
+                //debug
+                if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
+                    Log.i("TAG", "uuid: " + gattCharacteristic.getUuid().toString());
             }
             mGattCharacteristics.add(charas);
             gattCharacteristicData.add(gattCharacteristicGroupData);
