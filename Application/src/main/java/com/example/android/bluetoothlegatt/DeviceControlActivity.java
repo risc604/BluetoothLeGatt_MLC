@@ -154,7 +154,7 @@ public class DeviceControlActivity extends Activity
                                 if (mNotifyCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
                                 mNotifyCharacteristic.setValue(Utils.mlcTestFunction());
 
-                                mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, false);
+                                //mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, false);
                                 mNotifyCharacteristic = null;
                                 //Toast.makeText(v.getContext(), "Notify !!", Toast.LENGTH_SHORT).show();
                             }

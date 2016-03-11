@@ -174,16 +174,18 @@ public class BluetoothLeService extends Service
         else if (UUID_MLC_BLE_SERVICE_WRITE.equals(characteristic.getUuid()))
         {
             int flag = characteristic.getProperties();
+
+            Log.d(TAG, "flag: " + Integer.toString(flag));
             int format = -1;
-            if ((flag & 0x01) != 0)
-            {
+            //if ((flag & 0x01) != 0)
+            //{
                 //Toast.makeText(this, characteristic.getUuid().toString(), Toast.LENGTH_SHORT ).show();
                 format = BluetoothGattCharacteristic.PERMISSION_WRITE;
                 Log.d(TAG, "Write format: " + Integer.toString(format));
                 //characteristic.setValue(byteCMD.toString()); //IntValue(format, 1);
                 characteristic.setValue(Utils.mlcTestFunction());
-            }
-            else
+            //}
+            //else
             {
                 format = BluetoothGattCharacteristic.PERMISSION_READ;
                 Log.d(TAG, "Read format: " + Integer.toString(format));
