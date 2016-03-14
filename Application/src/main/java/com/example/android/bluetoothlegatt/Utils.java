@@ -25,6 +25,11 @@ public class Utils
         for (int i=0; i<(cmdLength-1); i++)     // check sum
             cmdByte[cmdLength-1] += cmdByte[i];
 
-        return cmdByte;
+        byte[] tempByte = new byte[cmdLength];
+
+        //for (int i=0; i<cmdLength; i++)
+        //    tempByte[i] = cmdByte[i];
+        tempByte = cmdByte;
+        return tempByte;
     }
 }

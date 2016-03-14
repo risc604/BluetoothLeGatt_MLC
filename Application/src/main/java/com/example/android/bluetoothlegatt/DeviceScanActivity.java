@@ -45,6 +45,7 @@ import java.util.HashMap;
  */
 public class DeviceScanActivity extends ListActivity
 {
+    private final String    TAG = DeviceScanActivity.class.getSimpleName();
     private LeDeviceListAdapter mLeDeviceListAdapter;
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning;
@@ -176,6 +177,11 @@ public class DeviceScanActivity extends ListActivity
     ///*
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id)
+    {
+        toBLEServiceStart(position);
+    }
+
+    private void toBLEServiceStart(int position)
     {
         final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
         if (device == null) return;
@@ -309,7 +315,7 @@ public class DeviceScanActivity extends ListActivity
             viewHolder.deviceRssi.setText("" + rssiMap.get(device) + " dBm");
             //viewHolder.totalDevices.setText(Integer.toString(getCount())+ " devices");
 
-            Log.i("TAG", "Count: " + Integer.toString(++gvCount));
+            Log.i(TAG, "Count: " + Integer.toString(++gvCount));
 
             if ( gvCount <10 )
             {
@@ -324,8 +330,9 @@ public class DeviceScanActivity extends ListActivity
                 }
             }
 
-            if ((gvCount > 10) && (tmpDevs == gvCount))
+            if ((gvCount > 500) && (tmpDevs == gvCount))
             {
+
 
             }
 
@@ -336,15 +343,15 @@ public class DeviceScanActivity extends ListActivity
         @Override
         public boolean areAllItemsEnabled()
         {
-            return super.areAllItemsEnabled();
-            //return false;
+            //return super.areAllItemsEnabled();
+            return false;
         }
 
         @Override
         public boolean isEnabled(int position)
         {
-            return super.isEnabled(position);
-            //return false;
+            //return super.isEnabled(position);
+            return false;
         }
 
         public int getRssi(BluetoothDevice device)

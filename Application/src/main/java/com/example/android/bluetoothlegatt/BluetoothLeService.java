@@ -71,6 +71,7 @@ public class BluetoothLeService extends Service
     public final static UUID UUID_MLC_BLE_SERVICE_WRITE = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_WRITE);
     public final static UUID UUID_MLC_BLE_SERVICE_READ = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_READ);
 
+    private BluetoothGattDescriptor descriptor;
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback()
@@ -360,7 +361,7 @@ public class BluetoothLeService extends Service
         mBluetoothGatt.readCharacteristic(characteristic);
     }
 
-    /*
+
     public void writeCharacteristic(BluetoothGattCharacteristic characteristic)
     {
         if (mBluetoothAdapter == null || mBluetoothGatt == null)
@@ -370,7 +371,6 @@ public class BluetoothLeService extends Service
         }
         mBluetoothGatt.writeCharacteristic(characteristic);
     }
-    */
 
     /**
      * Enables or disables notification on a give characteristic.
@@ -392,11 +392,13 @@ public class BluetoothLeService extends Service
         // This is specific to Heart Rate Measurement.
         //if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid()))
         //{
-            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
+
+            BluetoothGattDescriptor  descriptor = characteristic.getDescriptor(
                     UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            mBluetoothGatt.writeDescriptor(descriptor);
+        mBluetoothGatt.writeDescriptor(descriptor);
         //}
+
     }
 
     /**
