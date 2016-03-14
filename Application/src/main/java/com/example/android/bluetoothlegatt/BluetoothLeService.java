@@ -22,6 +22,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -359,6 +360,7 @@ public class BluetoothLeService extends Service
         mBluetoothGatt.readCharacteristic(characteristic);
     }
 
+    /*
     public void writeCharacteristic(BluetoothGattCharacteristic characteristic)
     {
         if (mBluetoothAdapter == null || mBluetoothGatt == null)
@@ -368,7 +370,7 @@ public class BluetoothLeService extends Service
         }
         mBluetoothGatt.writeCharacteristic(characteristic);
     }
-
+    */
 
     /**
      * Enables or disables notification on a give characteristic.
@@ -385,33 +387,16 @@ public class BluetoothLeService extends Service
             return;
         }
 
-        if (characteristic.getUuid().equals(UUID_MLC_BLE_SERVICE_WRITE))
-        {
-
-            //Toast.makeText(this, "Notify write !!", Toast.LENGTH_SHORT).show();
-            characteristic.setValue(Utils.mlcTestFunction().toString());
-            //BluetoothGattCharacteristic.PERMISSION_WRITE;
-            //BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
-            //        UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_WRITE));
-
-            Log.d(TAG, "write data to BLE");
-            mBluetoothGatt.writeCharacteristic(characteristic);
-        }
-
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
-/*
+
         // This is specific to Heart Rate Measurement.
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid()))
-        {
+        //if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid()))
+        //{
             BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
                     UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             mBluetoothGatt.writeDescriptor(descriptor);
-        }
-*/
-        //if(UUID_MLC_BLE_SERVICE_WRITE.equals(characteristic.getUuid()))
-
-
+        //}
     }
 
     /**

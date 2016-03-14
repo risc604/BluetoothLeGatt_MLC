@@ -38,6 +38,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * For a given BLE device, this Activity provides the user interface to connect, display data,
@@ -62,6 +63,8 @@ public class DeviceControlActivity extends Activity
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private BluetoothGattService        mlcBPService;
+    private BluetoothGattCharacteristic mlcBPWriteChar, mlcBPReadChar;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -301,16 +304,19 @@ public class DeviceControlActivity extends Activity
         // Loops through available GATT Services.
         for (BluetoothGattService gattService : gattServices)
         {
+            if (gattService.getUuid().equals(UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE)))
+            {
+                mlcBPService = gattService;
+                Log.i(TAG, "MLC BP Services: " + mlcBPService.toString());
+                //Log.i(TAG, "Write:" + mlcBPService.getCharacteristic(UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_WRITE)).getValue().toString());
+                //Log.i(TAG, "Read:" + mlcBPService.getCharacteristic(UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_READ)).getValue().toString());
+            }
             //set service to ListArray.
             HashMap<String, String> currentServiceData = new HashMap<String, String>();
             uuid = gattService.getUuid().toString();
             currentServiceData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
             currentServiceData.put(LIST_UUID, uuid);
             gattServiceData.add(currentServiceData);
-
-            //debug
-            if (gattServiceData.equals(SampleGattAttributes.MLC_BLE_SEVICE))
-                Log.i("TAG", "gattService: "+gattServiceData.toString());
 
             ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
                     new ArrayList<HashMap<String, String>>();
@@ -323,6 +329,24 @@ public class DeviceControlActivity extends Activity
             // Loops through available Characteristics.
             for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics)
             {
+                if ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0)
+                {
+                    if (gattCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
+                    {
+                        mlcBPWriteChar = gattCharacteristic;
+                        Log.i(TAG, "Write:" + mlcBPWriteChar.toString());
+                    }
+                }
+
+                if ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0)
+                {
+                    if (gattCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_READ))
+                    {
+                        mlcBPReadChar = gattCharacteristic;
+                        Log.i(TAG, "Read:" + mlcBPReadChar.toString());
+                    }
+                }
+
                 charas.add(gattCharacteristic);
                 //set characteristic to ListArray.
                 HashMap<String, String> currentCharaData = new HashMap<String, String>();
@@ -334,7 +358,7 @@ public class DeviceControlActivity extends Activity
 
                 //debug
                 if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
-                    Log.i("TAG", "uuid: " + gattCharacteristic.getUuid().toString());
+                    Log.i(TAG, "uuid:" + gattCharacteristic.getUuid().toString());
             }
             mGattCharacteristics.add(charas);
             gattCharacteristicData.add(gattCharacteristicGroupData);
