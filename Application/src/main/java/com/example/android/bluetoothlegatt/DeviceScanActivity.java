@@ -332,8 +332,7 @@ public class DeviceScanActivity extends ListActivity
 
             if ((gvCount > 500) && (tmpDevs == gvCount))
             {
-
-
+                // write Intent Services to BLE server.
             }
 
             return view;
@@ -343,15 +342,15 @@ public class DeviceScanActivity extends ListActivity
         @Override
         public boolean areAllItemsEnabled()
         {
-            //return super.areAllItemsEnabled();
-            return false;
+            return super.areAllItemsEnabled();
+            //return false;
         }
 
         @Override
         public boolean isEnabled(int position)
         {
-            //return super.isEnabled(position);
-            return false;
+            return super.isEnabled(position);
+            //return false;
         }
 
         public int getRssi(BluetoothDevice device)
