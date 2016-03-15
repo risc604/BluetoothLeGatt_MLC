@@ -34,8 +34,8 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class DeviceControlActivity extends Activity
     private BluetoothGattCharacteristic mlcBPWriteChar, mlcBPReadChar;
 
     // new Bluetooth Adapter
-    private Serializable mBluetoothAdapter;
+    private DeviceScanActivity.LeDeviceListAdapter mBluetoothAdapter;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -189,7 +189,14 @@ public class DeviceControlActivity extends Activity
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-        mBluetoothAdapter = intent.getSerializableExtra("BLE_DEVICE");
+        mBluetoothAdapter = (DeviceScanActivity.LeDeviceListAdapter) intent.getSerializableExtra("BLE_DEVICE");
+
+        //test debug
+        for (int i=0; i<mBluetoothAdapter.getCount(); i++)
+        {
+            Toast.makeText(this, Integer.toString(i)+ "  mac: "
+                    + mBluetoothAdapter.getDevice(i).getAddress().toString(), Toast.LENGTH_SHORT).show();
+        }
 
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI

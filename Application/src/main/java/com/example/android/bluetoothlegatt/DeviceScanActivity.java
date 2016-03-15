@@ -235,7 +235,7 @@ public class DeviceScanActivity extends ListActivity
     }
 
     // Adapter for holding devices found through scanning.
-    private class LeDeviceListAdapter extends BaseAdapter
+    public class LeDeviceListAdapter extends BaseAdapter
     {
         private final ArrayList<BluetoothDevice>  mLeDevices;
         private final HashMap<BluetoothDevice, Integer>    rssiMap;
