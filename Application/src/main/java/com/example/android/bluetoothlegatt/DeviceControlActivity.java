@@ -17,7 +17,6 @@
 package com.example.android.bluetoothlegatt;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -36,6 +35,7 @@ import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class DeviceControlActivity extends Activity
     private BluetoothGattCharacteristic mlcBPWriteChar, mlcBPReadChar;
 
     // new Bluetooth Adapter
-    private BluetoothAdapter    mBluetoothAdapter;
+    private Serializable mBluetoothAdapter;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -189,6 +189,7 @@ public class DeviceControlActivity extends Activity
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+        mBluetoothAdapter = intent.getSerializableExtra("BLE_DEVICE");
 
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
