@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -284,7 +283,6 @@ public class DeviceScanActivity extends ListActivity
             return i;
         }
 
-        private int gvCount=0, tmpDevs=0;
         @Override
         public View getView(int i, View view, ViewGroup viewGroup)
         {
@@ -314,27 +312,6 @@ public class DeviceScanActivity extends ListActivity
             viewHolder.deviceAddress.setText(device.getAddress());
             viewHolder.deviceRssi.setText("" + rssiMap.get(device) + " dBm");
             //viewHolder.totalDevices.setText(Integer.toString(getCount())+ " devices");
-
-            Log.i(TAG, "Count: " + Integer.toString(++gvCount));
-
-            if ( gvCount <10 )
-            {
-                if (tmpDevs != getCount())
-                {
-                    tmpDevs = getCount();
-                    gvCount = 0;
-                }
-                else
-                {
-                    gvCount++;
-                }
-            }
-
-            if ((gvCount > 500) && (tmpDevs == gvCount))
-            {
-                // write Intent Services to BLE server.
-            }
-
             return view;
         }
 

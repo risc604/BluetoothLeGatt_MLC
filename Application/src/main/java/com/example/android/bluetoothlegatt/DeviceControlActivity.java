@@ -37,7 +37,6 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -123,7 +122,8 @@ public class DeviceControlActivity extends Activity
             }
             else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
             {
-                displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                //displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                sendCommandToDevice(mBluetoothLeService.getSupportedGattServices());  // MLC test command.
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
             {
@@ -168,59 +168,6 @@ public class DeviceControlActivity extends Activity
                             mNotifyCharacteristic = characteristic;
                             mBluetoothLeService.setCharacteristicNotification(characteristic, true);
                         }
-
-                        /*
-                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_WRITE)>0)
-                        {
-                        //    mlcBPWriteChar = characteristic;
-                        //}
-                           */
-
-                        /*
-
-                            if (mBluetoothLeService.getSupportedGattServices().equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
-                            {
-                                try
-                                {
-                                    wait(100);
-                                } catch (InterruptedException e)
-                                {
-                                    e.printStackTrace();
-                                }
-
-                                try
-                                {
-                                    byte[] info = new byte[11];
-                                    info = Utils.mlcTestFunction();
-                                    //displayData(Utils.mlcTestFunction().toString());
-
-                                    //for (int i=0; i<11; i++)
-                                        Log.d(TAG, "MLC write:" + info.toString());
-
-                                    mlcBPWriteChar.setValue(Utils.mlcTestFunction());
-                                    mBluetoothLeService.writeCharacteristic(mlcBPWriteChar);
-                                    try
-                                    {
-                                        wait(100);
-                                    } catch (InterruptedException e)
-                                    {
-                                        e.printStackTrace();
-                                    }
-
-                                } catch (NullPointerException e)
-                                {
-                                    final BluetoothManager bluetoothManager =
-                                            (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-                                    mBluetoothAdapter = bluetoothManager.getAdapter();
-                                    mBluetoothAdapter.disable();
-                                    mBluetoothLeService.close();
-                                    //Intent  intent = new Intent(DeviceScanActivity.class, DeviceScanActivity.class);
-                                    //startActivity(intent);
-                                    Log.e(TAG, "MLC Error");
-                                }
-                            }
-                       // }
-                        */
                         return true;
                     }
                     return false;
@@ -339,121 +286,40 @@ public class DeviceControlActivity extends Activity
         }
     }
 
-
-    // Demonstrates how to iterate through the supported GATT Services/Characteristics.
-    // In this sample, we populate the data structure that is bound to the ExpandableListView
-    // on the UI.
-
-    private void displayGattServices(List<BluetoothGattService> gattServices)
+    private void sendCommandToDevice(List<BluetoothGattService> gattServices)
     {
         if (gattServices == null) return;
-        String uuid = null;
-        String unknownServiceString = getResources().getString(R.string.unknown_service);
-        ////String unknownCharaString = getResources().getString(R.string.unknown_characteristic);
-
-        ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<HashMap<String, String>>();
-        //ArrayList<ArrayList<HashMap<String, String>>>   gattCharacteristicData =
-        //        new ArrayList<ArrayList<HashMap<String, String>>>();
-
-        // Loops through available GATT Services.
+        // Loops to find available GATT Services.
         for (BluetoothGattService gattService : gattServices)
         {
-            //set service to ListArray.
-            HashMap<String, String> currentServiceData = new HashMap<String, String>();
-            uuid = gattService.getUuid().toString();
-            currentServiceData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
-            currentServiceData.put(LIST_UUID, uuid);
-
-            //if (SampleGattAttributes.lookup(uuid, unknownServiceString).equalsIgnoreCase())
-
-            gattServiceData.add(currentServiceData);
-
             mlcBPReadChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
             mlcBPWriteChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
-
-            ///ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
-            ///        new ArrayList<HashMap<String, String>>();
-            ///List<BluetoothGattCharacteristic> gattCharacteristics =
-            ///        gattService.getCharacteristics();
-            ///
-            ///ArrayList<BluetoothGattCharacteristic> charas =
-            ///        new ArrayList<BluetoothGattCharacteristic>();
-            ///
-            ///// Loops through available Characteristics.
-            ///for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics)
-            ///{
-            ///    if ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0)
-            ///    {
-            ///        if (gattCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
-            ///        {
-            ///            mlcBPWriteChar = gattCharacteristic;
-            ///            Log.i(TAG, "Write:" + mlcBPWriteChar.toString());
-            ///        }
-            ///    }
-            ///
-            ///    if ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0)
-            ///    {
-            ///        if (gattCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_READ))
-            ///        {
-            ///            mlcBPReadChar = gattCharacteristic;
-            ///            Log.i(TAG, "Read:" + mlcBPReadChar.toString());
-            ///        }
-            ///    }
-            ///
-            ///    charas.add(gattCharacteristic);
-            ///    //set characteristic to ListArray.
-            ///    HashMap<String, String> currentCharaData = new HashMap<String, String>();
-            ///    uuid = gattCharacteristic.getUuid().toString();
-            ///
-            ///    currentCharaData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
-            ///    currentCharaData.put(LIST_UUID, uuid);
-            ///    gattCharacteristicGroupData.add(currentCharaData);
-            ///
-
-            ///}
-            ///mGattCharacteristics.add(charas);
-            ///gattCharacteristicData.add(gattCharacteristicGroupData);
         }
 
         mBluetoothLeService.setCharacteristicNotification(mlcBPReadChar, true);
-
         if (mlcBPWriteChar != null)
         {
             try
             {
-                Thread.sleep(100);
-                //wait(100);
+                Thread.sleep(300);
             }
             catch (InterruptedException ie)
             {
                 ie.printStackTrace();
             }
-
             Log.i(TAG, Utils.mlcTestFunction().toString());
             mlcBPWriteChar.setValue(Utils.mlcTestFunction());
             mBluetoothLeService.writeCharacteristic(mlcBPWriteChar);
         }
-
-        ///SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
-        ///        this,
-        ///        gattServiceData,
-        ///        android.R.layout.simple_expandable_list_item_2,
-        ///        new String[]{LIST_NAME, LIST_UUID},
-        ///        new int[]{android.R.id.text1, android.R.id.text2},
-        ///        gattCharacteristicData,
-        ///        android.R.layout.simple_expandable_list_item_2,
-        ///        new String[]{LIST_NAME, LIST_UUID},
-        ///        new int[]{android.R.id.text1, android.R.id.text2}
-        ///);
-        ///mGattServicesList.setAdapter(gattServiceAdapter);
+        else
+            Log.e(TAG, "Error, No mlc BP write Charactics");
     }
 
-
-
+/*
     // Demonstrates how to iterate through the supported GATT Services/Characteristics.
     // In this sample, we populate the data structure that is bound to the ExpandableListView
     // on the UI.
-/*
+
     private void displayGattServices(List<BluetoothGattService> gattServices)
     {
         if (gattServices == null) return;
@@ -477,8 +343,6 @@ public class DeviceControlActivity extends Activity
 
             mlcBPReadChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
             mlcBPWriteChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
-
-
 
             ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
                     new ArrayList<HashMap<String, String>>();
