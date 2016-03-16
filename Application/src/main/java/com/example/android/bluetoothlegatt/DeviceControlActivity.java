@@ -34,7 +34,6 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +61,8 @@ public class DeviceControlActivity extends Activity
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
-    private BluetoothGattService        mlcBPService;
-    private BluetoothGattCharacteristic mlcBPWriteChar, mlcBPReadChar;
+    //private BluetoothGattService        mlcBPService;
+    //private BluetoothGattCharacteristic mlcBPWriteChar, mlcBPReadChar;
 
     // new Bluetooth Adapter
     private DeviceScanActivity.LeDeviceListAdapter mBluetoothAdapter;
@@ -189,14 +188,16 @@ public class DeviceControlActivity extends Activity
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-        mBluetoothAdapter = (DeviceScanActivity.LeDeviceListAdapter) intent.getSerializableExtra("BLE_DEVICE");
+        //mBluetoothAdapter = (DeviceScanActivity.LeDeviceListAdapter) intent.getSerializableExtra("BLE_DEVICE");
 
+        /*
         //test debug
         for (int i=0; i<mBluetoothAdapter.getCount(); i++)
         {
             Toast.makeText(this, Integer.toString(i)+ "  mac: "
                     + mBluetoothAdapter.getDevice(i).getAddress().toString(), Toast.LENGTH_SHORT).show();
         }
+        */
 
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
@@ -294,10 +295,46 @@ public class DeviceControlActivity extends Activity
         }
     }
 
+
+    private void sendCommandToDevice(List<BluetoothGattService> gattServices)
+    {
+        BluetoothGattCharacteristic     readCharacter = null;
+        BluetoothGattCharacteristic     writeCharacter = null;
+
+        if (gattServices == null) return;
+        // Loops to find available GATT Characteristic.
+        for (BluetoothGattService gattService : gattServices)
+        {
+            readCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
+            writeCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
+        }
+
+        mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
+        if (writeCharacter != null)
+        {
+            try
+            {
+                Thread.sleep(300);
+            }
+            catch (InterruptedException ie)
+            {
+                ie.printStackTrace();
+            }
+            writeCharacter.setValue(Utils.mlcTestFunction());
+            Log.i(TAG, Utils.mlcTestFunction().toString());
+
+            mBluetoothLeService.writeCharacteristic(writeCharacter);
+        }
+        else
+            Log.e(TAG, "Error, No mlc BP write Charactics");
+    }
+
+
+    /*
     private void sendCommandToDevice(List<BluetoothGattService> gattServices)
     {
         if (gattServices == null) return;
-        // Loops to find available GATT Services.
+        // Loops to find available GATT Characteristic.
         for (BluetoothGattService gattService : gattServices)
         {
             mlcBPReadChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
@@ -315,13 +352,16 @@ public class DeviceControlActivity extends Activity
             {
                 ie.printStackTrace();
             }
-            Log.i(TAG, Utils.mlcTestFunction().toString());
             mlcBPWriteChar.setValue(Utils.mlcTestFunction());
+            Log.i(TAG, Utils.mlcTestFunction().toString());
+
             mBluetoothLeService.writeCharacteristic(mlcBPWriteChar);
         }
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");
     }
+
+    */
 
 /*
     // Demonstrates how to iterate through the supported GATT Services/Characteristics.

@@ -36,7 +36,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -189,7 +188,7 @@ public class DeviceScanActivity extends ListActivity
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
 
-        intent.putExtra("BLE_DEVICE", (Serializable) mLeDeviceListAdapter);
+       // intent.putExtra("BLE_DEVICE", (Serializable) mLeDeviceListAdapter);
 
         if (mScanning)
         {
