@@ -194,6 +194,8 @@ public class DeviceControlActivity extends Activity
 
         String[]    AddressList = tempMap.toString().split("[,]+");
         ArrayList<String> realAddress = new ArrayList<>();
+        ArrayList<Integer> deviceRssi = new ArrayList<>();
+
         for (int i=0; i<AddressList.length; i++)
         {
             AddressList[i] = AddressList[i].replace("{", "");
@@ -207,13 +209,30 @@ public class DeviceControlActivity extends Activity
             {
                 if (item.matches("^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$"))
                     realAddress.add(item);
+                else
+                    deviceRssi.add(Integer.parseInt(item));
             }
         }
 
         for (int i=0; i<realAddress.size(); i++)
+        {
             Log.i(TAG, "Real Addr[" + i + "]: " + realAddress.get(i));
+            Log.i(TAG, "Rssi[" + i + "]: " + deviceRssi.get(i));
+            mDeviceAddress = realAddress.get(i);
 
-        mDeviceAddress = realAddress.get(0);
+            try
+            {
+                Thread.sleep(200);
+
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+
+
 
 
         /*
