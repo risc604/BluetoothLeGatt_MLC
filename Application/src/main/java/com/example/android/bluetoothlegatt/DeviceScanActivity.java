@@ -36,6 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -180,15 +181,38 @@ public class DeviceScanActivity extends ListActivity
         toBLEServiceStart(position);
     }
 
+    // MLC make data to Passing.
     private void toBLEServiceStart(int position)
     {
         final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
         if (device == null) return;
-        final Intent intent = new Intent(this, DeviceControlActivity.class);
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
 
-       // intent.putExtra("BLE_DEVICE", (Serializable) mLeDeviceListAdapter);
+        final Intent intent = new Intent(this, DeviceControlActivity.class);
+        ///intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+        ///intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+
+        ///ArrayList<HashMap<BluetoothDevice, Integer>>  tmpDevicesRssi= new ArrayList<HashMap<BluetoothDevice, Integer>>();
+
+        intent.putExtra("BLE_DEVICE", (Serializable) mLeDeviceListAdapter.getTotalInfo());
+
+        /*
+        ArrayList<String>  tmpDevicesName = new ArrayList<String>();
+        ArrayList<String>  tmpDevicesAddress = new ArrayList<String>();
+        for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
+        {
+            tmpDevicesName.add(i, mLeDeviceListAdapter.getDevice(i).getName());
+            tmpDevicesAddress.add(i, mLeDeviceListAdapter.getDevice(i).getAddress());
+        }
+        //tmpDevicesRssi = mLeDeviceListAdapter.getTotalInfo();
+
+        //tmpDevices.add(i, mLeDeviceListAdapter.getDevice(i));
+        ///intent.putExtra("BLE_DEVICE_NAME", (Serializable)tmpDevicesName);
+        ///intent.putExtra("BLE_DEVICE_ADDRESS", (Serializable)tmpDevicesAddress);
+        //intent.putExtra("BLE_DEVICE_RSSI", (Serializable) tmpDevicesRssi);
+        tmpDevicesRssi.add(mLeDeviceListAdapter.getTotalInfo());
+        intent.putExtra("BLE_DEVICE_RSSI", (Serializable)tmpDevicesRssi);
+        */
+
 
         if (mScanning)
         {
@@ -234,7 +258,7 @@ public class DeviceScanActivity extends ListActivity
     }
 
     // Adapter for holding devices found through scanning.
-    public class LeDeviceListAdapter extends BaseAdapter
+    private class LeDeviceListAdapter extends BaseAdapter
     {
         private final ArrayList<BluetoothDevice>  mLeDevices;
         private final HashMap<BluetoothDevice, Integer>    rssiMap;

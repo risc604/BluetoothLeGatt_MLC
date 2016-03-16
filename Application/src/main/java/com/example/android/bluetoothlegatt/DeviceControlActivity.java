@@ -17,6 +17,7 @@
 package com.example.android.bluetoothlegatt;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -36,6 +37,7 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -64,8 +66,8 @@ public class DeviceControlActivity extends Activity
     //private BluetoothGattService        mlcBPService;
     //private BluetoothGattCharacteristic mlcBPWriteChar, mlcBPReadChar;
 
-    // new Bluetooth Adapter
-    private DeviceScanActivity.LeDeviceListAdapter mBluetoothAdapter;
+    // BLE Total devices by scanning.
+    private ArrayList<HashMap<BluetoothDevice, Integer>> mBluetoothTotalDevice = new ArrayList<>();
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -186,21 +188,84 @@ public class DeviceControlActivity extends Activity
         setContentView(R.layout.gatt_services_characteristics);
 
         final Intent intent = getIntent();
-        mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
-        mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-        //mBluetoothAdapter = (DeviceScanActivity.LeDeviceListAdapter) intent.getSerializableExtra("BLE_DEVICE");
+
+        HashMap<BluetoothDevice, Intent> tempMap = (HashMap<BluetoothDevice, Intent>)intent.getSerializableExtra("BLE_DEVICE");
+        Log.i(TAG, "HashMAP: " + tempMap.toString());
+
+        String[]    AddressList = tempMap.toString().split("[,]+");
+        ArrayList<String> realAddress = new ArrayList<>();
+        for (int i=0; i<AddressList.length; i++)
+        {
+            AddressList[i] = AddressList[i].replace("{", "");
+            AddressList[i] = AddressList[i].replace("}", "");
+            AddressList[i] = AddressList[i].replace(" ", "");
+            //AddressList[i] = AddressList[i].
+            Log.i(TAG, "Address[" + i + "]: " + AddressList[i]);
+
+            String[] tmpString =  AddressList[i].split("[=]");
+            for (String item : tmpString)
+            {
+                if (item.matches("^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$"))
+                    realAddress.add(item);
+            }
+        }
+
+        for (int i=0; i<realAddress.size(); i++)
+            Log.i(TAG, "Real Addr[" + i + "]: " + realAddress.get(i));
+
+        mDeviceAddress = realAddress.get(0);
+
 
         /*
-        //test debug
-        for (int i=0; i<mBluetoothAdapter.getCount(); i++)
+        ///mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
+        ///mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+        //mBluetoothTotalDevice = (ArrayList<HashMap<BluetoothDevice, Integer>>) intent.getSerializableExtra("BLE_DEVICE");
+        //Map<BluetoothDevice, Integer> rssMap = new Map<BluetoothDevice, Integer>();
+        ArrayList<String>  mBleDevicesName = new ArrayList<String>();
+        ArrayList<String>  mBleDevicesAddress = new ArrayList<String>();
+        ArrayList<HashMap<BluetoothDevice, Integer>>   totalDevicesRssi = new ArrayList<HashMap<BluetoothDevice, Integer>>();
+        final int   deviceCounts= mBleDevicesName.size();
+        //String[] mDevicesName = new String[deviceCounts];
+        //String[] mDevicesAddress = new String[deviceCounts];
+        int[]     mDeviceRssi = new int[deviceCounts];
+
+        //Log.i(TAG, "HashMAP: " + totalDevicesRssi.toString());
+
+        mBleDevicesName = (ArrayList<String>) intent.getSerializableExtra("BLE_DEVICE_NAME");
+        mBleDevicesAddress = (ArrayList<String>) intent.getSerializableExtra("BLE_DEVICE_ADDRESS");
+        totalDevicesRssi = (ArrayList<HashMap < BluetoothDevice, Integer>>) intent.getSerializableExtra("BLE_DEVICE_RSSI");
+
+        for (int i=0; i<deviceCounts; i++)
         {
-            Toast.makeText(this, Integer.toString(i)+ "  mac: "
-                    + mBluetoothAdapter.getDevice(i).getAddress().toString(), Toast.LENGTH_SHORT).show();
+            //mDevicesName[i] = mBleDevicesName.get(i);
+            //mDevicesAddress[i] = mBleDevicesAddress.get(i);
+            mDeviceRssi[i] =  totalDevicesRssi.get(i).get(mBleDevicesAddress);
+
+            Log.i(TAG, "Device[" + Integer.toString(i) + "]: " + mBleDevicesName.get(i).toString() + ": "
+                    + mBleDevicesAddress.get(i).toString() + ": "
+                    + Integer.toString(mDeviceRssi[i]));
+        }
+        mDeviceName = mBleDevicesName.get(0);
+        mDeviceAddress = mBleDevicesAddress.get(0);
+
+
+        //*
+        for (int i=0; i<mBluetoothTotalDevice.size(); i++)
+        {
+            Map tmp = mBluetoothTotalDevice.get(i);
+            //mDeviceName = tmp.get();
+        }
+        /*
+        //test debug
+        for (int i=0; i<mBluetoothTotalDevice.size(); i++)
+        {
+            Log.i(TAG, "Device[" + Integer.toString(i) + "]: " + mBluetoothTotalDevice.get(i).toString());
+            //Toast.makeText(this, Integer.toString(i)+ "  mac: "
+            //        + mBluetoothAdapter.getDevice(i).getAddress().toString(), Toast.LENGTH_SHORT).show();
         }
         */
-
         // Sets up UI references.
-        ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
+                ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
         mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
@@ -460,5 +525,12 @@ public class DeviceControlActivity extends Activity
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         return intentFilter;
+    }
+
+    private ArrayList<String> getBleAddress(HashMap<BluetoothDevice, Integer> rssMap)
+    {
+        ArrayList<String>   deviceAddress = new ArrayList<String>();
+
+        return (deviceAddress);
     }
 }
