@@ -63,11 +63,6 @@ public class DeviceControlActivity extends Activity
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
-    //private BluetoothGattService        mlcBPService;
-    //private BluetoothGattCharacteristic mlcBPWriteChar, mlcBPReadChar;
-
-    // BLE Total devices by scanning.
-    private ArrayList<HashMap<BluetoothDevice, Integer>> mBluetoothTotalDevice = new ArrayList<>();
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
