@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +40,7 @@ import android.widget.Toast;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -50,7 +52,6 @@ public class DeviceScanActivity extends ListActivity
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning;
     private Handler mHandler;
-    private HashMap<BluetoothDevice, Integer> bleDevices;
 
     private static final int    REQUEST_ENABLE_BT = 1;
     private static final long   SCAN_PERIOD = 10000;
@@ -188,11 +189,25 @@ public class DeviceScanActivity extends ListActivity
         if (device == null) return;
 
         final Intent intent = new Intent(this, DeviceControlActivity.class);
+
+        HashMap<String, Integer> bleDevicesInfo = new HashMap<String, Integer>();
+        List<String>    deviceAddressList = new ArrayList<>();
+
         ///intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
         ///intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
 
         ///ArrayList<HashMap<BluetoothDevice, Integer>>  tmpDevicesRssi= new ArrayList<HashMap<BluetoothDevice, Integer>>();
 
+
+        for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
+        {
+            deviceAddressList.add(mLeDeviceListAdapter.getDevice(i).getAddress());
+            Log.i(TAG, "List[" + i + "]" + deviceAddressList.get(i));
+        }
+        intent.putExtra("BLE_ADDRESS", (Serializable)deviceAddressList);
+
+        ///bleDevicesInfo = mLeDeviceListAdapter.getTotalInfo();
+        ///intent.putExtra("BLE_DEVICE", (Serializable) bleDevicesInfo);
         intent.putExtra("BLE_DEVICE", (Serializable) mLeDeviceListAdapter.getTotalInfo());
 
         /*
@@ -263,7 +278,6 @@ public class DeviceScanActivity extends ListActivity
         private final ArrayList<BluetoothDevice>  mLeDevices;
         private final HashMap<BluetoothDevice, Integer>    rssiMap;
         private LayoutInflater mInflator;
-
 
         public LeDeviceListAdapter()
         {
@@ -363,9 +377,16 @@ public class DeviceScanActivity extends ListActivity
             return rssiMap.get(device);
         }
 
-        public HashMap<BluetoothDevice, Integer> getTotalInfo()
+        public HashMap<String, Integer> getTotalInfo()
         {
-            return rssiMap;
+            HashMap<String, Integer>    rssiMapInfo = new HashMap<>();
+
+            for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
+            {
+                rssiMapInfo.put(mLeDeviceListAdapter.getDevice(i).getAddress(),
+                                mLeDeviceListAdapter.getRssi(mLeDeviceListAdapter.getDevice(i)));
+            }
+            return rssiMapInfo;
         }
     }
 

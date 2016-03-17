@@ -17,7 +17,6 @@
 package com.example.android.bluetoothlegatt;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -184,51 +183,39 @@ public class DeviceControlActivity extends Activity
 
         final Intent intent = getIntent();
 
-        HashMap<BluetoothDevice, Intent> tempMap = (HashMap<BluetoothDevice, Intent>)intent.getSerializableExtra("BLE_DEVICE");
-        Log.i(TAG, "HashMAP: " + tempMap.toString());
+        List<String>    devicesAddrList = (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
+       HashMap<String, Integer> tempMap =
+                (HashMap<String, Integer>)intent.getSerializableExtra("BLE_DEVICE");
 
-        String[]    AddressList = tempMap.toString().split("[,]+");
-        ArrayList<String> realAddress = new ArrayList<>();
-        ArrayList<Integer> deviceRssi = new ArrayList<>();
+        ArrayList<String>   bleDeviceAddress = new ArrayList<String>();
+        //(HashMap<BluetoothDevice, Integer>)intent.getSerializableExtra("BLE_DEVICE");
+        Log.i(TAG, "HashMAP: " + tempMap.toString() + ",  total: " + tempMap.size());
 
-        for (int i=0; i<AddressList.length; i++)
+        for (int i=0; i<tempMap.size(); i++)
         {
-            AddressList[i] = AddressList[i].replace("{", "");
-            AddressList[i] = AddressList[i].replace("}", "");
-            AddressList[i] = AddressList[i].replace(" ", "");
-            //AddressList[i] = AddressList[i].
-            Log.i(TAG, "Address[" + i + "]: " + AddressList[i]);
-
-            String[] tmpString =  AddressList[i].split("[=]");
-            for (String item : tmpString)
-            {
-                if (item.matches("^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$"))
-                    realAddress.add(item);
-                else
-                    deviceRssi.add(Integer.parseInt(item));
-            }
+            Log.i(TAG, "Rssi["+ i +"]: " + tempMap.get(devicesAddrList.get(i)));
         }
 
-        for (int i=0; i<realAddress.size(); i++)
+        bleDeviceAddress = getBleAddress2(tempMap);
+        bleDeviceAddress = getBleAddress(tempMap);
+        for (int i=0; i<bleDeviceAddress.size(); i++)
         {
-            Log.i(TAG, "Real Addr[" + i + "]: " + realAddress.get(i));
-            Log.i(TAG, "Rssi[" + i + "]: " + deviceRssi.get(i));
-            mDeviceAddress = realAddress.get(i);
+            Log.i(TAG, "Real Addr[" + i + "]: " + bleDeviceAddress.get(i));
+            //Log.i(TAG, "Rssi[" + i + "]: " + bleDeviceAddress.get(i));
+            mDeviceAddress = bleDeviceAddress.get(i);
 
+            /*
             try
             {
                 Thread.sleep(200);
-
+                //wait(5000);
             }
             catch (InterruptedException e)
             {
                 e.printStackTrace();
             }
+            */
         }
-
-
-
-
 
         /*
         ///mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
@@ -262,7 +249,6 @@ public class DeviceControlActivity extends Activity
         mDeviceName = mBleDevicesName.get(0);
         mDeviceAddress = mBleDevicesAddress.get(0);
 
-
         //*
         for (int i=0; i<mBluetoothTotalDevice.size(); i++)
         {
@@ -279,7 +265,7 @@ public class DeviceControlActivity extends Activity
         }
         */
         // Sets up UI references.
-                ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
+        ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
         mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
@@ -326,7 +312,8 @@ public class DeviceControlActivity extends Activity
         {
             menu.findItem(R.id.menu_connect).setVisible(false);
             menu.findItem(R.id.menu_disconnect).setVisible(true);
-        } else
+        }
+        else
         {
             menu.findItem(R.id.menu_connect).setVisible(true);
             menu.findItem(R.id.menu_disconnect).setVisible(false);
@@ -373,7 +360,6 @@ public class DeviceControlActivity extends Activity
             mDataField.setText(data);
         }
     }
-
 
     private void sendCommandToDevice(List<BluetoothGattService> gattServices)
     {
@@ -541,10 +527,40 @@ public class DeviceControlActivity extends Activity
         return intentFilter;
     }
 
-    private ArrayList<String> getBleAddress(HashMap<BluetoothDevice, Integer> rssMap)
+    private ArrayList<String> getBleAddress2(HashMap<String, Integer> rssiMap)
     {
-        ArrayList<String>   deviceAddress = new ArrayList<String>();
+        ArrayList<String>   address = new ArrayList<String>();
+        ArrayList<Integer>  rssi    = new ArrayList<Integer>();
 
-        return (deviceAddress);
+        return address;
+    }
+
+    private ArrayList<String> getBleAddress(HashMap<String, Integer> rssiMap)
+    {
+        if (rssiMap == null)
+            return null;
+
+        String[]    AddressList = rssiMap.toString().split("[,]+");
+        ArrayList<String> realAddress = new ArrayList<>();
+        ArrayList<Integer> deviceRssi = new ArrayList<>();
+
+        for (int i=0; i<AddressList.length; i++)
+        {
+            AddressList[i] = AddressList[i].replace("{", "");
+            AddressList[i] = AddressList[i].replace("}", "");
+            AddressList[i] = AddressList[i].replace(" ", "");
+            //AddressList[i] = AddressList[i].
+            Log.i(TAG, "split MAP[" + i + "]: " + AddressList[i]);
+
+            String[] tmpString =  AddressList[i].split("[=]");
+            for (String item : tmpString)
+            {
+                if (item.matches("^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$"))
+                    realAddress.add(item);
+                else
+                    deviceRssi.add(Integer.parseInt(item));
+            }
+        }
+        return (realAddress);
     }
 }
