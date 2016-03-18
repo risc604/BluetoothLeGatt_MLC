@@ -153,6 +153,7 @@ public class BluetoothLeService extends Service
     {
         final Intent intent = new Intent(action);
 
+        /*
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
         // carried out as per profile specifications:
         // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
@@ -173,31 +174,8 @@ public class BluetoothLeService extends Service
             Log.d(TAG, String.format("Received heart rate: %d", heartRate));
             intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
         }
-        else if (UUID_MLC_BLE_SERVICE_WRITE.equals(characteristic.getUuid()))
-        {
-            int flag = characteristic.getProperties();
-
-            Log.d(TAG, "flag: " + Integer.toString(flag));
-            int format = -1;
-            //if ((flag & 0x01) != 0)
-            //{
-                //Toast.makeText(this, characteristic.getUuid().toString(), Toast.LENGTH_SHORT ).show();
-                format = BluetoothGattCharacteristic.PERMISSION_WRITE;
-                Log.d(TAG, "Write format: " + Integer.toString(format));
-                //characteristic.setValue(byteCMD.toString()); //IntValue(format, 1);
-                characteristic.setValue(Utils.mlcTestFunction());
-            //}
-            //else
-            {
-                format = BluetoothGattCharacteristic.PERMISSION_READ;
-                Log.d(TAG, "Read format: " + Integer.toString(format));
-
-            }
-            final int mlcFormat = characteristic.getIntValue(format, 1);
-            Log.d(TAG, String.format("Received MLC format: %d", mlcFormat));
-            intent.putExtra(EXTRA_DATA, String.valueOf(mlcFormat));
-        }
         else
+        */
         {
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();

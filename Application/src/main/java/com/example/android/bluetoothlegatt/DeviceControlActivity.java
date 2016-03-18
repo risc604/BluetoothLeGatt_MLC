@@ -30,7 +30,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
@@ -60,6 +59,7 @@ public class DeviceControlActivity extends Activity
     private BluetoothLeService mBluetoothLeService;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+    private List<String>    devicesAddrList = new ArrayList<String>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
 
@@ -95,6 +95,7 @@ public class DeviceControlActivity extends Activity
     // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
     // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
     //                        or notification operations.
+    int reciveCount = 0;    //debug
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver()
     {
         @Override
@@ -122,11 +123,19 @@ public class DeviceControlActivity extends Activity
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
             {
-                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                String  data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
+                //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                displayData(data);
+
+                if ((data == null) && (mBluetoothLeService != null))
+                sendNextCommand();
             }
+
+            Log.i(TAG, "Rev: " + reciveCount++);
         }
     };
 
+    /*
     // If a given GATT characteristic is selected, check for supported features.  This sample
     // demonstrates 'Read' and 'Notify' features.  See
     // http://d.android.com/reference/android/bluetooth/BluetoothGatt.html for the complete
@@ -165,9 +174,13 @@ public class DeviceControlActivity extends Activity
                         }
                         return true;
                     }
+
+                    Log.i(TAG, "View Count: " + viewCount++);
                     return false;
                 }
             };
+
+    */
 
     private void clearUI()
     {
@@ -183,8 +196,9 @@ public class DeviceControlActivity extends Activity
 
         final Intent intent = getIntent();
 
-        List<String>                devicesAddrList =
-                (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
+        //List<String>                devicesAddrList =
+        //        (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
+        devicesAddrList = (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
         HashMap<String, Integer>    bleDeviceInfoMap =
                 (HashMap<String, Integer>)intent.getSerializableExtra("BLE_DEVICE");
         ArrayList<String>   bleDeviceAddress = new ArrayList<String>();
@@ -261,8 +275,8 @@ public class DeviceControlActivity extends Activity
         */
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
-        mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
-        mGattServicesList.setOnChildClickListener(servicesListClickListner);
+        ///mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
+        ///mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
         mDataField = (TextView) findViewById(R.id.data_value);
 
@@ -272,6 +286,7 @@ public class DeviceControlActivity extends Activity
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
+    private int everCount=0;
     @Override
     protected void onResume()
     {
@@ -282,6 +297,8 @@ public class DeviceControlActivity extends Activity
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
+
+        Log.i(TAG, "Resume: " + everCount++);
 
 
     }
@@ -391,6 +408,19 @@ public class DeviceControlActivity extends Activity
             Log.e(TAG, "Error, No mlc BP write Charactics");
     }
 
+
+    private void sendNextCommand()
+    {
+        mDeviceAddress = devicesAddrList.get(1);
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, mServiceConnection, BIND_ADJUST_WITH_ACTIVITY);
+
+        if (mBluetoothLeService != null)
+        {
+            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+            Log.d(TAG, "2 result=" + result);
+        }
+    }
 
     /*
     private void sendCommandToDevice(List<BluetoothGattService> gattServices)
