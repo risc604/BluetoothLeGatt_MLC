@@ -403,7 +403,8 @@ public class DeviceScanActivity extends ListActivity
                         public void run()
                         {
                             //if(device.getName().equalsIgnoreCase("3MW1-4B"))
-                            if(device.getName().equalsIgnoreCase(mlcDeviceName))
+                            //if(device.getName().equalsIgnoreCase(mlcDeviceName))
+                            if(device.getName().equals(mlcDeviceName))
                             {
                                 //mLeDeviceListAdapter.addDevice(device);
                                 mLeDeviceListAdapter.addDevice(device, rssi);

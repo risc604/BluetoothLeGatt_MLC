@@ -183,26 +183,21 @@ public class DeviceControlActivity extends Activity
 
         final Intent intent = getIntent();
 
-        List<String>    devicesAddrList = (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
-       HashMap<String, Integer> tempMap =
+        List<String>                devicesAddrList =
+                (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
+        HashMap<String, Integer>    bleDeviceInfoMap =
                 (HashMap<String, Integer>)intent.getSerializableExtra("BLE_DEVICE");
-
         ArrayList<String>   bleDeviceAddress = new ArrayList<String>();
-        //(HashMap<BluetoothDevice, Integer>)intent.getSerializableExtra("BLE_DEVICE");
-        Log.i(TAG, "HashMAP: " + tempMap.toString() + ",  total: " + tempMap.size());
+        Log.i(TAG, "HashMAP: " + bleDeviceInfoMap.toString() + ",  total: " + bleDeviceInfoMap.size());
 
-        for (int i=0; i<tempMap.size(); i++)
+        for (int i=0; i<devicesAddrList.size(); i++)
         {
-            Log.i(TAG, "Rssi["+ i +"]: " + tempMap.get(devicesAddrList.get(i)));
-        }
-
-        bleDeviceAddress = getBleAddress2(tempMap);
-        bleDeviceAddress = getBleAddress(tempMap);
-        for (int i=0; i<bleDeviceAddress.size(); i++)
-        {
-            Log.i(TAG, "Real Addr[" + i + "]: " + bleDeviceAddress.get(i));
+            Log.i(TAG, "BLE Addr[" + i + "]: " + devicesAddrList.get(i) + ": " +
+                    bleDeviceInfoMap.get(devicesAddrList.get(i)));
+            //Log.i(TAG, "RSSi: " + bleDeviceInfoMap.get(devicesAddrList.get(i)) + " dBm");
             //Log.i(TAG, "Rssi[" + i + "]: " + bleDeviceAddress.get(i));
-            mDeviceAddress = bleDeviceAddress.get(i);
+            mDeviceAddress = devicesAddrList.get(i);
+            mDeviceName = mDeviceAddress;   // display device name by address.
 
             /*
             try
@@ -287,6 +282,8 @@ public class DeviceControlActivity extends Activity
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
+
+
     }
 
     @Override
@@ -527,14 +524,13 @@ public class DeviceControlActivity extends Activity
         return intentFilter;
     }
 
-    private ArrayList<String> getBleAddress2(HashMap<String, Integer> rssiMap)
+    private Integer getBleRssi(HashMap<String, Integer> rssiMap, ArrayList<String> deviceAddress)
     {
-        ArrayList<String>   address = new ArrayList<String>();
-        ArrayList<Integer>  rssi    = new ArrayList<Integer>();
-
-        return address;
+        return (rssiMap.get(deviceAddress));
     }
 
+    /*
+    // Parser BLE RSSI by Hash map info.
     private ArrayList<String> getBleAddress(HashMap<String, Integer> rssiMap)
     {
         if (rssiMap == null)
@@ -563,4 +559,5 @@ public class DeviceControlActivity extends Activity
         }
         return (realAddress);
     }
+    */
 }
