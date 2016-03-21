@@ -55,6 +55,7 @@ public class DeviceControlActivity extends Activity
     private TextView mDataField;
     private String mDeviceName;
     private String mDeviceAddress;
+    private int     bleDevices=0;
     private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
@@ -62,6 +63,7 @@ public class DeviceControlActivity extends Activity
     private List<String>    devicesAddrList = new ArrayList<String>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private boolean flagOK = false;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -127,8 +129,8 @@ public class DeviceControlActivity extends Activity
                 //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
                 displayData(data);
 
-                if ((data == null) && (mBluetoothLeService != null))
-                sendNextCommand();
+                ///if ((data == null) && (mBluetoothLeService != null))
+                ///sendNextCommand();
             }
 
             Log.i(TAG, "Rev: " + reciveCount++);
@@ -201,9 +203,11 @@ public class DeviceControlActivity extends Activity
         devicesAddrList = (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
         HashMap<String, Integer>    bleDeviceInfoMap =
                 (HashMap<String, Integer>)intent.getSerializableExtra("BLE_DEVICE");
-        ArrayList<String>   bleDeviceAddress = new ArrayList<String>();
-        Log.i(TAG, "HashMAP: " + bleDeviceInfoMap.toString() + ",  total: " + bleDeviceInfoMap.size());
+        bleDevices = devicesAddrList.size();
+        //ArrayList<String>   bleDeviceAddress = new ArrayList<String>();
+        //Log.i(TAG, "HashMAP: " + bleDeviceInfoMap.toString() + ",  total: " + bleDeviceInfoMap.size());
 
+        /*
         for (int i=0; i<devicesAddrList.size(); i++)
         {
             Log.i(TAG, "BLE Addr[" + i + "]: " + devicesAddrList.get(i) + ": " +
@@ -212,19 +216,19 @@ public class DeviceControlActivity extends Activity
             //Log.i(TAG, "Rssi[" + i + "]: " + bleDeviceAddress.get(i));
             mDeviceAddress = devicesAddrList.get(i);
             mDeviceName = mDeviceAddress;   // display device name by address.
-
-            /*
-            try
-            {
-                Thread.sleep(200);
-                //wait(5000);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-            */
+            //
+            //try
+            //{
+            //    Thread.sleep(200);
+            //    //wait(5000);
+            //}
+            //catch (InterruptedException e)
+            //{
+            //    e.printStackTrace();
+            //}
+            //
         }
+        */
 
         /*
         ///mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
@@ -274,16 +278,16 @@ public class DeviceControlActivity extends Activity
         }
         */
         // Sets up UI references.
-        ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
+        //((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
         ///mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         ///mGattServicesList.setOnChildClickListener(servicesListClickListner);
-        mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
-        mDataField = (TextView) findViewById(R.id.data_value);
+        //mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
+        //mDataField = (TextView) findViewById(R.id.data_value);
 
-        getActionBar().setTitle(mDeviceName);
+        //getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        //Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        //bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
     private int everCount=0;
@@ -291,12 +295,18 @@ public class DeviceControlActivity extends Activity
     protected void onResume()
     {
         super.onResume();
-        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-        if (mBluetoothLeService != null)
-        {
-            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-            Log.d(TAG, "Connect request result=" + result);
-        }
+
+        //Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        //bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+        MLC_TestFunction(0);
+
+        //registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        //if (mBluetoothLeService != null)
+        //{
+        //    final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+        //    Log.d(TAG, "Connect request result=" + result);
+        //}
 
         Log.i(TAG, "Resume: " + everCount++);
 
@@ -355,6 +365,116 @@ public class DeviceControlActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+    private void MLC_TestFunction(int state)
+    {
+        // make mulit device ble service intent & start service to connection.
+        //ArrayList<Intent>   intentsList = null;
+        int devIndex = 0;
+        int step = state;
+        Intent gattServiceIntent = null;
+
+        Log.i(TAG, "BLE: " + devicesAddrList.size());
+        while (step < 10)
+        {
+            Log.i(TAG, "Step: " + step);
+            switch (step)
+            {
+                case 0:     // make test ble mac address
+                    flagOK = false;
+                    mDeviceAddress = devicesAddrList.get(devIndex);
+                    ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
+                    mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
+                    mDataField = (TextView) findViewById(R.id.data_value);
+                    mDeviceName = mDeviceAddress;
+
+                    getActionBar().setTitle(mDeviceName);
+                    getActionBar().setDisplayHomeAsUpEnabled(true);
+                    // make ble service receiver
+                    // intentsList.add(devIndex, new Intent(this, BluetoothLeService.class));
+                    gattServiceIntent = new Intent(this, BluetoothLeService.class);
+                    // check data or receive data ok
+                    //bindService(intentsList.get(devIndex), mServiceConnection, BIND_AUTO_CREATE);
+                    bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+                    registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+
+                case 1:
+                    if (mBluetoothLeService != null)
+                    {
+                        final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+                        Log.d(TAG, "Connect request result=" + result);
+                        //intentsList.remove(devIndex);
+                    }
+
+                    if (flagOK)
+                    {
+                        flagOK = false;
+                        step = 2;
+                    }
+                    //else if (mBluetoothLeService == null)
+                    //    step = 2;
+                    //break;
+
+                case 2:
+                    unbindService(mServiceConnection);
+                    mBluetoothLeService = null;
+                    step = 3;
+                    break;
+
+                case 3:
+                    /*
+                    if (intentsList != null)
+                    {
+                        step = 0;
+                    }
+                    else if (intentsList == null)
+                    {
+                        step = 11;  // over to exist MLC test.
+                    }
+                    else
+                    {
+                        Log.e(TAG, "MLC test function STEP Error.");
+                    }
+                    */
+                    devIndex++;
+                    if (devIndex < devicesAddrList.size())
+                        step = 0;
+                    else if (devIndex >= devicesAddrList.size())
+                        step = 11;
+                    else
+                    {
+                        Log.e(TAG, "MLC test function STEP Error.");
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+
+
+        /*
+        for (int i=0; i<bleDevices; i++)
+        {
+            // check data or receive data ok
+            bindService(intentsList.get(i), mServiceConnection, BIND_AUTO_CREATE);
+            registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        }
+        */
+
+
+
+
+
+
+
+
+        //disconnect ble service or gatt server
+
+        // to restart.
+    }
+
+
     private void updateConnectionState(final int resourceId)
     {
         runOnUiThread(new Runnable()
@@ -372,6 +492,8 @@ public class DeviceControlActivity extends Activity
         if (data != null)
         {
             mDataField.setText(data);
+            if (data.matches("ML"));
+                flagOK = true;
         }
     }
 
@@ -413,7 +535,7 @@ public class DeviceControlActivity extends Activity
     {
         mDeviceAddress = devicesAddrList.get(1);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        bindService(gattServiceIntent, mServiceConnection, BIND_ADJUST_WITH_ACTIVITY);
+        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
         if (mBluetoothLeService != null)
         {
