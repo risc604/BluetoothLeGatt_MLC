@@ -30,7 +30,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
@@ -64,7 +63,7 @@ public class DeviceControlActivity extends Activity
     private List<String>    devicesAddrList = new ArrayList<String>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
-    private boolean flagOK = false;
+    //private boolean flagOK = false;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -139,6 +138,7 @@ public class DeviceControlActivity extends Activity
     };
 
 
+    /*
     // If a given GATT characteristic is selected, check for supported features.  This sample
     // demonstrates 'Read' and 'Notify' features.  See
     // http://d.android.com/reference/android/bluetooth/BluetoothGatt.html for the complete
@@ -182,6 +182,7 @@ public class DeviceControlActivity extends Activity
                     return false;
                 }
             };
+    */
 
     private void clearUI()
     {
@@ -253,8 +254,8 @@ public class DeviceControlActivity extends Activity
 
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
-        mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
-        mGattServicesList.setOnChildClickListener(servicesListClickListner);
+        //mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
+        //mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
         mDataField = (TextView) findViewById(R.id.data_value);
 
@@ -332,114 +333,104 @@ public class DeviceControlActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
-    private void MLC_TestFunction(int state)
-    {
-        // make mulit device ble service intent & start service to connection.
-        //ArrayList<Intent>   intentsList = null;
-        int devIndex = 0;
-        int step = state;
-        Intent gattServiceIntent = null;
-
-        Log.i(TAG, "BLE: " + devicesAddrList.size());
-        while (step < 10)
-        {
-            Log.i(TAG, "Step: " + step);
-            switch (step)
-            {
-                case 0:     // make test ble mac address
-                    flagOK = false;
-                    mDeviceAddress = devicesAddrList.get(devIndex);
-                    ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
-                    mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
-                    mDataField = (TextView) findViewById(R.id.data_value);
-                    mDeviceName = mDeviceAddress;
-
-                    getActionBar().setTitle(mDeviceName);
-                    getActionBar().setDisplayHomeAsUpEnabled(true);
-                    // make ble service receiver
-                    // intentsList.add(devIndex, new Intent(this, BluetoothLeService.class));
-                    gattServiceIntent = new Intent(this, BluetoothLeService.class);
-                    // check data or receive data ok
-                    //bindService(intentsList.get(devIndex), mServiceConnection, BIND_AUTO_CREATE);
-                    bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-                    registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-
-                case 1:
-                    if (mBluetoothLeService != null)
-                    {
-                        final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-                        Log.d(TAG, "Connect request result=" + result);
-                        //intentsList.remove(devIndex);
-                    }
-
-                    if (flagOK)
-                    {
-                        flagOK = false;
-                        step = 2;
-                    }
-                    //else if (mBluetoothLeService == null)
-                    //    step = 2;
-                    //break;
-
-                case 2:
-                    unbindService(mServiceConnection);
-                    mBluetoothLeService = null;
-                    step = 3;
-                    break;
-
-                case 3:
-                    /*
-                    if (intentsList != null)
-                    {
-                        step = 0;
-                    }
-                    else if (intentsList == null)
-                    {
-                        step = 11;  // over to exist MLC test.
-                    }
-                    else
-                    {
-                        Log.e(TAG, "MLC test function STEP Error.");
-                    }
-                    */
-                    devIndex++;
-                    if (devIndex < devicesAddrList.size())
-                        step = 0;
-                    else if (devIndex >= devicesAddrList.size())
-                        step = 11;
-                    else
-                    {
-                        Log.e(TAG, "MLC test function STEP Error.");
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-
-
-        /*
-        for (int i=0; i<bleDevices; i++)
-        {
-            // check data or receive data ok
-            bindService(intentsList.get(i), mServiceConnection, BIND_AUTO_CREATE);
-            registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-        }
-        */
-
-
-
-
-
-
-
-
+    /*
+    //private void MLC_TestFunction(int state)
+    //{
+    //    // make mulit device ble service intent & start service to connection.
+    //    //ArrayList<Intent>   intentsList = null;
+    //    int devIndex = 0;
+    //    int step = state;
+    //    Intent gattServiceIntent = null;
+    //
+    //    Log.i(TAG, "BLE: " + devicesAddrList.size());
+    //    while (step < 10)
+    //    {
+    //        Log.i(TAG, "Step: " + step);
+    //        switch (step)
+    //        {
+    //            case 0:     // make test ble mac address
+    //                //flagOK = false;
+    //                mDeviceAddress = devicesAddrList.get(devIndex);
+    //                ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
+    //                mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
+    //                mDataField = (TextView) findViewById(R.id.data_value);
+    //                mDeviceName = mDeviceAddress;
+    //
+    //                getActionBar().setTitle(mDeviceName);
+    //                getActionBar().setDisplayHomeAsUpEnabled(true);
+    //                // make ble service receiver
+    //                // intentsList.add(devIndex, new Intent(this, BluetoothLeService.class));
+    //                gattServiceIntent = new Intent(this, BluetoothLeService.class);
+    //                // check data or receive data ok
+    //                //bindService(intentsList.get(devIndex), mServiceConnection, BIND_AUTO_CREATE);
+    //                bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+    //                registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+    //
+    //            case 1:
+    //                if (mBluetoothLeService != null)
+    //                {
+    //                    final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+    //                    Log.d(TAG, "Connect request result=" + result);
+    //                    //intentsList.remove(devIndex);
+    //                }
+    //
+    //                if (flagOK)
+    //                {
+    //                    flagOK = false;
+    //                    step = 2;
+    //                }
+    //                //else if (mBluetoothLeService == null)
+    //                //    step = 2;
+    //                //break;
+    //
+    //            case 2:
+    //                unbindService(mServiceConnection);
+    //                mBluetoothLeService = null;
+    //                step = 3;
+    //                break;
+    //
+    //            case 3:
+    //                /*
+    //                if (intentsList != null)
+    //                {
+    //                    step = 0;
+    //                }
+    //                else if (intentsList == null)
+    //                {
+    //                    step = 11;  // over to exist MLC test.
+    //                }
+    //                else
+    //                {
+    //                    Log.e(TAG, "MLC test function STEP Error.");
+    //                }
+    //                */
+    //                devIndex++;
+    //                if (devIndex < devicesAddrList.size())
+    //                    step = 0;
+    //                else if (devIndex >= devicesAddrList.size())
+    //                    step = 11;
+    //                else
+    //                {
+    //                    Log.e(TAG, "MLC test function STEP Error.");
+    //                }
+    //                break;
+    //
+    //            default:
+    //                break;
+    //        }
+    //    }
+    //    /*
+    //    for (int i=0; i<bleDevices; i++)
+    //    {
+    //        // check data or receive data ok
+    //        bindService(intentsList.get(i), mServiceConnection, BIND_AUTO_CREATE);
+    //        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+    //    }
+    //    */
+    //
         //disconnect ble service or gatt server
-
         // to restart.
-    }
+    //}
 
 
     private void updateConnectionState(final int resourceId)
@@ -460,7 +451,10 @@ public class DeviceControlActivity extends Activity
         {
             mDataField.setText(data);
             if (data.matches("ML"));
-                flagOK = true;
+            {
+                //Toast.makeText(this, "Get BP ML string.", Toast.LENGTH_SHORT).show();
+                goBackDeviceScanActivity();
+            }
         }
     }
 
@@ -480,7 +474,10 @@ public class DeviceControlActivity extends Activity
         mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
         if (writeCharacter != null)
         {
-            try
+            writeCharacter.setValue(Utils.mlcTestFunction());
+            Log.i(TAG, Utils.mlcTestFunction().toString());
+            mBluetoothLeService.writeCharacteristic(writeCharacter);
+            /*   try
             {
                 Thread.sleep(300);
             }
@@ -488,16 +485,22 @@ public class DeviceControlActivity extends Activity
             {
                 ie.printStackTrace();
             }
-            writeCharacter.setValue(Utils.mlcTestFunction());
-            Log.i(TAG, Utils.mlcTestFunction().toString());
-
-            mBluetoothLeService.writeCharacteristic(writeCharacter);
+            */
         }
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");
     }
 
+    private void goBackDeviceScanActivity()
+    {
+        Intent  intent = new Intent(this, DeviceScanActivity.class);
+        intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        startActivity(intent);
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
+    }
 
+    /*
     private void sendNextCommand()
     {
         mDeviceAddress = devicesAddrList.get(1);
@@ -511,7 +514,6 @@ public class DeviceControlActivity extends Activity
         }
     }
 
-    /*
     private void sendCommandToDevice(List<BluetoothGattService> gattServices)
     {
         if (gattServices == null) return;

@@ -347,6 +347,16 @@ public class BluetoothLeService extends Service
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
+
+        try
+        {
+            Thread.sleep(200);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+
         mBluetoothGatt.writeCharacteristic(characteristic);
     }
 
