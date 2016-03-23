@@ -452,6 +452,14 @@ public class DeviceControlActivity extends Activity
             mDataField.setText(data);
             if (data.matches("ML"));
             {
+                try
+                {
+                    Thread.sleep(2000);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
                 //Toast.makeText(this, "Get BP ML string.", Toast.LENGTH_SHORT).show();
                 goBackDeviceScanActivity();
             }
@@ -493,11 +501,13 @@ public class DeviceControlActivity extends Activity
 
     private void goBackDeviceScanActivity()
     {
+        unregisterReceiver(mGattUpdateReceiver);
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
+
         Intent  intent = new Intent(this, DeviceScanActivity.class);
         intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
         startActivity(intent);
-        unbindService(mServiceConnection);
-        mBluetoothLeService = null;
     }
 
     /*

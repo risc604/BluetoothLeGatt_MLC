@@ -52,9 +52,12 @@ public class DeviceScanActivity extends ListActivity
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning;
     private Handler mHandler;
+    private ArrayList<String>   testOKDeviceList;
+    private int                 listIndex=0;
 
     private static final int    REQUEST_ENABLE_BT = 1;
-    private static final long   SCAN_PERIOD = 10000;
+    private static final int    REQUEST_TEST_FUNCTION = 2;
+    private static final long   SCAN_PERIOD = 5000;
     private static final String mlcDeviceName = "3MW1-4B";
     private boolean stopFlag = false;
 
@@ -86,6 +89,8 @@ public class DeviceScanActivity extends ListActivity
             finish();
             return;
         }
+
+        testOKDeviceList = new ArrayList<>(); //make test Ok device quent.
     }
 
     @Override
@@ -145,14 +150,6 @@ public class DeviceScanActivity extends ListActivity
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
         scanLeDevice(true);
-
-        //tomcat adds
-        /*
-        bleDevices = mLeDeviceListAdapter.getTotalInfo();
-        final Intent    intent = new Intent(this, MLCIntentService.class);
-        intent.putExtra("ble", bleDevices);
-        startService(intent);
-        */
     }
 
     @Override
@@ -163,6 +160,31 @@ public class DeviceScanActivity extends ListActivity
         {
             finish();
             return;
+        }
+
+        if (resultCode == REQUEST_TEST_FUNCTION && resultCode == Activity.RESULT_OK)
+        {
+            Intent  intent = getIntent();
+            String okDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+
+            for (int i=0; i<testOKDeviceList.size(); i++)
+            {
+                if (testOKDeviceList.get(i).equalsIgnoreCase(okDeviceAddress))
+                    testOKDeviceList.remove(i);
+            }
+
+            if (!testOKDeviceList.isEmpty())
+            {
+                intent = new Intent(this, DeviceControlActivity.class);
+                //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testOKDeviceList.get(0));
+                if (mScanning)
+                {
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    mScanning = false;
+                }
+                startActivityForResult(intent, REQUEST_TEST_FUNCTION);
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -184,12 +206,18 @@ public class DeviceScanActivity extends ListActivity
         final Intent intent = new Intent(this, DeviceControlActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+
+        //tomcat add for test list.
+        for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
+            testOKDeviceList.add(i, mLeDeviceListAdapter.getDevice(i).getAddress());
+
         if (mScanning)
         {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             mScanning = false;
         }
-        startActivity(intent);
+        //startActivity(intent);
+        startActivityForResult(intent, REQUEST_TEST_FUNCTION);
         //toBLEServiceStart(position);
     }
 
