@@ -30,8 +30,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -56,8 +54,10 @@ public class DeviceControlActivity extends Activity
     private String mDeviceName;
     private String mDeviceAddress;
     private int     bleDevices=0;
-    private ExpandableListView mGattServicesList;
+    //private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
+    //private List<BluetoothLeService>    mBLEServiceList;
+
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private List<String>    devicesAddrList = new ArrayList<String>();
@@ -82,6 +82,7 @@ public class DeviceControlActivity extends Activity
             }
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
+            //mBLEServiceList.add(0, mBluetoothLeService);
         }
 
         @Override
@@ -182,13 +183,14 @@ public class DeviceControlActivity extends Activity
                     return false;
                 }
             };
-    */
 
+    */
     private void clearUI()
     {
-        mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
+        //mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
         mDataField.setText(R.string.no_data);
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -261,8 +263,10 @@ public class DeviceControlActivity extends Activity
 
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
     }
 
     //private int everCount=0;
@@ -270,7 +274,10 @@ public class DeviceControlActivity extends Activity
     protected void onResume()
     {
         super.onResume();
+
+        //goBackDeviceScanActivity();
         //MLC_TestFunction(0);
+
 
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         if (mBluetoothLeService != null)
@@ -278,6 +285,7 @@ public class DeviceControlActivity extends Activity
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
+
         //Log.i(TAG, "Resume: " + everCount++);
     }
 
@@ -450,19 +458,21 @@ public class DeviceControlActivity extends Activity
         if (data != null)
         {
             mDataField.setText(data);
-            if (data.matches("ML"));
+            if (data.matches("M0"));
             {
                 try
                 {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 }
                 catch (InterruptedException e)
                 {
                     e.printStackTrace();
                 }
+                //onBackPressed();
+                //onDestroy();
+                goBackDeviceScanActivity();
                 //Toast.makeText(this, "Get BP ML string.", Toast.LENGTH_SHORT).show();
-                onDestroy();
-                //goBackDeviceScanActivity();
+
             }
         }
     }
@@ -500,30 +510,33 @@ public class DeviceControlActivity extends Activity
             Log.e(TAG, "Error, No mlc BP write Charactics");
     }
 
-   // /*
-   // private void goBackDeviceScanActivity()
-   // {
-   //     //unregisterReceiver(mGattUpdateReceiver);
-   //     //unbindService(mServiceConnection);
-   //     mBluetoothLeService.disconnect();
-   //     mBluetoothLeService = null;
-   //
-   //     /*
-   //     try
-   //     {
-   //         Thread.sleep(500);
-   //     }
-   //     catch (InterruptedException e)
-   //     {
-   //         e.printStackTrace();
-   //     }
-   //     */
-   //
-   //     Intent  intent = new Intent(this, DeviceScanActivity.class);
-   //     intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
-   //     startActivity(intent);
-   // }
-   //
+
+    private void goBackDeviceScanActivity()
+    {
+        //unregisterReceiver(mGattUpdateReceiver);
+        //unbindService(mServiceConnection);
+        //mBluetoothLeService.disconnect();
+        //mBluetoothLeService = null;
+
+
+        try
+        {
+            Thread.sleep(500);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+
+        Intent  intent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
+        intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        setResult(2, intent);
+        finish();
+
+        //startActivity(intent);
+
+    }
+
 
     /*
     private void sendNextCommand()
