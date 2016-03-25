@@ -49,11 +49,11 @@ public class DeviceScanActivity extends ListActivity
 {
     private final String    TAG = DeviceScanActivity.class.getSimpleName();
     private LeDeviceListAdapter mLeDeviceListAdapter;
-    private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothAdapter    mBluetoothAdapter;
     private boolean mScanning;
     private Handler mHandler;
     private ArrayList<String>   testOKDeviceList;
-    private int                 listIndex=0;
+    private int                 ActivityCount=0;
 
     private static final int    REQUEST_ENABLE_BT = 1;
     private static final int    REQUEST_TEST_FUNCTION = 2;
@@ -146,6 +146,20 @@ public class DeviceScanActivity extends ListActivity
             }
         }
 
+        Log.i(TAG, "onResume...");
+
+        /*
+        if ((ActivityCount > 1) && (ActivityCount !=0))
+        {
+            Log.i(TAG, "mlcTestFuntion");
+            //if (mLeDeviceListAdapter.getCount() >= ActivityCount)
+                mlcTestFunction();
+            //toBLEServiceStart();
+        }
+
+        */
+
+
         // Initializes list view adapter.
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
@@ -162,10 +176,24 @@ public class DeviceScanActivity extends ListActivity
             return;
         }
 
-        if (resultCode == REQUEST_TEST_FUNCTION && resultCode == Activity.RESULT_OK)
+        Log.d(TAG, "result code: " + resultCode);
+        //Toast.makeText(this, requestCode, Toast.LENGTH_SHORT ).show();
+        if (requestCode == REQUEST_TEST_FUNCTION && resultCode == Activity.RESULT_OK)
         {
             Intent  intent = getIntent();
             String okDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+
+            Log.i(TAG, "OK address: " + okDeviceAddress);
+            //Toast.makeText(this, okDeviceAddress, Toast.LENGTH_SHORT ).show();
+
+            try
+            {
+                Thread.sleep(5000);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
 
             for (int i=0; i<testOKDeviceList.size(); i++)
             {
@@ -211,6 +239,7 @@ public class DeviceScanActivity extends ListActivity
         for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
             testOKDeviceList.add(i, mLeDeviceListAdapter.getDevice(i).getAddress());
 
+        ActivityCount++;
         if (mScanning)
         {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -219,6 +248,48 @@ public class DeviceScanActivity extends ListActivity
         //startActivity(intent);
         startActivityForResult(intent, REQUEST_TEST_FUNCTION);
         //toBLEServiceStart(position);
+    }
+
+    private void mlcTestFunction()
+    {
+        //if (requestCode == REQUEST_TEST_FUNCTION && resultCode == Activity.RESULT_OK)
+        //{
+            Intent  intent = getIntent();
+            String okDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+
+            Log.i(TAG, "mlc test address: " + okDeviceAddress);
+            Toast.makeText(this, okDeviceAddress, Toast.LENGTH_SHORT ).show();
+
+            try
+            {
+                Thread.sleep(5000);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+
+            for (int i=0; i<testOKDeviceList.size(); i++)
+            {
+                if (testOKDeviceList.get(i).equalsIgnoreCase(okDeviceAddress))
+                    testOKDeviceList.remove(i);
+            }
+
+            ActivityCount++;
+
+            if (!testOKDeviceList.isEmpty())
+            {
+                intent = new Intent(this, DeviceControlActivity.class);
+                //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testOKDeviceList.get(0));
+                if (mScanning)
+                {
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    mScanning = false;
+                }
+                startActivityForResult(intent, REQUEST_TEST_FUNCTION);
+            }
+        //}
     }
 
     // MLC make data to Passing.

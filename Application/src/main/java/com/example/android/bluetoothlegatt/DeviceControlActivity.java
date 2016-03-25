@@ -461,7 +461,8 @@ public class DeviceControlActivity extends Activity
                     e.printStackTrace();
                 }
                 //Toast.makeText(this, "Get BP ML string.", Toast.LENGTH_SHORT).show();
-                goBackDeviceScanActivity();
+                onDestroy();
+                //goBackDeviceScanActivity();
             }
         }
     }
@@ -499,16 +500,30 @@ public class DeviceControlActivity extends Activity
             Log.e(TAG, "Error, No mlc BP write Charactics");
     }
 
-    private void goBackDeviceScanActivity()
-    {
-        unregisterReceiver(mGattUpdateReceiver);
-        unbindService(mServiceConnection);
-        mBluetoothLeService = null;
-
-        Intent  intent = new Intent(this, DeviceScanActivity.class);
-        intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
-        startActivity(intent);
-    }
+   // /*
+   // private void goBackDeviceScanActivity()
+   // {
+   //     //unregisterReceiver(mGattUpdateReceiver);
+   //     //unbindService(mServiceConnection);
+   //     mBluetoothLeService.disconnect();
+   //     mBluetoothLeService = null;
+   //
+   //     /*
+   //     try
+   //     {
+   //         Thread.sleep(500);
+   //     }
+   //     catch (InterruptedException e)
+   //     {
+   //         e.printStackTrace();
+   //     }
+   //     */
+   //
+   //     Intent  intent = new Intent(this, DeviceScanActivity.class);
+   //     intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+   //     startActivity(intent);
+   // }
+   //
 
     /*
     private void sendNextCommand()
