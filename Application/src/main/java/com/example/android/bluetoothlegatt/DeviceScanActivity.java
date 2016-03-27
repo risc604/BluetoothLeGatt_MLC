@@ -16,6 +16,7 @@
 
 package com.example.android.bluetoothlegatt;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -51,8 +52,8 @@ public class DeviceScanActivity extends ListActivity
     private Handler mHandler;
 
     private static final int    REQUEST_ENABLE_BT = 1;
-    private static final int    REQUEST_TEST_FUNCTION = 2;
-    private static final long   SCAN_PERIOD = 5000;
+    public static final int     REQUEST_TEST_FUNCTION = 10;
+    private static final long   SCAN_PERIOD = 10000;
     private static final String mlcDeviceName = "3MW1-4B";
     private ArrayList<String>   testOKDeviceList;
     private int                 ActivityCount=0;
@@ -87,7 +88,7 @@ public class DeviceScanActivity extends ListActivity
             return;
         }
 
-        ///testOKDeviceList = new ArrayList<>(); //make test Ok device quent.
+        testOKDeviceList = new ArrayList<>(); //make test Ok device quent.
     }
 
     @Override
@@ -168,26 +169,28 @@ public class DeviceScanActivity extends ListActivity
 
         //Toast.makeText(this, requestCode, Toast.LENGTH_SHORT ).show();
         // User chose not to enable Bluetooth.
-        /*
+
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED)
         {
             finish();
             return;
         }
-        */
+
 
         Log.d(TAG, "result code: " + resultCode);
         Log.d(TAG, "requestCode code: " + requestCode);
         //Toast.makeText(this, requestCode, Toast.LENGTH_SHORT ).show();
 
-        /*
-        if (requestCode == REQUEST_TEST_FUNCTION && resultCode == Activity.RESULT_OK)
+        if (resultCode == DeviceControlActivity.OK_ADDRESS)
         {
             Intent  intent = getIntent();
-            String okDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+            Bundle bundle = new Bundle();
+            //String okDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+            String okDeviceAddress = bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
 
+            Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
             Log.i(TAG, "OK address: " + okDeviceAddress);
-            Toast.makeText(this, okDeviceAddress, Toast.LENGTH_SHORT ).show();
+            Toast.makeText(this, okDeviceAddress, Toast.LENGTH_LONG ).show();
 
             try
             {
@@ -198,13 +201,24 @@ public class DeviceScanActivity extends ListActivity
                 e.printStackTrace();
             }
 
+
+
+
+
             for (int i=0; i<testOKDeviceList.size(); i++)
             {
-                if (testOKDeviceList.get(i).equalsIgnoreCase(okDeviceAddress))
+                Log.d(TAG, "Before List size: " + testOKDeviceList.size());
+                if (testOKDeviceList.get(i).equalsIgnoreCase(okDeviceAddress)) {
                     testOKDeviceList.remove(i);
+
+                    Log.i(TAG, "After remove List size:" + testOKDeviceList.size());
+
+                    if (testOKDeviceList.size()==0)
+                        testOKDeviceList = null;
+                }
             }
 
-            if (!testOKDeviceList.isEmpty())
+            if (!testOKDeviceList.isEmpty() && (testOKDeviceList != null))
             {
                 intent = new Intent(this, DeviceControlActivity.class);
                 //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
@@ -216,10 +230,7 @@ public class DeviceScanActivity extends ListActivity
                 }
                 startActivityForResult(intent, REQUEST_TEST_FUNCTION);
             }
-      //
         }
-    */
-
     }
 
     @Override
@@ -234,18 +245,31 @@ public class DeviceScanActivity extends ListActivity
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id)
     {
-        final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
+        final BluetoothDevice device = mLeDeviceListAdapter.getDevice(0);
         if (device == null) return;
-        final Intent intent = new Intent(DeviceScanActivity.this, DeviceControlActivity.class);
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
-        startActivityForResult(intent, 2);
-        //startActivity(intent);
-/*
+
+        Log.d(TAG, "Devices: " + mLeDeviceListAdapter.mLeDevices.size());
+        Log.d(TAG, "Counts: " + mLeDeviceListAdapter.getCount());
+
         //tomcat add for test list.
         for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
             testOKDeviceList.add(i, mLeDeviceListAdapter.getDevice(i).getAddress());
 
+        //final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
+
+        final Intent intent = new Intent(DeviceScanActivity.this, DeviceControlActivity.class);
+        Bundle  bundle = new Bundle();
+
+        bundle.putString(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+        bundle.putString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+        intent.putExtras(bundle);
+        startActivityForResult(intent, REQUEST_TEST_FUNCTION);
+        //startActivity(intent);
+
+
+/*
         ActivityCount++;
         if (mScanning)
         {
@@ -524,6 +548,8 @@ public class DeviceScanActivity extends ListActivity
                             //if(device.getName().equalsIgnoreCase("3MW1-4B"))
                             //if (device.getName().equalsIgnoreCase(mlcDeviceName))
                             //if(device.getName().equals(mlcDeviceName))
+                            //if (device.equals(SampleGattAttributes.MLC_BLE_SEVICE))
+                            if ((device.getName() != null) && device.getName().equals(mlcDeviceName))
                             {
                                 //mLeDeviceListAdapter.addDevice(device);
                                 mLeDeviceListAdapter.addDevice(device, rssi);

@@ -48,6 +48,7 @@ public class DeviceControlActivity extends Activity
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
+    public static final int OK_ADDRESS = 200;
 
     private TextView mConnectionState;
     private TextView mDataField;
@@ -199,8 +200,12 @@ public class DeviceControlActivity extends Activity
         setContentView(R.layout.gatt_services_characteristics);
 
         final Intent intent = getIntent();
-        mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
-        mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+        final Bundle bundle = intent.getExtras();
+        mDeviceName = bundle.getString(this.EXTRAS_DEVICE_NAME);
+        mDeviceAddress = bundle.getString(this.EXTRAS_DEVICE_ADDRESS);
+
+        //mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
+        //mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
         /*
         //List<String>                devicesAddrList =
         //        (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
@@ -529,8 +534,15 @@ public class DeviceControlActivity extends Activity
         }
 
         Intent  intent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
-        intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
-        setResult(2, intent);
+        //intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        Bundle bundle = new Bundle();
+
+        bundle.putString(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        Log.d(TAG, "DeviceAddress: " + mDeviceAddress);
+        //intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+
+        intent.putExtras(bundle);
+        setResult(OK_ADDRESS, intent);
         finish();
 
         //startActivity(intent);
