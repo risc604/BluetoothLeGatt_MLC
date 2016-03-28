@@ -13,13 +13,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_height="wrap_content"
-             android:layout_width="56dp"
-             android:minWidth="56dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_height="match_parent"
+             android:layout_width="match_parent">
 
-    <ProgressBar
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center"/>
-</FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="130dp"
+        android:text="New Text"
+        android:id="@+id/textView" android:layout_gravity="right|bottom"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentBottom="true" android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"/>
+
+
+</RelativeLayout>

@@ -43,6 +43,7 @@ import java.util.HashMap;
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
  */
+//public class DeviceScanActivity extends Activity
 public class DeviceScanActivity extends ListActivity
 {
     private final String    TAG = DeviceScanActivity.class.getSimpleName();
@@ -50,12 +51,14 @@ public class DeviceScanActivity extends ListActivity
     private BluetoothAdapter    mBluetoothAdapter;
     private boolean mScanning;
     private Handler mHandler;
+    private TextView    finalTextView;
 
     private static final int    REQUEST_ENABLE_BT = 1;
     public static final int     REQUEST_TEST_FUNCTION = 10;
     private static final long   SCAN_PERIOD = 10000;
     private static final String mlcDeviceName = "3MW1-4B";
     private ArrayList<String>   testDeviceList;
+    private ArrayList<String>   okDeviceList;
     private static int          ActivityCount=0;
     //private boolean stopFlag = false;
 
@@ -64,6 +67,7 @@ public class DeviceScanActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
         getActionBar().setTitle(R.string.title_devices);
+        //setContentView(R.layout.actionbar_indeterminate_progress);
         mHandler = new Handler();
 
         // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -89,6 +93,7 @@ public class DeviceScanActivity extends ListActivity
         }
 
         testDeviceList = new ArrayList<>(); //make test Ok device quent.
+        okDeviceList = new ArrayList<>();
     }
 
     @Override
@@ -186,15 +191,18 @@ public class DeviceScanActivity extends ListActivity
             //Bundle bundle = new Bundle();
             //String okDeviceAddress = bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
             //Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
-
             String okDeviceAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
             //String controlString = data.getStringExtra("OK_NAME");
+
+            //display test OK device info.
+            String  infoString="";
+            if (okDeviceAddress != null)
+                okDeviceList.add(okDeviceAddress + " => PASS");
 
             Log.i(TAG, "OK address: " + okDeviceAddress);
             Log.d(TAG, "1 test list items: " + testDeviceList.size());
 
-
-            for (int i=0; (i<testDeviceList.size()); i++)
+            for (int i=0; i<testDeviceList.size(); i++)
             {
                 if (testDeviceList.get(i).equals(okDeviceAddress))
                 {
@@ -204,7 +212,7 @@ public class DeviceScanActivity extends ListActivity
                 }
             }
 
-
+            //checkListViewOKItem(okDeviceAddress);
 
 
             //Toast.makeText(this, okDeviceAddress, Toast.LENGTH_LONG ).show();
@@ -218,6 +226,7 @@ public class DeviceScanActivity extends ListActivity
                 e.printStackTrace();
             }
   */
+
 
             if (!testDeviceList.isEmpty() && (testDeviceList != null))
             {
@@ -234,8 +243,18 @@ public class DeviceScanActivity extends ListActivity
             }
             else
             {
+                //setContentView(R.layout.actionbar_indeterminate_progress);
+                ///finalTextView = (TextView)findViewById(R.id.textView);
+                ///finalTextView.setText("");
+
                 Log.d(TAG, "Test List : " + testDeviceList.size());
-                onPause();
+                for (int i=0; i<okDeviceList.size(); i++)
+                {
+                    infoString += okDeviceList.get(i) + " \n\r";
+                }
+                //finalTextView.append(infoString);
+
+                //onPause();
             }
         }
     }
@@ -285,6 +304,17 @@ public class DeviceScanActivity extends ListActivity
         */
         //startActivityForResult(intent, REQUEST_TEST_FUNCTION);
         //toBLEServiceStart(position);
+    }
+
+    private void checkListViewOKItem(String okAddress)
+    {
+        for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
+        {
+            if (mLeDeviceListAdapter.getDevice(i).getAddress().equals(okAddress))
+            {
+                getListView().setBackgroundColor(i);
+            }
+        }
     }
 
     private void mlcTestFunction()
@@ -420,6 +450,7 @@ public class DeviceScanActivity extends ListActivity
         private final ArrayList<BluetoothDevice>  mLeDevices;
         private final HashMap<BluetoothDevice, Integer>    rssiMap;
         private LayoutInflater mInflator;
+        private ViewHolder viewHolder;
 
         public LeDeviceListAdapter()
         {
@@ -467,10 +498,19 @@ public class DeviceScanActivity extends ListActivity
             return i;
         }
 
+        /*
+        public void setItemColor(int i, int color)
+        {
+            View    view;
+            view = mInflator.inflate(R.layout.listitem_device, null);
+            view.setBackgroundColor(color);
+        }
+        */
+
         @Override
         public View getView(int i, View view, ViewGroup viewGroup)
         {
-            ViewHolder viewHolder;
+            //ViewHolder viewHolder;
             // General ListView optimization code.
             if (view == null)
             {
@@ -519,6 +559,7 @@ public class DeviceScanActivity extends ListActivity
             return rssiMap.get(device);
         }
 
+        /*
         public HashMap<String, Integer> getTotalInfo()
         {
             HashMap<String, Integer>    rssiMapInfo = new HashMap<>();
@@ -530,6 +571,12 @@ public class DeviceScanActivity extends ListActivity
             }
             return rssiMapInfo;
         }
+
+        public ViewHolder getViewHolder()
+        {
+            return viewHolder;
+        }
+        */
     }
 
     // Device scan callback.
