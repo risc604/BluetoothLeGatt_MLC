@@ -55,8 +55,8 @@ public class DeviceScanActivity extends ListActivity
     public static final int     REQUEST_TEST_FUNCTION = 10;
     private static final long   SCAN_PERIOD = 10000;
     private static final String mlcDeviceName = "3MW1-4B";
-    private ArrayList<String>   testOKDeviceList;
-    private int                 ActivityCount=0;
+    private ArrayList<String>   testDeviceList;
+    private static int          ActivityCount=0;
     //private boolean stopFlag = false;
 
     @Override
@@ -88,7 +88,7 @@ public class DeviceScanActivity extends ListActivity
             return;
         }
 
-        testOKDeviceList = new ArrayList<>(); //make test Ok device quent.
+        testDeviceList = new ArrayList<>(); //make test Ok device quent.
     }
 
     @Override
@@ -176,59 +176,66 @@ public class DeviceScanActivity extends ListActivity
             return;
         }
 
-
         Log.d(TAG, "result code: " + resultCode);
         Log.d(TAG, "requestCode code: " + requestCode);
         //Toast.makeText(this, requestCode, Toast.LENGTH_SHORT ).show();
 
-        if (resultCode == DeviceControlActivity.OK_ADDRESS)
+        if (resultCode == this.REQUEST_TEST_FUNCTION)
         {
-            Intent  intent = getIntent();
-            Bundle bundle = new Bundle();
-            //String okDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
-            String okDeviceAddress = bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+            //Intent  intent = getIntent();
+            //Bundle bundle = new Bundle();
+            //String okDeviceAddress = bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+            //Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
 
-            Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
+            String okDeviceAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+            //String controlString = data.getStringExtra("OK_NAME");
+
             Log.i(TAG, "OK address: " + okDeviceAddress);
-            Toast.makeText(this, okDeviceAddress, Toast.LENGTH_LONG ).show();
+            Log.d(TAG, "1 test list items: " + testDeviceList.size());
 
+
+            for (int i=0; (i<testDeviceList.size()); i++)
+            {
+                if (testDeviceList.get(i).equals(okDeviceAddress))
+                {
+                    Log.d(TAG, "Remove Item: " + testDeviceList.get(i));
+                    testDeviceList.remove(i);
+                    Log.d(TAG, "2 test list items: " + testDeviceList.size());
+                }
+            }
+
+
+
+
+            //Toast.makeText(this, okDeviceAddress, Toast.LENGTH_LONG ).show();
+/*
             try
             {
-                Thread.sleep(5000);
+                Thread.sleep(300);
             }
             catch (InterruptedException e)
             {
                 e.printStackTrace();
             }
+  */
 
-
-
-
-
-            for (int i=0; i<testOKDeviceList.size(); i++)
+            if (!testDeviceList.isEmpty() && (testDeviceList != null))
             {
-                Log.d(TAG, "Before List size: " + testOKDeviceList.size());
-                if (testOKDeviceList.get(i).equalsIgnoreCase(okDeviceAddress)) {
-                    testOKDeviceList.remove(i);
-
-                    Log.i(TAG, "After remove List size:" + testOKDeviceList.size());
-
-                    if (testOKDeviceList.size()==0)
-                        testOKDeviceList = null;
-                }
-            }
-
-            if (!testOKDeviceList.isEmpty() && (testOKDeviceList != null))
-            {
-                intent = new Intent(this, DeviceControlActivity.class);
+                Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
+                Intent intent = new Intent(this, DeviceControlActivity.class);
                 //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testOKDeviceList.get(0));
+                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
                 if (mScanning)
                 {
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     mScanning = false;
                 }
                 startActivityForResult(intent, REQUEST_TEST_FUNCTION);
+            }
+            else
+            {
+                Log.d(TAG, "Test List : " + testDeviceList.size());
+                onPause();
             }
         }
     }
@@ -251,23 +258,21 @@ public class DeviceScanActivity extends ListActivity
         Log.d(TAG, "Devices: " + mLeDeviceListAdapter.mLeDevices.size());
         Log.d(TAG, "Counts: " + mLeDeviceListAdapter.getCount());
 
-        //tomcat add for test list.
+        //tomcat add for check list item.
         for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
-            testOKDeviceList.add(i, mLeDeviceListAdapter.getDevice(i).getAddress());
+            testDeviceList.add(i, mLeDeviceListAdapter.getDevice(i).getAddress());
 
         //final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
 
         final Intent intent = new Intent(DeviceScanActivity.this, DeviceControlActivity.class);
-        Bundle  bundle = new Bundle();
-
-        bundle.putString(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-        bundle.putString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
-        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
-        intent.putExtras(bundle);
+        //Bundle  bundle = new Bundle();
+        //bundle.putString(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+        //bundle.putString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+        //intent.putExtras(bundle);
         startActivityForResult(intent, REQUEST_TEST_FUNCTION);
         //startActivity(intent);
-
 
 /*
         ActivityCount++;
@@ -294,26 +299,21 @@ public class DeviceScanActivity extends ListActivity
 
             try
             {
-                Thread.sleep(5000);
+                Thread.sleep(500);
             }
             catch (InterruptedException e)
             {
                 e.printStackTrace();
             }
 
-            for (int i=0; i<testOKDeviceList.size(); i++)
-            {
-                if (testOKDeviceList.get(i).equalsIgnoreCase(okDeviceAddress))
-                    testOKDeviceList.remove(i);
-            }
 
             ActivityCount++;
 
-            if (!testOKDeviceList.isEmpty())
+            if (!testDeviceList.isEmpty())
             {
                 intent = new Intent(this, DeviceControlActivity.class);
                 //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testOKDeviceList.get(0));
+                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
                 if (mScanning)
                 {
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -553,6 +553,7 @@ public class DeviceScanActivity extends ListActivity
                             {
                                 //mLeDeviceListAdapter.addDevice(device);
                                 mLeDeviceListAdapter.addDevice(device, rssi);
+                                //testOKDeviceList.add(device.getAddress());
                                 mLeDeviceListAdapter.notifyDataSetChanged();
                             }
                         }

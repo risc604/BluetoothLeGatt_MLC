@@ -200,12 +200,12 @@ public class DeviceControlActivity extends Activity
         setContentView(R.layout.gatt_services_characteristics);
 
         final Intent intent = getIntent();
-        final Bundle bundle = intent.getExtras();
-        mDeviceName = bundle.getString(this.EXTRAS_DEVICE_NAME);
-        mDeviceAddress = bundle.getString(this.EXTRAS_DEVICE_ADDRESS);
+        //final Bundle bundle = intent.getExtras();
+        //mDeviceName = bundle.getString(this.EXTRAS_DEVICE_NAME);
+        //mDeviceAddress = bundle.getString(this.EXTRAS_DEVICE_ADDRESS);
 
-        //mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
-        //mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+        mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
+        mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
         /*
         //List<String>                devicesAddrList =
         //        (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
@@ -534,19 +534,17 @@ public class DeviceControlActivity extends Activity
         }
 
         Intent  intent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
-        //intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
-        Bundle bundle = new Bundle();
-
-        bundle.putString(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        //Bundle bundle = new Bundle();
+        //bundle.putString(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        //intent.putExtras(bundle);
+        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
         Log.d(TAG, "DeviceAddress: " + mDeviceAddress);
-        //intent.putExtra(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        //intent.putExtra("OK_NAME", "HA~~~~~~~~HA~~~~~");
 
-        intent.putExtras(bundle);
-        setResult(OK_ADDRESS, intent);
+        setResult(DeviceScanActivity.REQUEST_TEST_FUNCTION, intent);
         finish();
 
         //startActivity(intent);
-
     }
 
 
