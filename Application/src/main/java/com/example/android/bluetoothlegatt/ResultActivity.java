@@ -2,8 +2,10 @@ package com.example.android.bluetoothlegatt;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -149,7 +151,7 @@ public class ResultActivity extends Activity
         tvListInfo.setText("");
     }
 
-    protected void onBtnClick()
+    public void onBtnClick(View view)
     {
         Log.d(TAG, "onBtnClick()");
         sendEMail();
@@ -160,7 +162,7 @@ public class ResultActivity extends Activity
         Log.i(TAG, "sendEMail()");
         Intent it = new Intent(Intent.ACTION_SEND);
         it.putExtra(Intent.EXTRA_SUBJECT, "BLE test log file.");
-        //it.putExtra(Intent.EXTRA_STREAM, Uri.parse(Utils.getFileName()));
+        it.putExtra(Intent.EXTRA_STREAM, Uri.parse(Utils.getFileName()));
         it.setType("text/plain");
 
         Log.i(TAG, "send intent data OK");
