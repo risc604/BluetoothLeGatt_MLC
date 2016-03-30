@@ -127,8 +127,14 @@ public class DeviceControlActivity extends Activity
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
             {
+                boolean nextBLEFlag = false;
                 //String  data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
-                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                nextBLEFlag = displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+
+                if (nextBLEFlag)
+                    goBackDeviceScanActivity();
+
                 //displayData(data);
 
                 ///if ((data == null) && (mBluetoothLeService != null))
@@ -458,28 +464,36 @@ public class DeviceControlActivity extends Activity
         });
     }
 
-    private void displayData(String data)
+    //private void displayData(String data)
+    private boolean displayData(String data)
     {
         if (data != null)
         {
             mDataField.setText(data);
             if (data.matches("M0"));
             {
+                /*
                 try
                 {
-                    Thread.sleep(1000);
+                    Thread.sleep(200);
                 }
                 catch (InterruptedException e)
                 {
                     e.printStackTrace();
                 }
+                */
+                Utils.mlcDelay(200);
+
+                return true;
                 //onBackPressed();
                 //onDestroy();
-                goBackDeviceScanActivity();
+                //mDataField.setText("");
+                //goBackDeviceScanActivity();
                 //Toast.makeText(this, "Get BP ML string.", Toast.LENGTH_SHORT).show();
 
             }
         }
+        return false;
     }
 
     private void sendCommandToDevice(List<BluetoothGattService> gattServices)
@@ -518,20 +532,18 @@ public class DeviceControlActivity extends Activity
 
     private void goBackDeviceScanActivity()
     {
-        //unregisterReceiver(mGattUpdateReceiver);
-        //unbindService(mServiceConnection);
-        //mBluetoothLeService.disconnect();
-        //mBluetoothLeService = null;
-
-
+        mBluetoothLeService.disconnect();
+        Utils.mlcDelay(200);
+        /*
         try
         {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         }
         catch (InterruptedException e)
         {
             e.printStackTrace();
         }
+        */
 
         Intent  intent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
         //Bundle bundle = new Bundle();

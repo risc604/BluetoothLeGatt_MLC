@@ -70,9 +70,8 @@ public class DeviceScanActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
         getActionBar().setTitle(R.string.title_devices);
-        //setContentView(R.layout.actionbar_indeterminate_progress);
-        mHandler = new Handler();
 
+        mHandler = new Handler();
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE))
@@ -224,14 +223,13 @@ public class DeviceScanActivity extends ListActivity
 /*
             try
             {
-                Thread.sleep(300);
+                Thread.sleep(500);
             }
             catch (InterruptedException e)
             {
                 e.printStackTrace();
             }
-  */
-
+*/
             if (!testDeviceList.isEmpty() && (testDeviceList != null))
             {
                 Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
@@ -243,6 +241,8 @@ public class DeviceScanActivity extends ListActivity
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     mScanning = false;
                 }
+
+                Utils.mlcDelay(200);
                 startActivityForResult(intent, REQUEST_TEST_FUNCTION);
             }
             else
@@ -319,7 +319,17 @@ public class DeviceScanActivity extends ListActivity
         finish();
     }
 
+    private void testFunc()
+    {
+        final Intent intent = new Intent(DeviceScanActivity.this, ResultActivity.class);
+        //intent.putStringArrayListExtra(ResultActivity.RESULT_LIST, resultBLEList);
+        //startActivityForResult(intent, REQUEST_FINAL_LIST);
+        startActivity(intent);
+        finish();
 
+    }
+
+    /*
     private void mlcTestFunction()
     {
         //if (requestCode == REQUEST_TEST_FUNCTION && resultCode == Activity.RESULT_OK)
@@ -356,7 +366,7 @@ public class DeviceScanActivity extends ListActivity
             }
         //}
     }
-
+*/
     //// MLC make data to Passing.
     //private void toBLEServiceStart(int position)
     //{

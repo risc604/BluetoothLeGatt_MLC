@@ -1,11 +1,12 @@
 package com.example.android.bluetoothlegatt;
 
-import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -13,6 +14,25 @@ import java.util.Calendar;
  */
 public class Utils
 {
+    private static final String    TAG = Utils.class.getSimpleName();
+    private static String txtFileName = new String();
+
+    public Utils()
+    {
+        txtFileName = null;
+    }
+
+    public static void mlcDelay(int mSecand)
+    {
+        try
+        {
+            Thread.sleep(mSecand);
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     public static final byte[] mlcTestFunction()
     {
         Calendar mCalendar = Calendar.getInstance();
@@ -40,7 +60,8 @@ public class Utils
     }
 
     //public static void writeFile(Context context, String fileName, String content)
-    public static void writeFile(Context context, File txtFile, String content)
+    //public static void writeFile(Context context, File txtFile, String content)
+    public static void writeFile(File txtFile, String content)
     {
         try
         {
@@ -74,7 +95,48 @@ public class Utils
         return( Integer.toString(cal.get(Calendar.YEAR)) +
                 Integer.toString((cal.get(Calendar.MONTH))+1) +
                 Integer.toString(cal.get(Calendar.DATE)) +
-                Integer.toString(cal.get(Calendar.HOUR_OF_DAY)) + fileAppendName);
+                Integer.toString(cal.get(Calendar.HOUR_OF_DAY)) +
+                Integer.toString(cal.get(Calendar.MINUTE)) +
+                Integer.toString(cal.get(Calendar.SECOND)) +
+                fileAppendName);
         //*Integer.toString(cal.get(Calendar.MINUTE)) +*/ ".txt";)
     }
+
+    public static void writeTolog(ArrayList<String> sourceList)
+    {
+        String fileName = makeFileName(".txt");
+        //txtFileName = new String();
+        txtFileName = "/sdcard/" + fileName;
+
+        try
+        {
+            Log.d(TAG, txtFileName);
+            FileOutputStream    fout = new FileOutputStream(new File(txtFileName), true);
+
+            for (int i=0; i<sourceList.size(); i++)
+            {
+                fout.write(sourceList.get(i).getBytes());
+            }
+            fout.close();
+            Log.d(TAG, "Write log file OK.");
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            Log.e(TAG, "Write file fail." + e.toString());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            Log.e(TAG, "file NOT found.");
+        }
+    }
+
+    public static String getFileName()
+    {
+        return txtFileName;
+    }
+
+
+
 }

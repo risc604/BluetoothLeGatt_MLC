@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class ResultActivity extends Activity
     public static final String     RESULT_LIST = "RESULT_LIST";
 
     TextView    tvListInfo;
+    Button      btnEmail;
     private ArrayList<String>   finalBLEList;
 
     @Override
@@ -25,11 +27,14 @@ public class ResultActivity extends Activity
         finalBLEList = new ArrayList<>();
         Intent  intent = getIntent();
         finalBLEList = intent.getStringArrayListExtra(RESULT_LIST);
+
+        Utils.writeTolog(finalBLEList);
+
         Log.d(TAG, "final BLE List: " + finalBLEList.toString());
 
         tvListInfo = (TextView)findViewById(R.id.textView1);
         tvListInfo.setText(" ");
-
+        btnEmail = (Button)findViewById(R.id.btnEMail);
     }
 
     /**
@@ -142,5 +147,23 @@ public class ResultActivity extends Activity
     {
         super.onDestroy();
         tvListInfo.setText("");
+    }
+
+    protected void onBtnClick()
+    {
+        Log.d(TAG, "onBtnClick()");
+        sendEMail();
+    }
+
+    private void sendEMail()
+    {
+        Log.i(TAG, "sendEMail()");
+        Intent it = new Intent(Intent.ACTION_SEND);
+        it.putExtra(Intent.EXTRA_SUBJECT, "BLE test log file.");
+        //it.putExtra(Intent.EXTRA_STREAM, Uri.parse(Utils.getFileName()));
+        it.setType("text/plain");
+
+        Log.i(TAG, "send intent data OK");
+        startActivity(Intent.createChooser(it, "Choose Email Client"));
     }
 }
