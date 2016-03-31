@@ -115,6 +115,7 @@ public class ResultActivity extends Activity
     protected void onPause()
     {
         super.onPause();
+        tvListInfo.setText("");
     }
 
     /**

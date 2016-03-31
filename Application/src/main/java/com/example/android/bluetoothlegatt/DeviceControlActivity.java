@@ -351,6 +351,7 @@ public class DeviceControlActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+
     /*
     //private void MLC_TestFunction(int state)
     //{
@@ -450,7 +451,6 @@ public class DeviceControlActivity extends Activity
         // to restart.
     //}
 
-
     private void updateConnectionState(final int resourceId)
     {
         runOnUiThread(new Runnable()
@@ -471,25 +471,8 @@ public class DeviceControlActivity extends Activity
             mDataField.setText(data);
             if (data.matches("M0"));
             {
-                /*
-                try
-                {
-                    Thread.sleep(200);
-                }
-                catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-                */
                 Utils.mlcDelay(200);
-
                 return true;
-                //onBackPressed();
-                //onDestroy();
-                //mDataField.setText("");
-                //goBackDeviceScanActivity();
-                //Toast.makeText(this, "Get BP ML string.", Toast.LENGTH_SHORT).show();
-
             }
         }
         return false;

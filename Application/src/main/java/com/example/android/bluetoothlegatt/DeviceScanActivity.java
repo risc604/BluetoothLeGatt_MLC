@@ -209,7 +209,7 @@ public class DeviceScanActivity extends ListActivity
                         "\t"+
                         rssiMapAddr.get(okDeviceAddress) +
                         " dBm " +
-                        "  => PASS \n\r");
+                        "  => PASS \r\n");
 
             Log.i(TAG, "OK address: " + okDeviceAddress);
             Log.d(TAG, "1 test list items: " + testDeviceList.size());
@@ -247,7 +247,7 @@ public class DeviceScanActivity extends ListActivity
                     mScanning = false;
                 }
 
-                Utils.mlcDelay(200);
+                //Utils.mlcDelay(200);
                 startActivityForResult(intent, REQUEST_TEST_FUNCTION);
             }
             else
@@ -297,6 +297,9 @@ public class DeviceScanActivity extends ListActivity
         Log.d(TAG, "Devices: " + mLeDeviceListAdapter.mLeDevices.size());
         Log.d(TAG, "Counts: " + mLeDeviceListAdapter.getCount());
 
+        testDeviceList.clear();
+        okDeviceList.clear();
+
         //tomcat add for check list item.
         for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
         {
@@ -330,7 +333,7 @@ public class DeviceScanActivity extends ListActivity
         intent.putStringArrayListExtra(ResultActivity.RESULT_LIST, resultBLEList);
         startActivityForResult(intent, REQUEST_FINAL_LIST);
         //startActivity(intent);
-        finish();
+        //finish();
     }
 
     private void testFunc()
@@ -457,6 +460,7 @@ public class DeviceScanActivity extends ListActivity
 
             mScanning = true;
             mBluetoothAdapter.startLeScan(mLeScanCallback);
+            //okDeviceList.clear();   // clear test device quenu.
         }
         else
         {
