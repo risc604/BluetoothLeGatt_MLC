@@ -29,6 +29,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -48,8 +49,9 @@ public class BluetoothLeService extends Service
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
     private int     mConnectionState = STATE_DISCONNECTED;
-    private int     serviceCount;
-    private boolean quit;
+    //private int     serviceCount;
+    //private boolean quit;
+    CountDownTimer  cdt = null;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -212,30 +214,22 @@ public class BluetoothLeService extends Service
     public void onCreate()
     {
         super.onCreate();
-        Log.d(TAG, "Service counter is setting.");
-        new Thread()
+        Log.d(TAG, "Service countdown timer is setting.");
+        cdt = new CountDownTimer(30 * 1000, 1000)
         {
-            /**
-             * Calls the <code>run()</code> method of the Runnable object the receiver
-             * holds. If no Runnable is set, does nothing.
-             *
-             * @see Thread#start
-             */
             @Override
-            public void run()
+            public void onTick(long millisUntilFinished)
             {
-                //super.run();
-                try
-                {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-                serviceCount++;
+                Log.i(TAG, "Countdown second remaining: " + millisUntilFinished )
+                mBinder.clone()
             }
-        }.start();
+
+            @Override
+            public void onFinish()
+            {
+
+            }
+        }
     }
 
     @Override
