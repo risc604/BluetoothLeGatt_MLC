@@ -100,7 +100,7 @@ public class DeviceControlActivity extends Activity
     // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
     // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
     //                        or notification operations.
-    //int reciveCount = 0;    //debug
+    // COUNTDOWN_BR: set service time out timer.
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver()
     {
         @Override
@@ -129,70 +129,20 @@ public class DeviceControlActivity extends Activity
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
             {
                 boolean nextBLEFlag = false;
-                //String  data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
                 nextBLEFlag = displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
 
                 if (nextBLEFlag)
                     goBackDeviceScanActivity();
-
-                //displayData(data);
-
-                ///if ((data == null) && (mBluetoothLeService != null))
-                ///sendNextCommand();
             }
-
-            //Log.i(TAG, "Rev: " + reciveCount++);
+            else if (BluetoothLeService.COUNTDOWN_BR.equals(action))
+            {
+                updateGUI(intent);
+            }
         }
     };
 
 
-    /*
-    // If a given GATT characteristic is selected, check for supported features.  This sample
-    // demonstrates 'Read' and 'Notify' features.  See
-    // http://d.android.com/reference/android/bluetooth/BluetoothGatt.html for the complete
-    // list of supported characteristic features.
-    private final ExpandableListView.OnChildClickListener servicesListClickListner =
-            new ExpandableListView.OnChildClickListener()
-            {
-                @Override
-                public boolean onChildClick(ExpandableListView parent,
-                                            View v,
-                                            int groupPosition,
-                                            int childPosition,
-                                            long id)
-                {
-                    if (mGattCharacteristics != null)
-                    {
-                        final BluetoothGattCharacteristic characteristic =
-                                mGattCharacteristics.get(groupPosition).get(childPosition);
-                        final int charaProp = characteristic.getProperties();
-                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0)
-                        {
-                            // If there is an active notification on a characteristic, clear
-                            // it first so it doesn't update the data field on the user interface.
-                            if (mNotifyCharacteristic != null)
-                            {
-                                mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, false);
-                                mNotifyCharacteristic = null;
-                            }
-                            mBluetoothLeService.readCharacteristic(characteristic);
-                        }
-
-                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0)
-                        {
-                            mNotifyCharacteristic = characteristic;
-                            mBluetoothLeService.setCharacteristicNotification(characteristic, true);
-                        }
-                        return true;
-                    }
-
-                    //Log.i(TAG, "View Count: " + viewCount++);
-                    return false;
-                }
-            };
-
-    */
     private void clearUI()
     {
         //mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
@@ -324,6 +274,16 @@ public class DeviceControlActivity extends Activity
         return false;
     }
 
+    private void updateGUI(Intent intent)
+    {
+        if (intent.getExtras() != null)
+        {
+            long millisUntilFinished = intent.getLongExtra("countdown", 0);
+            mConnectionState.append(" \t" +String.valueOf(millisUntilFinished));
+            Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000);
+         }
+    }
+
     private void sendCommandToDevice(List<BluetoothGattService> gattServices)
     {
         BluetoothGattCharacteristic     readCharacter = null;
@@ -369,6 +329,7 @@ public class DeviceControlActivity extends Activity
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.COUNTDOWN_BR);
         return intentFilter;
     }
 

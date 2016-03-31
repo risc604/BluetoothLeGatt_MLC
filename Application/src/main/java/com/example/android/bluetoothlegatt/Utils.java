@@ -27,11 +27,27 @@ public class Utils
         try
         {
             Thread.sleep(mSecand);
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             e.printStackTrace();
         }
     }
+
+    /*
+    public static final byte[] makeDateTimeString()
+    {
+        Calendar mCalendar = Calendar.getInstance();
+        byte[]  tmpBytep = {(byte)(mCalendar.get(Calendar.YEAR)-2000),
+                (byte)(mCalendar.get(Calendar.MONTH)+1),
+                (byte)(mCalendar.get(Calendar.DATE)),
+                (byte)(mCalendar.get(Calendar.HOUR)),
+                (byte)(mCalendar.get(Calendar.MINUTE)),
+                (byte)(mCalendar.get(Calendar.SECOND))
+        };
+        return tmpBytep;
+    }
+    */
 
     public static final byte[] mlcTestFunction()
     {
@@ -105,7 +121,6 @@ public class Utils
     public static void writeTolog(ArrayList<String> sourceList)
     {
         String fileName = makeFileName(".txt");
-        //txtFileName = new String();
         txtFileName = "/sdcard/" + fileName;
 
         try
@@ -136,7 +151,6 @@ public class Utils
     {
         return txtFileName;
     }
-
-
-
 }
+
+

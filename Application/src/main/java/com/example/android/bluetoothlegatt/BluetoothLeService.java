@@ -43,6 +43,8 @@ import java.util.UUID;
 public class BluetoothLeService extends Service
 {
     private final static String TAG = BluetoothLeService.class.getSimpleName();
+    //public static final String COUNTDOWN_BR = "your_package_name.countdown_br";
+
 
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
@@ -57,25 +59,21 @@ public class BluetoothLeService extends Service
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
 
-    public final static String ACTION_GATT_CONNECTED =
-            "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
-    public final static String ACTION_GATT_DISCONNECTED =
-            "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
-    public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
-    public final static String ACTION_DATA_AVAILABLE =
-            "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
-    public final static String EXTRA_DATA =
-            "com.example.bluetooth.le.EXTRA_DATA";
+    public final static String ACTION_GATT_CONNECTED = "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
+    public final static String ACTION_GATT_DISCONNECTED = "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
+    public final static String ACTION_GATT_SERVICES_DISCOVERED = "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
+    public final static String ACTION_DATA_AVAILABLE = "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
+    public final static String EXTRA_DATA = "com.example.bluetooth.le.EXTRA_DATA";
+    public static final String COUNTDOWN_BR = "com.example.bluetooth.le.countdown_br";
+    Intent bi = new Intent(COUNTDOWN_BR);
 
-    public final static UUID UUID_HEART_RATE_MEASUREMENT =
-            UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
-
-    public final static UUID UUID_MLC_BLE_SERVICE = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE);
+    //public final static UUID UUID_HEART_RATE_MEASUREMENT =
+    //        UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
+    //public final static UUID UUID_MLC_BLE_SERVICE = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE);
     public final static UUID UUID_MLC_BLE_SERVICE_WRITE = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_WRITE);
     public final static UUID UUID_MLC_BLE_SERVICE_READ = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_READ);
 
-    private BluetoothGattDescriptor descriptor;
+    //private BluetoothGattDescriptor descriptor;
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback()
@@ -114,6 +112,7 @@ public class BluetoothLeService extends Service
             {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
+            cdt.cancel();   //debug
         }
 
         @Override
@@ -180,7 +179,7 @@ public class BluetoothLeService extends Service
         }
         else
         */
-        {
+        //{
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();
             if (data != null && data.length > 0)
@@ -190,7 +189,7 @@ public class BluetoothLeService extends Service
                     stringBuilder.append(String.format("%02X ", byteChar));
                 intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
             }
-        }
+        //}
         sendBroadcast(intent);
     }
 
@@ -201,10 +200,10 @@ public class BluetoothLeService extends Service
             return BluetoothLeService.this;
         }
 
-        public int getCount()
-        {
-            return serviceCount;
-        }
+        //public int getCount()
+        //{
+        //   return serviceCount;
+        //}
     }
 
     /**
@@ -220,22 +219,24 @@ public class BluetoothLeService extends Service
             @Override
             public void onTick(long millisUntilFinished)
             {
-                Log.i(TAG, "Countdown second remaining: " + millisUntilFinished )
-                mBinder.clone()
+                Log.i(TAG, "Countdown second remaining: " + millisUntilFinished );
+                bi.putExtra("countdown", millisUntilFinished);
+                sendBroadcast(bi);
             }
 
             @Override
             public void onFinish()
             {
-
+                Log.i(TAG, "Timer finished");
             }
-        }
+        };
+        cdt.start();
     }
 
     @Override
     public IBinder onBind(Intent intent)
     {
-        this.quit = true;
+        //this.quit = true;
         return mBinder;
     }
 
@@ -245,7 +246,7 @@ public class BluetoothLeService extends Service
         // After using a given device, you should make sure that BluetoothGatt.close() is called
         // such that resources are cleaned up properly.  In this particular example, close() is
         // invoked when the UI is disconnected from the Service.
-        this.quit = true;
+        //this.quit = true;
         close();
         return super.onUnbind(intent);
     }
@@ -259,9 +260,11 @@ public class BluetoothLeService extends Service
     @Override
     public void onDestroy()
     {
+        cdt.cancel();
+        Log.i(TAG, "Timer cancelled");
         super.onDestroy();
-        this.quit = true;
-        Log.i(TAG, "Service is Destroy.");
+        //this.quit = true;
+        //Log.i(TAG, "Service is Destroy.");
     }
 
     private final IBinder mBinder = new LocalBinder();
@@ -292,8 +295,8 @@ public class BluetoothLeService extends Service
             return false;
         }
 
-        serviceCount = 0;
-        this.quit = false;
+        //serviceCount = 0;
+        //this.quit = false;
         return true;
     }
 
@@ -436,7 +439,7 @@ public class BluetoothLeService extends Service
             BluetoothGattDescriptor  descriptor = characteristic.getDescriptor(
                     UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-        mBluetoothGatt.writeDescriptor(descriptor);
+            mBluetoothGatt.writeDescriptor(descriptor);
         //}
 
     }
@@ -454,3 +457,5 @@ public class BluetoothLeService extends Service
         return mBluetoothGatt.getServices();
     }
 }
+
+

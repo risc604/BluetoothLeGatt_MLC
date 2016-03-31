@@ -97,12 +97,6 @@ public class DeviceScanActivity extends ListActivity
         testDeviceList = new ArrayList<>(); //make test Ok device quent.
         okDeviceList = new ArrayList<>();
         rssiMapAddr = new HashMap<>();
-        //testDeviceList = null;
-        //okDeviceList = null;
-        //rssiMapAddr = null;
-        ///testDeviceList.clear();
-        ///okDeviceList.clear();
-        ///rssiMapAddr.clear();
     }
 
     @Override
@@ -157,17 +151,6 @@ public class DeviceScanActivity extends ListActivity
         }
 
         Log.i(TAG, "onResume...");
-
-        /*
-        if ((ActivityCount > 1) && (ActivityCount !=0))
-        {
-            Log.i(TAG, "mlcTestFuntion");
-            //if (mLeDeviceListAdapter.getCount() >= ActivityCount)
-                mlcTestFunction();
-            //toBLEServiceStart();
-        }
-
-        */
 
         // Initializes list view adapter.
         mLeDeviceListAdapter = new LeDeviceListAdapter();
@@ -247,11 +230,6 @@ public class DeviceScanActivity extends ListActivity
                 Log.d(TAG, "Test List : " + testDeviceList.size());
                 if (okDeviceList != null)
                     gotoResultActivity(okDeviceList);
-                ///for (int i=0; i<okDeviceList.size(); i++)
-                ///{
-                ///    infoString += okDeviceList.get(i) + " \n\r";
-                ///}
-                //onPause();
             }
         }
     }
@@ -298,18 +276,6 @@ public class DeviceScanActivity extends ListActivity
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
         startActivityForResult(intent, REQUEST_TEST_FUNCTION);
-
-        /*
-        ActivityCount++;
-        if (mScanning)
-        {
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            mScanning = false;
-        }
-        startActivity(intent);
-        */
-        //startActivityForResult(intent, REQUEST_TEST_FUNCTION);
-        //toBLEServiceStart(position);
     }
 
     private void gotoResultActivity(ArrayList<String> resultBLEList)
@@ -321,110 +287,6 @@ public class DeviceScanActivity extends ListActivity
         //startActivity(intent);
         //finish();
     }
-
-    private void testFunc()
-    {
-        final Intent intent = new Intent(DeviceScanActivity.this, ResultActivity.class);
-        //intent.putStringArrayListExtra(ResultActivity.RESULT_LIST, resultBLEList);
-        //startActivityForResult(intent, REQUEST_FINAL_LIST);
-        startActivity(intent);
-        finish();
-
-    }
-
-    /*
-    private void mlcTestFunction()
-    {
-        //if (requestCode == REQUEST_TEST_FUNCTION && resultCode == Activity.RESULT_OK)
-        //{
-            Intent  intent = getIntent();
-            String okDeviceAddress = intent.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
-
-            Log.i(TAG, "mlc test address: " + okDeviceAddress);
-            Toast.makeText(this, okDeviceAddress, Toast.LENGTH_SHORT ).show();
-
-            try
-            {
-                Thread.sleep(500);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-
-
-            ActivityCount++;
-
-            if (!testDeviceList.isEmpty())
-            {
-                intent = new Intent(this, DeviceControlActivity.class);
-                //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
-                if (mScanning)
-                {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    mScanning = false;
-                }
-                startActivityForResult(intent, REQUEST_TEST_FUNCTION);
-            }
-        //}
-    }
-*/
-    //// MLC make data to Passing.
-    //private void toBLEServiceStart(int position)
-    //{
-    //    final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
-    //    if (device == null) return;
-    //
-    //    final Intent intent = new Intent(this, DeviceControlActivity.class);
-    //
-    //    HashMap<String, Integer> bleDevicesInfo = new HashMap<String, Integer>();
-    //    List<String> deviceAddressList = new ArrayList<>();
-    //
-    //    ///intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-    //    ///intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
-    //
-    //    ///ArrayList<HashMap<BluetoothDevice, Integer>>  tmpDevicesRssi= new ArrayList<HashMap<BluetoothDevice, Integer>>();
-    //
-    //
-    //    for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
-    //    {
-    //        deviceAddressList.add(mLeDeviceListAdapter.getDevice(i).getAddress());
-    //        Log.i(TAG, "List[" + i + "]" + deviceAddressList.get(i));
-    //    }
-    //    intent.putExtra("BLE_ADDRESS", (Serializable)deviceAddressList);
-    //
-    //    ///bleDevicesInfo = mLeDeviceListAdapter.getTotalInfo();
-    //    ///intent.putExtra("BLE_DEVICE", (Serializable) bleDevicesInfo);
-    //    intent.putExtra("BLE_DEVICE", (Serializable) mLeDeviceListAdapter.getTotalInfo());
-    //
-    //    /*
-    //    ArrayList<String>  tmpDevicesName = new ArrayList<String>();
-    //    ArrayList<String>  tmpDevicesAddress = new ArrayList<String>();
-    //    for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
-    //    {
-    //        tmpDevicesName.add(i, mLeDeviceListAdapter.getDevice(i).getName());
-    //        tmpDevicesAddress.add(i, mLeDeviceListAdapter.getDevice(i).getAddress());
-    //    }
-    //    //tmpDevicesRssi = mLeDeviceListAdapter.getTotalInfo();
-    //
-    //    //tmpDevices.add(i, mLeDeviceListAdapter.getDevice(i));
-    //    ///intent.putExtra("BLE_DEVICE_NAME", (Serializable)tmpDevicesName);
-    //    ///intent.putExtra("BLE_DEVICE_ADDRESS", (Serializable)tmpDevicesAddress);
-    //    //intent.putExtra("BLE_DEVICE_RSSI", (Serializable) tmpDevicesRssi);
-    //    tmpDevicesRssi.add(mLeDeviceListAdapter.getTotalInfo());
-    //    intent.putExtra("BLE_DEVICE_RSSI", (Serializable)tmpDevicesRssi);
-    //    */
-    //
-    //
-    //    if (mScanning)
-    //    {
-    //        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-    //        mScanning = false;
-    //    }
-    //    startActivity(intent);
-    //}
-    //*/
 
     private void scanLeDevice(final boolean enable)
     {
@@ -454,10 +316,6 @@ public class DeviceScanActivity extends ListActivity
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             //Toast.makeText(this, "Scan BLE device OK", Toast.LENGTH_SHORT).show();  //debug.
         }
-
-
-        //if (stopFlag)
-        //    Toast.makeText(this, "Scan BLE device OK", Toast.LENGTH_SHORT).show();  //debug.
         invalidateOptionsMenu();
     }
 
@@ -574,36 +432,10 @@ public class DeviceScanActivity extends ListActivity
             //return false;
         }
 
-        /*
-        public int getRssi(BluetoothDevice device)
-        {
-            return rssiMap.get(device);
-        }
-        */
-
         public int getRssi(String deviceAddr)
         {
             return rssiMap.get(deviceAddr);
         }
-
-        /*
-        public HashMap<String, Integer> getTotalInfo()
-        {
-            HashMap<String, Integer>    rssiMapInfo = new HashMap<>();
-
-            for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
-            {
-                rssiMapInfo.put(mLeDeviceListAdapter.getDevice(i).getAddress(),
-                                mLeDeviceListAdapter.getRssi(mLeDeviceListAdapter.getDevice(i)));
-            }
-            return rssiMapInfo;
-        }
-
-        public ViewHolder getViewHolder()
-        {
-            return viewHolder;
-        }
-        */
     }
 
     // Device scan callback.
@@ -643,3 +475,5 @@ public class DeviceScanActivity extends ListActivity
        // TextView totalDevices;
     }
 }
+
+

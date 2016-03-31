@@ -154,19 +154,6 @@ public class ResultActivity extends Activity
         finalBLEList.clear();
     }
 
-    /**
-     * Called when the activity has detected the user's press of the back
-     * key.  The default implementation simply finishes the current activity,
-     * but you can override this to do whatever you want.
-     */
-    @Override
-    public void onBackPressed()
-    {
-        super.onBackPressed();
-        //Intent intent = new Intent(ResultActivity.class, DeviceScanActivity.class);
-        //startActivity(intent);
-    }
-
     public void onBtnClick(View view)
     {
         Log.d(TAG, "onBtnClick()");
