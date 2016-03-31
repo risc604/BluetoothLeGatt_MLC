@@ -57,6 +57,7 @@ public class DeviceControlActivity extends Activity
     private int     bleDevices=0;
     //private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
+    private BluetoothLeService.LocalBinder  binder;
     //private List<BluetoothLeService>    mBLEServiceList;
 
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
@@ -83,7 +84,7 @@ public class DeviceControlActivity extends Activity
             }
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
-            //mBLEServiceList.add(0, mBluetoothLeService);
+            binder = (BluetoothLeService.LocalBinder) service;
         }
 
         @Override
@@ -206,78 +207,26 @@ public class DeviceControlActivity extends Activity
         setContentView(R.layout.gatt_services_characteristics);
 
         final Intent intent = getIntent();
-        //final Bundle bundle = intent.getExtras();
-        //mDeviceName = bundle.getString(this.EXTRAS_DEVICE_NAME);
-        //mDeviceAddress = bundle.getString(this.EXTRAS_DEVICE_ADDRESS);
-
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-        /*
-        //List<String>                devicesAddrList =
-        //        (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
-        ///devicesAddrList = (ArrayList<String>) intent.getSerializableExtra("BLE_ADDRESS");
-        ///HashMap<String, Integer>    bleDeviceInfoMap =
-        ///        (HashMap<String, Integer>)intent.getSerializableExtra("BLE_DEVICE");
-        ///bleDevices = devicesAddrList.size();
-
-        //mBluetoothTotalDevice = (ArrayList<HashMap<BluetoothDevice, Integer>>) intent.getSerializableExtra("BLE_DEVICE");
-        //Map<BluetoothDevice, Integer> rssMap = new Map<BluetoothDevice, Integer>();
-        ArrayList<String>  mBleDevicesName = new ArrayList<String>();
-        ArrayList<String>  mBleDevicesAddress = new ArrayList<String>();
-        ArrayList<HashMap<BluetoothDevice, Integer>>   totalDevicesRssi = new ArrayList<HashMap<BluetoothDevice, Integer>>();
-        final int   deviceCounts= mBleDevicesName.size();
-        //String[] mDevicesName = new String[deviceCounts];
-        //String[] mDevicesAddress = new String[deviceCounts];
-        int[]     mDeviceRssi = new int[deviceCounts];
-
-        //Log.i(TAG, "HashMAP: " + totalDevicesRssi.toString());
-
-        mBleDevicesName = (ArrayList<String>) intent.getSerializableExtra("BLE_DEVICE_NAME");
-        mBleDevicesAddress = (ArrayList<String>) intent.getSerializableExtra("BLE_DEVICE_ADDRESS");
-        totalDevicesRssi = (ArrayList<HashMap < BluetoothDevice, Integer>>) intent.getSerializableExtra("BLE_DEVICE_RSSI");
-
-        for (int i=0; i<deviceCounts; i++)
-        {
-            //mDevicesName[i] = mBleDevicesName.get(i);
-            //mDevicesAddress[i] = mBleDevicesAddress.get(i);
-            mDeviceRssi[i] =  totalDevicesRssi.get(i).get(mBleDevicesAddress);
-
-            Log.i(TAG, "Device[" + Integer.toString(i) + "]: " + mBleDevicesName.get(i).toString() + ": "
-                    + mBleDevicesAddress.get(i).toString() + ": "
-                    + Integer.toString(mDeviceRssi[i]));
-        }
-        mDeviceName = mBleDevicesName.get(0);
-        mDeviceAddress = mBleDevicesAddress.get(0);
-
-        //*
-        for (int i=0; i<mBluetoothTotalDevice.size(); i++)
-        {
-            Map tmp = mBluetoothTotalDevice.get(i);
-            //mDeviceName = tmp.get();
-        }
-        /*
-        //test debug
-        for (int i=0; i<mBluetoothTotalDevice.size(); i++)
-        {
-            Log.i(TAG, "Device[" + Integer.toString(i) + "]: " + mBluetoothTotalDevice.get(i).toString());
-            //Toast.makeText(this, Integer.toString(i)+ "  mac: "
-            //        + mBluetoothAdapter.getDevice(i).getAddress().toString(), Toast.LENGTH_SHORT).show();
-        }
-        */
 
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
-        //mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
-        //mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
         mDataField = (TextView) findViewById(R.id.data_value);
 
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //AlarmManager    alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        //Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        //intent.putExtra("ALARM_EVENT", true);
+        //PendingIntent alarmIntenet = PendingIntent.getBroadcast(this, 0, intent, 0);
+        //alarmManager.set(AlarmManager.RTC_WAKEUP, 20 * 60 * 1000, alarmIntenet);
+        //bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-
     }
 
     //private int everCount=0;
@@ -293,7 +242,7 @@ public class DeviceControlActivity extends Activity
             Log.d(TAG, "Connect request result=" + result);
         }
 
-        //Log.i(TAG, "Resume: " + everCount++);
+        //Log.i(TAG, "Service Count: " + binder.getCount());
     }
 
     @Override
@@ -309,10 +258,7 @@ public class DeviceControlActivity extends Activity
         super.onDestroy();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
-        //mDeviceName = null;
-        //mDeviceAddress = null;
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -351,106 +297,6 @@ public class DeviceControlActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
-
-    /*
-    //private void MLC_TestFunction(int state)
-    //{
-    //    // make mulit device ble service intent & start service to connection.
-    //    //ArrayList<Intent>   intentsList = null;
-    //    int devIndex = 0;
-    //    int step = state;
-    //    Intent gattServiceIntent = null;
-    //
-    //    Log.i(TAG, "BLE: " + devicesAddrList.size());
-    //    while (step < 10)
-    //    {
-    //        Log.i(TAG, "Step: " + step);
-    //        switch (step)
-    //        {
-    //            case 0:     // make test ble mac address
-    //                //flagOK = false;
-    //                mDeviceAddress = devicesAddrList.get(devIndex);
-    //                ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
-    //                mConnectionState = (TextView) findViewById(R.id.connection_state);      //set device connection state to UI
-    //                mDataField = (TextView) findViewById(R.id.data_value);
-    //                mDeviceName = mDeviceAddress;
-    //
-    //                getActionBar().setTitle(mDeviceName);
-    //                getActionBar().setDisplayHomeAsUpEnabled(true);
-    //                // make ble service receiver
-    //                // intentsList.add(devIndex, new Intent(this, BluetoothLeService.class));
-    //                gattServiceIntent = new Intent(this, BluetoothLeService.class);
-    //                // check data or receive data ok
-    //                //bindService(intentsList.get(devIndex), mServiceConnection, BIND_AUTO_CREATE);
-    //                bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-    //                registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-    //
-    //            case 1:
-    //                if (mBluetoothLeService != null)
-    //                {
-    //                    final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-    //                    Log.d(TAG, "Connect request result=" + result);
-    //                    //intentsList.remove(devIndex);
-    //                }
-    //
-    //                if (flagOK)
-    //                {
-    //                    flagOK = false;
-    //                    step = 2;
-    //                }
-    //                //else if (mBluetoothLeService == null)
-    //                //    step = 2;
-    //                //break;
-    //
-    //            case 2:
-    //                unbindService(mServiceConnection);
-    //                mBluetoothLeService = null;
-    //                step = 3;
-    //                break;
-    //
-    //            case 3:
-    //                /*
-    //                if (intentsList != null)
-    //                {
-    //                    step = 0;
-    //                }
-    //                else if (intentsList == null)
-    //                {
-    //                    step = 11;  // over to exist MLC test.
-    //                }
-    //                else
-    //                {
-    //                    Log.e(TAG, "MLC test function STEP Error.");
-    //                }
-    //                */
-    //                devIndex++;
-    //                if (devIndex < devicesAddrList.size())
-    //                    step = 0;
-    //                else if (devIndex >= devicesAddrList.size())
-    //                    step = 11;
-    //                else
-    //                {
-    //                    Log.e(TAG, "MLC test function STEP Error.");
-    //                }
-    //                break;
-    //
-    //            default:
-    //                break;
-    //        }
-    //    }
-    //    /*
-    //    for (int i=0; i<bleDevices; i++)
-    //    {
-    //        // check data or receive data ok
-    //        bindService(intentsList.get(i), mServiceConnection, BIND_AUTO_CREATE);
-    //        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-    //    }
-    //    */
-    //
-        //disconnect ble service or gatt server
-        // to restart.
-    //}
-
     private void updateConnectionState(final int resourceId)
     {
         runOnUiThread(new Runnable()
@@ -483,7 +329,7 @@ public class DeviceControlActivity extends Activity
         BluetoothGattCharacteristic     readCharacter = null;
         BluetoothGattCharacteristic     writeCharacter = null;
 
-        if (gattServices == null) return;
+        if (gattServices == null)   return;
         // Loops to find available GATT Characteristic.
         for (BluetoothGattService gattService : gattServices)
         {
@@ -497,186 +343,25 @@ public class DeviceControlActivity extends Activity
             writeCharacter.setValue(Utils.mlcTestFunction());
             Log.i(TAG, Utils.mlcTestFunction().toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
-            /*   try
-            {
-                Thread.sleep(300);
-            }
-            catch (InterruptedException ie)
-            {
-                ie.printStackTrace();
-            }
-            */
         }
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");
     }
-
 
     private void goBackDeviceScanActivity()
     {
         mBluetoothLeService.disconnect();
         Utils.mlcDelay(200);
-        /*
-        try
-        {
-            Thread.sleep(1000);
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        */
 
         Intent  intent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
-        //Bundle bundle = new Bundle();
-        //bundle.putString(this.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
-        //intent.putExtras(bundle);
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
         Log.d(TAG, "DeviceAddress: " + mDeviceAddress);
-        //intent.putExtra("OK_NAME", "HA~~~~~~~~HA~~~~~");
 
         setResult(DeviceScanActivity.REQUEST_TEST_FUNCTION, intent);
         finish();
-
         //startActivity(intent);
     }
 
-
-    /*
-    private void sendNextCommand()
-    {
-        mDeviceAddress = devicesAddrList.get(1);
-        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-
-        if (mBluetoothLeService != null)
-        {
-            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-            Log.d(TAG, "2 result=" + result);
-        }
-    }
-
-    private void sendCommandToDevice(List<BluetoothGattService> gattServices)
-    {
-        if (gattServices == null) return;
-        // Loops to find available GATT Characteristic.
-        for (BluetoothGattService gattService : gattServices)
-        {
-            mlcBPReadChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
-            mlcBPWriteChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
-        }
-
-        mBluetoothLeService.setCharacteristicNotification(mlcBPReadChar, true);
-        if (mlcBPWriteChar != null)
-        {
-            try
-            {
-                Thread.sleep(300);
-            }
-            catch (InterruptedException ie)
-            {
-                ie.printStackTrace();
-            }
-            mlcBPWriteChar.setValue(Utils.mlcTestFunction());
-            Log.i(TAG, Utils.mlcTestFunction().toString());
-
-            mBluetoothLeService.writeCharacteristic(mlcBPWriteChar);
-        }
-        else
-            Log.e(TAG, "Error, No mlc BP write Charactics");
-    }
-
-    */
-
-/*
-    // Demonstrates how to iterate through the supported GATT Services/Characteristics.
-    // In this sample, we populate the data structure that is bound to the ExpandableListView
-    // on the UI.
-
-    private void displayGattServices(List<BluetoothGattService> gattServices)
-    {
-        if (gattServices == null) return;
-        String uuid = null;
-        String unknownServiceString = getResources().getString(R.string.unknown_service);
-        String unknownCharaString = getResources().getString(R.string.unknown_characteristic);
-        ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<HashMap<String, String>>();
-        ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData
-                = new ArrayList<ArrayList<HashMap<String, String>>>();
-        mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
-
-        // Loops through available GATT Services.
-        for (BluetoothGattService gattService : gattServices)
-        {
-            //set service to ListArray.
-            HashMap<String, String> currentServiceData = new HashMap<String, String>();
-            uuid = gattService.getUuid().toString();
-            currentServiceData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
-            currentServiceData.put(LIST_UUID, uuid);
-            gattServiceData.add(currentServiceData);
-
-            mlcBPReadChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
-            mlcBPWriteChar = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
-
-            ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
-                    new ArrayList<HashMap<String, String>>();
-            List<BluetoothGattCharacteristic> gattCharacteristics =
-                    gattService.getCharacteristics();
-
-            ArrayList<BluetoothGattCharacteristic> charas =
-                    new ArrayList<BluetoothGattCharacteristic>();
-
-            // Loops through available Characteristics.
-            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics)
-            {
-                if ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0)
-                {
-                    if (gattCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
-                    {
-                        mlcBPWriteChar = gattCharacteristic;
-                        Log.i(TAG, "Write:" + mlcBPWriteChar.toString());
-                    }
-                }
-
-                if ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0)
-                {
-                    if (gattCharacteristic.getUuid().equals(SampleGattAttributes.MLC_BLE_SEVICE_READ))
-                    {
-                        mlcBPReadChar = gattCharacteristic;
-                        Log.i(TAG, "Read:" + mlcBPReadChar.toString());
-                    }
-                }
-
-                charas.add(gattCharacteristic);
-                //set characteristic to ListArray.
-                HashMap<String, String> currentCharaData = new HashMap<String, String>();
-                uuid = gattCharacteristic.getUuid().toString();
-
-                currentCharaData.put(LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
-                currentCharaData.put(LIST_UUID, uuid);
-                gattCharacteristicGroupData.add(currentCharaData);
-
-                //debug
-                if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(SampleGattAttributes.MLC_BLE_SEVICE_WRITE))
-                    Log.i(TAG, "uuid:" + gattCharacteristic.getUuid().toString());
-            }
-            mGattCharacteristics.add(charas);
-            gattCharacteristicData.add(gattCharacteristicGroupData);
-        }
-
-        SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
-                this,
-                gattServiceData,
-                android.R.layout.simple_expandable_list_item_2,
-                new String[]{LIST_NAME, LIST_UUID},
-                new int[]{android.R.id.text1, android.R.id.text2},
-                gattCharacteristicData,
-                android.R.layout.simple_expandable_list_item_2,
-                new String[]{LIST_NAME, LIST_UUID},
-                new int[]{android.R.id.text1, android.R.id.text2}
-        );
-        mGattServicesList.setAdapter(gattServiceAdapter);
-    }
-*/
     private static IntentFilter makeGattUpdateIntentFilter()
     {
         final IntentFilter intentFilter = new IntentFilter();

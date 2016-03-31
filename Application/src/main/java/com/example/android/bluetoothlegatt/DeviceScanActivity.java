@@ -195,15 +195,10 @@ public class DeviceScanActivity extends ListActivity
 
         if (resultCode == this.REQUEST_TEST_FUNCTION)
         {
-            //Intent  intent = getIntent();
-            //Bundle bundle = new Bundle();
-            //String okDeviceAddress = bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
             //Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
             String okDeviceAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
 
-            //String controlString = data.getStringExtra("OK_NAME");
-            //display test OK device info.
-            //String  infoString="";
+            //make test ok address & rssi mapping.
             if (okDeviceAddress != null)
                 okDeviceList.add(okDeviceAddress +
                         "\t"+
@@ -214,6 +209,7 @@ public class DeviceScanActivity extends ListActivity
             Log.i(TAG, "OK address: " + okDeviceAddress);
             Log.d(TAG, "1 test list items: " + testDeviceList.size());
 
+            //check OK address then remove test quenu item.
             for (int i=0; i<testDeviceList.size(); i++)
             {
                 if (testDeviceList.get(i).equals(okDeviceAddress))
@@ -225,17 +221,7 @@ public class DeviceScanActivity extends ListActivity
             }
 
             //Toast.makeText(this, okDeviceAddress, Toast.LENGTH_LONG ).show();
-/*
-            try
-            {
-                Thread.sleep(500);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-*/
-            if (!testDeviceList.isEmpty() && (testDeviceList != null))
+            if (!testDeviceList.isEmpty() && (testDeviceList != null))  //go to BLE test screen
             {
                 //Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
                 Intent intent = new Intent(this, DeviceControlActivity.class);
@@ -250,7 +236,7 @@ public class DeviceScanActivity extends ListActivity
                 //Utils.mlcDelay(200);
                 startActivityForResult(intent, REQUEST_TEST_FUNCTION);
             }
-            else
+            else  //test final to display result screen.
             {
                 if (mScanning)
                 {

@@ -47,7 +47,9 @@ public class BluetoothLeService extends Service
     private BluetoothAdapter mBluetoothAdapter;
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
-    private int mConnectionState = STATE_DISCONNECTED;
+    private int     mConnectionState = STATE_DISCONNECTED;
+    private int     serviceCount;
+    private boolean quit;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -196,11 +198,50 @@ public class BluetoothLeService extends Service
         {
             return BluetoothLeService.this;
         }
+
+        public int getCount()
+        {
+            return serviceCount;
+        }
+    }
+
+    /**
+     * Called by the system when the service is first created.  Do not call this method directly.
+     */
+    @Override
+    public void onCreate()
+    {
+        super.onCreate();
+        Log.d(TAG, "Service counter is setting.");
+        new Thread()
+        {
+            /**
+             * Calls the <code>run()</code> method of the Runnable object the receiver
+             * holds. If no Runnable is set, does nothing.
+             *
+             * @see Thread#start
+             */
+            @Override
+            public void run()
+            {
+                //super.run();
+                try
+                {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                serviceCount++;
+            }
+        }.start();
     }
 
     @Override
     public IBinder onBind(Intent intent)
     {
+        this.quit = true;
         return mBinder;
     }
 
@@ -210,8 +251,23 @@ public class BluetoothLeService extends Service
         // After using a given device, you should make sure that BluetoothGatt.close() is called
         // such that resources are cleaned up properly.  In this particular example, close() is
         // invoked when the UI is disconnected from the Service.
+        this.quit = true;
         close();
         return super.onUnbind(intent);
+    }
+
+    /**
+     * Called by the system to notify a Service that it is no longer used and is being removed.  The
+     * service should clean up any resources it holds (threads, registered
+     * receivers, etc) at this point.  Upon return, there will be no more calls
+     * in to this Service object and it is effectively dead.  Do not call this method directly.
+     */
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        this.quit = true;
+        Log.i(TAG, "Service is Destroy.");
     }
 
     private final IBinder mBinder = new LocalBinder();
@@ -242,6 +298,8 @@ public class BluetoothLeService extends Service
             return false;
         }
 
+        serviceCount = 0;
+        this.quit = false;
         return true;
     }
 
