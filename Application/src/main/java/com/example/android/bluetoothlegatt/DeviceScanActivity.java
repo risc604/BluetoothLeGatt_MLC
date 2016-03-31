@@ -97,6 +97,12 @@ public class DeviceScanActivity extends ListActivity
         testDeviceList = new ArrayList<>(); //make test Ok device quent.
         okDeviceList = new ArrayList<>();
         rssiMapAddr = new HashMap<>();
+        //testDeviceList = null;
+        //okDeviceList = null;
+        //rssiMapAddr = null;
+        ///testDeviceList.clear();
+        ///okDeviceList.clear();
+        ///rssiMapAddr.clear();
     }
 
     @Override
@@ -163,7 +169,6 @@ public class DeviceScanActivity extends ListActivity
 
         */
 
-
         // Initializes list view adapter.
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
@@ -201,10 +206,10 @@ public class DeviceScanActivity extends ListActivity
             //String  infoString="";
             if (okDeviceAddress != null)
                 okDeviceList.add(okDeviceAddress +
-                        "\t\t"+
+                        "\t"+
                         rssiMapAddr.get(okDeviceAddress) +
                         " dBm " +
-                        "  => PASS");
+                        "  => PASS \n\r");
 
             Log.i(TAG, "OK address: " + okDeviceAddress);
             Log.d(TAG, "1 test list items: " + testDeviceList.size());
@@ -232,7 +237,7 @@ public class DeviceScanActivity extends ListActivity
 */
             if (!testDeviceList.isEmpty() && (testDeviceList != null))
             {
-                Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
+                //Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
                 Intent intent = new Intent(this, DeviceControlActivity.class);
                 //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
                 intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
@@ -270,7 +275,16 @@ public class DeviceScanActivity extends ListActivity
     {
         super.onPause();
         scanLeDevice(false);
-        mLeDeviceListAdapter.clear();
+        //mLeDeviceListAdapter.clear();
+        //testDeviceList.clear();
+        //okDeviceList.clear();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        //rssiMapAddr.clear();
     }
 
     ///*

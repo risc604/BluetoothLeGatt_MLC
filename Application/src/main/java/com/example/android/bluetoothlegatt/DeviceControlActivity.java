@@ -286,10 +286,6 @@ public class DeviceControlActivity extends Activity
     {
         super.onResume();
 
-        //goBackDeviceScanActivity();
-        //MLC_TestFunction(0);
-
-
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         if (mBluetoothLeService != null)
         {
@@ -313,7 +309,10 @@ public class DeviceControlActivity extends Activity
         super.onDestroy();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
+        //mDeviceName = null;
+        //mDeviceAddress = null;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,7 @@ public class ResultActivity extends Activity
         setContentView(R.layout.activity_result);
 
         finalBLEList = new ArrayList<>();
+        finalBLEList = null;
         Intent  intent = getIntent();
         finalBLEList = intent.getStringArrayListExtra(RESULT_LIST);
 
@@ -67,7 +69,7 @@ public class ResultActivity extends Activity
         for (int i=0; i<finalBLEList.size(); i++)
         {
             Log.d(TAG, "final BLE list [" + i + "] : " + finalBLEList.get(i));
-            tvListInfo.append(finalBLEList.get(i) + "\n\r");
+            tvListInfo.append(finalBLEList.get(i));
         }
     }
 
@@ -113,7 +115,6 @@ public class ResultActivity extends Activity
     protected void onPause()
     {
         super.onPause();
-        tvListInfo.setText("");
     }
 
     /**
@@ -149,6 +150,20 @@ public class ResultActivity extends Activity
     {
         super.onDestroy();
         tvListInfo.setText("");
+        finalBLEList.clear();
+    }
+
+    /**
+     * Called when the activity has detected the user's press of the back
+     * key.  The default implementation simply finishes the current activity,
+     * but you can override this to do whatever you want.
+     */
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        //Intent intent = new Intent(ResultActivity.class, DeviceScanActivity.class);
+        //startActivity(intent);
     }
 
     public void onBtnClick(View view)
@@ -159,13 +174,23 @@ public class ResultActivity extends Activity
 
     private void sendEMail()
     {
+        String logfile = Utils.getFileName();
         Log.i(TAG, "sendEMail()");
+        Log.i(TAG, "log file path: " + logfile);
         Intent it = new Intent(Intent.ACTION_SEND);
-        it.putExtra(Intent.EXTRA_SUBJECT, "BLE test log file.");
-        it.putExtra(Intent.EXTRA_STREAM, Uri.parse(Utils.getFileName()));
+        it.putExtra(Intent.EXTRA_SUBJECT, "BLE test log file." + logfile);
+        it.putExtra(Intent.EXTRA_TEXT, "To see attach fil is form BLE test log.");
+        it.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + logfile));
         it.setType("text/plain");
 
         Log.i(TAG, "send intent data OK");
-        startActivity(Intent.createChooser(it, "Choose Email Client"));
+        try
+        {
+            startActivity(Intent.createChooser(it, "Choose Email Client"));
+        }
+        catch (android.content.ActivityNotFoundException ext)
+        {
+            Toast.makeText(getBaseContext(), "An Error Happened ", Toast.LENGTH_SHORT).show();
+        }
     }
 }
