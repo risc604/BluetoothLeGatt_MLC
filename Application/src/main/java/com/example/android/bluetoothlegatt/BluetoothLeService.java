@@ -107,12 +107,13 @@ public class BluetoothLeService extends Service
             if (status == BluetoothGatt.GATT_SUCCESS)
             {
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
+                cdt.cancel();   //debug
             }
             else
             {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
-            cdt.cancel();   //debug
+            //cdt.cancel();   //debug
         }
 
         @Override
@@ -197,6 +198,7 @@ public class BluetoothLeService extends Service
     {
         BluetoothLeService getService()
         {
+            cdt.start();   //debug
             return BluetoothLeService.this;
         }
 
@@ -232,7 +234,7 @@ public class BluetoothLeService extends Service
                 Log.i(TAG, "Timer finished");
             }
         };
-        cdt.start();
+        //cdt.start();
     }
 
     @Override
