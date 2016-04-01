@@ -279,8 +279,8 @@ public class DeviceControlActivity extends Activity
         if (intent.getExtras() != null)
         {
             long millisUntilFinished = intent.getLongExtra("countdown", 0);
-            mConnectionState.append(" \t" +String.valueOf(millisUntilFinished));
-            Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000);
+            mConnectionState.append(" " +String.valueOf(millisUntilFinished));
+            Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000 + "ms");
          }
     }
 
