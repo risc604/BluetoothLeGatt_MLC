@@ -184,7 +184,7 @@ public class DeviceScanActivity extends ListActivity
             //make test ok address & rssi mapping.
             if (okDeviceAddress != null)
                 okDeviceList.add(okDeviceAddress +
-                        "\t"+
+                        "  \t"+
                         rssiMapAddr.get(okDeviceAddress) +
                         " dBm " +
                         "  => PASS \r\n");

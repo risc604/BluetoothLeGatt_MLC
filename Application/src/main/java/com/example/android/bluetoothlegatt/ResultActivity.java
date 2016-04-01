@@ -33,7 +33,6 @@ public class ResultActivity extends Activity
         finalBLEList = intent.getStringArrayListExtra(RESULT_LIST);
 
         Utils.writeTolog(finalBLEList);
-
         Log.d(TAG, "final BLE List: " + finalBLEList.toString());
 
         tvListInfo = (TextView)findViewById(R.id.textView1);
@@ -167,7 +166,7 @@ public class ResultActivity extends Activity
         Log.i(TAG, "log file path: " + logfile);
         Intent it = new Intent(Intent.ACTION_SEND);
         it.putExtra(Intent.EXTRA_SUBJECT, "BLE test log file." + logfile);
-        it.putExtra(Intent.EXTRA_TEXT, "To see attach fil is form BLE test log.");
+        it.putExtra(Intent.EXTRA_TEXT, Uri.parse("file://" + logfile));
         it.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + logfile));
         it.setType("text/plain");
 
