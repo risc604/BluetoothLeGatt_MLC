@@ -220,13 +220,15 @@ public class BluetoothLeService extends Service
             public void onTick(long millisUntilFinished)
             {
                 Log.i(TAG, "Countdown second remaining: " + millisUntilFinished );
-                bi.putExtra("countdown", millisUntilFinished);
+                bi.putExtra("countdown", millisUntilFinished/1000);
                 sendBroadcast(bi);
             }
 
             @Override
             public void onFinish()
             {
+                bi.putExtra("TimeOut", true);
+                sendBroadcast(bi);
                 Log.i(TAG, "Timer finished");
             }
         };

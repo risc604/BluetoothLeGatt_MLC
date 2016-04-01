@@ -54,7 +54,8 @@ public class DeviceControlActivity extends Activity
     private TextView mDataField;
     private String mDeviceName;
     private String mDeviceAddress;
-    private int     bleDevices=0;
+    private boolean serviceFailFlag = false;
+    //private int     bleDevices=0;
     //private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothLeService.LocalBinder  binder;
@@ -137,7 +138,20 @@ public class DeviceControlActivity extends Activity
             }
             else if (BluetoothLeService.COUNTDOWN_BR.equals(action))
             {
-                updateGUI(intent);
+                if (updateGUI(intent))
+                {
+                    Intent stopServiceIntent = new Intent(DeviceControlActivity.this, BluetoothLeService.class);
+                    Log.d(TAG, "Bluetooth Le service STOP!!");
+                    stopService(stopServiceIntent);
+                    serviceFailFlag = true;
+                    mDataField.setText("BP Bluetooth Error !!  Restart APP.");
+
+                    Intent firstIntent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
+                    startActivity(firstIntent);
+                    finish();
+                    //onBackPressed();
+                    //onDestroy();
+                }
             }
         }
     };
@@ -174,7 +188,7 @@ public class DeviceControlActivity extends Activity
         //PendingIntent alarmIntenet = PendingIntent.getBroadcast(this, 0, intent, 0);
         //alarmManager.set(AlarmManager.RTC_WAKEUP, 20 * 60 * 1000, alarmIntenet);
         //bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-
+        serviceFailFlag = false;
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
@@ -192,6 +206,11 @@ public class DeviceControlActivity extends Activity
             Log.d(TAG, "Connect request result=" + result);
         }
 
+        if (serviceFailFlag)
+        {
+            Log.i(TAG, "onResume() fail : " + serviceFailFlag);
+            onBackPressed();
+        }
         //Log.i(TAG, "Service Count: " + binder.getCount());
     }
 
@@ -274,14 +293,21 @@ public class DeviceControlActivity extends Activity
         return false;
     }
 
-    private void updateGUI(Intent intent)
+    private boolean updateGUI(Intent intent)
     {
+        boolean serviceTimerOut = false;
+
         if (intent.getExtras() != null)
         {
             long millisUntilFinished = intent.getLongExtra("countdown", 0);
-            mConnectionState.append(" " +String.valueOf(millisUntilFinished));
-            Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000 + "ms");
-         }
+            mConnectionState.append(" " + String.valueOf(millisUntilFinished));
+            Log.i(TAG, "Countdown seconds remaining: " + millisUntilFinished / 1000 + "ms");
+
+            serviceTimerOut = intent.getBooleanExtra("TimeOut", false);
+            Log.i(TAG, "Countdown Time out: " + serviceTimerOut);
+        }
+
+        return serviceTimerOut;
     }
 
     private void sendCommandToDevice(List<BluetoothGattService> gattServices)
