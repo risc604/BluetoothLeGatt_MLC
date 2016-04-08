@@ -16,6 +16,7 @@
 
 package com.example.android.bluetoothlegatt;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -24,6 +25,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -55,6 +57,7 @@ public class DeviceScanActivity extends ListActivity
 
     private static final int    REQUEST_ENABLE_BT = 1;
     public static final int     REQUEST_TEST_FUNCTION = 10;
+    public static final int     REQUEST_SEVICE_FAIL = 20;
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
     private static final String mlcDeviceName = "3MW1-4B";
@@ -65,6 +68,7 @@ public class DeviceScanActivity extends ListActivity
 
     //private boolean stopFlag = false;
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -99,6 +103,7 @@ public class DeviceScanActivity extends ListActivity
         rssiMapAddr = new HashMap<>();
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -134,6 +139,7 @@ public class DeviceScanActivity extends ListActivity
         return true;
     }
 
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
     @Override
     protected void onResume()
     {
@@ -158,6 +164,7 @@ public class DeviceScanActivity extends ListActivity
         scanLeDevice(true);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -210,6 +217,7 @@ public class DeviceScanActivity extends ListActivity
                 Intent intent = new Intent(this, DeviceControlActivity.class);
                 //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
                 intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
+
                 if (mScanning)
                 {
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -232,6 +240,18 @@ public class DeviceScanActivity extends ListActivity
                     gotoResultActivity(okDeviceList);
             }
         }
+        else if (requestCode == REQUEST_SEVICE_FAIL)
+        {
+                if (mScanning)
+                {
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    mScanning = false;
+                }
+
+                Log.d(TAG, "Test List : " + testDeviceList.size());
+                if (okDeviceList != null)
+                    gotoResultActivity(okDeviceList);
+        }
     }
 
     @Override
@@ -252,6 +272,7 @@ public class DeviceScanActivity extends ListActivity
     }
 
     ///*
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id)
     {
@@ -288,6 +309,7 @@ public class DeviceScanActivity extends ListActivity
         //finish();
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void scanLeDevice(final boolean enable)
     {
         //boolean mOK=true;
@@ -297,6 +319,7 @@ public class DeviceScanActivity extends ListActivity
             // Stops scanning after a pre-defined scan period.
             mHandler.postDelayed(new Runnable()
             {
+                @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
                 @Override
                 public void run()
                 {
@@ -338,6 +361,7 @@ public class DeviceScanActivity extends ListActivity
         }
 
         //public void addDevice(BluetoothDevice device)
+        @TargetApi(Build.VERSION_CODES.ECLAIR)
         public void addDevice(BluetoothDevice device, int rssi)
         {
             if (!mLeDevices.contains(device) )  // for MLC BP
@@ -385,6 +409,7 @@ public class DeviceScanActivity extends ListActivity
         }
         */
 
+        @TargetApi(Build.VERSION_CODES.ECLAIR)
         @Override
         public View getView(int i, View view, ViewGroup viewGroup)
         {
@@ -447,6 +472,7 @@ public class DeviceScanActivity extends ListActivity
                 {
                     runOnUiThread(new Runnable()
                     {
+                        @TargetApi(Build.VERSION_CODES.ECLAIR)
                         @Override
                         public void run()
                         {

@@ -57,7 +57,7 @@ public class BluetoothLeService extends Service
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
-    private static final int SERVICE_TIME_OUT = 30;     // every service connection auto time out.
+    private static final int SERVICE_TIME_OUT = 10;     // every service connection auto time out.
 
     public final static String ACTION_GATT_CONNECTED = "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
     public final static String ACTION_GATT_DISCONNECTED = "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";

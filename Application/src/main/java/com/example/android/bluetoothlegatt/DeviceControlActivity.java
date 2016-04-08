@@ -54,7 +54,7 @@ public class DeviceControlActivity extends Activity
     private TextView mDataField;
     private String mDeviceName;
     private String mDeviceAddress;
-    private boolean serviceFailFlag = false;
+    //private boolean serviceFailFlag = false;
     //private int     bleDevices=0;
     //private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
@@ -140,15 +140,7 @@ public class DeviceControlActivity extends Activity
             {
                 if (updateGUI(intent))
                 {
-                    Intent stopServiceIntent = new Intent(DeviceControlActivity.this, BluetoothLeService.class);
-                    Log.d(TAG, "Bluetooth Le service STOP!!");
-                    stopService(stopServiceIntent);
-                    serviceFailFlag = true;
-                    mDataField.setText("BP Bluetooth Error !!  Restart APP.");
-
-                    Intent firstIntent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
-                    startActivity(firstIntent);
-                    finish();
+                    serviceFailProcess();
                     //onBackPressed();
                     //onDestroy();
                 }
@@ -188,7 +180,7 @@ public class DeviceControlActivity extends Activity
         //PendingIntent alarmIntenet = PendingIntent.getBroadcast(this, 0, intent, 0);
         //alarmManager.set(AlarmManager.RTC_WAKEUP, 20 * 60 * 1000, alarmIntenet);
         //bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        serviceFailFlag = false;
+        //serviceFailFlag = false;
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
@@ -206,11 +198,11 @@ public class DeviceControlActivity extends Activity
             Log.d(TAG, "Connect request result=" + result);
         }
 
-        if (serviceFailFlag)
-        {
-            Log.i(TAG, "onResume() fail : " + serviceFailFlag);
-            onBackPressed();
-        }
+        //if (serviceFailFlag)
+        //{
+        //    Log.i(TAG, "onResume() fail : " + serviceFailFlag);
+        //    onBackPressed();
+        //}
         //Log.i(TAG, "Service Count: " + binder.getCount());
     }
 
@@ -337,7 +329,7 @@ public class DeviceControlActivity extends Activity
     private void goBackDeviceScanActivity()
     {
         mBluetoothLeService.disconnect();
-        Utils.mlcDelay(200);
+        Utils.mlcDelay(100);    //200
 
         Intent  intent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
@@ -346,6 +338,26 @@ public class DeviceControlActivity extends Activity
         setResult(DeviceScanActivity.REQUEST_TEST_FUNCTION, intent);
         finish();
         //startActivity(intent);
+    }
+
+    private void serviceFailProcess()
+    {
+        //unregisterReceiver(mGattUpdateReceiver);
+
+        Intent stopServiceIntent = new Intent(DeviceControlActivity.this, BluetoothLeService.class);
+        Log.d(TAG, "Bluetooth Le service STOP!!");
+        stopService(stopServiceIntent);
+        //serviceFailFlag = true;
+        mDataField.setText("BP Bluetooth Error !!  Restart APP.");
+
+        ///Intent firstIntent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
+        ///startActivity(firstIntent);
+        ///finish();
+
+        Intent  failIntent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
+        //failIntent.putExtra("SERVICE STOP", false);
+        setResult(DeviceScanActivity.REQUEST_SEVICE_FAIL, failIntent);
+        finish();
     }
 
     private static IntentFilter makeGattUpdateIntentFilter()
