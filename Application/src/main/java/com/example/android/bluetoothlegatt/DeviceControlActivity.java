@@ -276,7 +276,7 @@ public class DeviceControlActivity extends Activity
         if (data != null)
         {
             mDataField.setText(data);
-            if (data.matches("M0"));
+            if (data.matches("M0") || (data != null));
             {
                 Utils.mlcDelay(200);
                 return true;
@@ -318,9 +318,23 @@ public class DeviceControlActivity extends Activity
         mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
         if (writeCharacter != null)
         {
-            writeCharacter.setValue(Utils.mlcTestFunction());
-            Log.i(TAG, Utils.mlcTestFunction().toString());
+            byte[] tmpCMDResult = Utils.mlcTestFunction(0x03);
+            writeCharacter.setValue(tmpCMDResult);
+            Log.i(TAG, tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
+            Utils.mlcDelay(500);    //2s
+
+            tmpCMDResult = Utils.mlcTestFunction(0x00);
+            writeCharacter.setValue(tmpCMDResult);
+            Log.i(TAG, tmpCMDResult.toString());
+            mBluetoothLeService.writeCharacteristic(writeCharacter);
+            Utils.mlcDelay(500);    //2s
+
+            tmpCMDResult = Utils.mlcTestFunction(0x04);
+            writeCharacter.setValue(tmpCMDResult);
+            Log.i(TAG, tmpCMDResult.toString());
+            mBluetoothLeService.writeCharacteristic(writeCharacter);
+            Utils.mlcDelay(500);    //2s
         }
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");

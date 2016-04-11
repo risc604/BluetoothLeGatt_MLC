@@ -49,11 +49,12 @@ public class Utils
     }
     */
 
-    public static final byte[] mlcTestFunction()
+    //public static final byte[] mlcTestFunction()
+    public static final byte[] mlcTestFunction(int fnCMDByte)
     {
         Calendar mCalendar = Calendar.getInstance();
         final int   cmdLength = 11;     //for CB2
-        final int   fnCMDByte = 0x00;   // for CB2 to read all data & send data/time.
+        //final int   fnCMDByte = 0x00;   // for CB2 to read all data & send data/time.
 
         byte[] cmdByte = { 0x4d, (byte) 0xff, 0x08, (byte)fnCMDByte,
                 (byte)(mCalendar.get(Calendar.YEAR)-2000),
