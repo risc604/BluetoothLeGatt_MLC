@@ -48,7 +48,8 @@ public class DeviceControlActivity extends Activity
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
-    public static final int OK_ADDRESS = 200;
+    //public static final int OK_ADDRESS = 200;
+    public static final String TEST_STATE = "STATE";
 
     private TextView mConnectionState;
     private TextView mDataField;
@@ -134,13 +135,14 @@ public class DeviceControlActivity extends Activity
                 nextBLEFlag = displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
 
                 if (nextBLEFlag)
-                    goBackDeviceScanActivity();
+                    goBackDeviceScanActivity(true);
             }
             else if (BluetoothLeService.COUNTDOWN_BR.equals(action))
             {
                 if (updateGUI(intent))
                 {
-                    serviceFailProcess();
+                    goBackDeviceScanActivity(false);
+                    //serviceFailProcess();
                     //onBackPressed();
                     //onDestroy();
                 }
@@ -322,25 +324,26 @@ public class DeviceControlActivity extends Activity
             writeCharacter.setValue(tmpCMDResult);
             Log.i(TAG, tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(500);    //500 ms
+            Utils.mlcDelay(300);    //500 ms
 
             tmpCMDResult = Utils.mlcTestFunction(0x00);
             writeCharacter.setValue(tmpCMDResult);
             Log.i(TAG, tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(500);    //500 ms
+            Utils.mlcDelay(200);    //500 ms
 
             tmpCMDResult = Utils.mlcTestFunction(0x04);
             writeCharacter.setValue(tmpCMDResult);
             Log.i(TAG, tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(500);    //500 ms
+            Utils.mlcDelay(100);    //500 ms
         }
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");
     }
 
-    private void goBackDeviceScanActivity()
+    //private void goBackDeviceScanActivity()
+    private void goBackDeviceScanActivity(boolean state)
     {
         mBluetoothLeService.disconnect();
         Utils.mlcDelay(100);    //200
@@ -348,12 +351,23 @@ public class DeviceControlActivity extends Activity
         Intent  intent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
         Log.d(TAG, "DeviceAddress: " + mDeviceAddress);
+        intent.putExtra(DeviceControlActivity.TEST_STATE, state);
+        Log.d(TAG, "test State: " + state);
 
+        if (state == false)
+        {
+            //Intent stopServiceIntent = new Intent(DeviceControlActivity.this, BluetoothLeService.class);
+            Log.d(TAG, "Bluetooth Le service STOP!!");
+            //stopService(stopServiceIntent);
+            mDataField.setText("BP Bluetooth Error !!  Restart APP.");
+            Utils.mlcDelay(200);
+        }
         setResult(DeviceScanActivity.REQUEST_TEST_FUNCTION, intent);
         finish();
         //startActivity(intent);
     }
 
+    /*
     private void serviceFailProcess()
     {
         //unregisterReceiver(mGattUpdateReceiver);
@@ -370,9 +384,12 @@ public class DeviceControlActivity extends Activity
 
         Intent  failIntent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
         //failIntent.putExtra("SERVICE STOP", false);
+        failIntent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
+        Log.d(TAG, "fail Address: " + mDeviceAddress);
         setResult(DeviceScanActivity.REQUEST_SEVICE_FAIL, failIntent);
         finish();
     }
+    */
 
     private static IntentFilter makeGattUpdateIntentFilter()
     {

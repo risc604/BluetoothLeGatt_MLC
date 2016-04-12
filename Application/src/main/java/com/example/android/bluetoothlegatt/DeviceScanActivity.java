@@ -185,73 +185,114 @@ public class DeviceScanActivity extends ListActivity
 
         if (resultCode == this.REQUEST_TEST_FUNCTION)
         {
-            //Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
-            String okDeviceAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
-
-            //make test ok address & rssi mapping.
-            if (okDeviceAddress != null)
-                okDeviceList.add(okDeviceAddress +
-                        "  \t"+
-                        rssiMapAddr.get(okDeviceAddress) +
-                        " dBm " +
-                        "  => PASS \r\n");
-
-            Log.i(TAG, "OK address: " + okDeviceAddress);
-            Log.d(TAG, "1 test list items: " + testDeviceList.size());
-
-            //check OK address then remove test quenu item.
-            for (int i=0; i<testDeviceList.size(); i++)
+            if (mScanning)
             {
-                if (testDeviceList.get(i).equals(okDeviceAddress))
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                mScanning = false;
+            }
+
+            //Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
+            String testAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+            boolean testState = data.getBooleanExtra(DeviceControlActivity.TEST_STATE, true);
+            Log.d(TAG, "test state: " + testState);
+
+            if (testAddress != null)
+            {
+                if (testState)
                 {
-                    Log.d(TAG, "Remove Item: " + testDeviceList.get(i));
-                    testDeviceList.remove(i);
-                    Log.d(TAG, "2 test list items: " + testDeviceList.size());
+                    //make test ok address & rssi mapping.
+                    okDeviceList.add(testAddress +
+                            "  \t" +
+                            rssiMapAddr.get(testAddress) +
+                            " dBm " +
+                            "  => PASS \r\n");
+
+                    Log.i(TAG, "OK address: " + testAddress + "OK list item: " + testDeviceList.size());
+                }
+                else
+                    Utils.mlcDelay(100);
+
+                //check OK address then remove test quenu item.
+                for (int i=0; i<testDeviceList.size(); i++)
+                {
+                    if (testDeviceList.get(i).equals(testAddress))
+                    {
+                        Log.d(TAG, "Remove Item: " + testDeviceList.get(i));
+                        testDeviceList.remove(i);
+                        Log.d(TAG, "after remove list items: " + testDeviceList.size());
+                    }
                 }
             }
 
             //Toast.makeText(this, okDeviceAddress, Toast.LENGTH_LONG ).show();
-            if (!testDeviceList.isEmpty() && (testDeviceList != null))  //go to BLE test screen
+            if ((testDeviceList.size()>0))  //go to BLE test screen
             {
                 //Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
                 Intent intent = new Intent(this, DeviceControlActivity.class);
                 //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
                 intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
 
-                if (mScanning)
-                {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    mScanning = false;
-                }
+                //if (mScanning)
+                //{
+                //    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                //    mScanning = false;
+                //}
 
                 //Utils.mlcDelay(200);
                 startActivityForResult(intent, REQUEST_TEST_FUNCTION);
             }
-            else  //test final to display result screen.
+            else if ((testDeviceList.size() < 1) && (okDeviceList.size() > 0))//test final to display result screen.
             {
-                if (mScanning)
-                {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    mScanning = false;
-                }
+                //if (mScanning)
+                //{
+                //    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                //    mScanning = false;
+                //}
 
                 Log.d(TAG, "Test List : " + testDeviceList.size());
                 if (okDeviceList != null)
                     gotoResultActivity(okDeviceList);
             }
+            else
+            {
+                Log.d(TAG, "Error: " + testAddress + " :" + testState);
+            }
         }
+        /*
         else if (requestCode == REQUEST_SEVICE_FAIL)
         {
+
                 if (mScanning)
                 {
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     mScanning = false;
                 }
 
-                Log.d(TAG, "Test List : " + testDeviceList.size());
-                if (okDeviceList != null)
-                    gotoResultActivity(okDeviceList);
+                String failAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
+                Log.d(TAG, "Svr fail Test List : " + testDeviceList.size());
+                for (int i=0; i<testDeviceList.size(); i++)
+                {
+                    if (testDeviceList.get(i).equals(failAddress))
+                    {
+                        Log.d(TAG, "Remove fail address: " + testDeviceList.get(i));
+                        testDeviceList.remove(i);
+                        Log.d(TAG, "fail: test list items: " + testDeviceList.size());
+                    }
+                }
+
+                if (!testDeviceList.isEmpty() && (testDeviceList != null))  //go to BLE test screen
+                {
+                    //Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
+                    Intent intent = new Intent(this, DeviceControlActivity.class);
+                    //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+                    intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
+                    //Utils.mlcDelay(200);
+                    startActivityForResult(intent, REQUEST_TEST_FUNCTION);
+                }
+                else if (okDeviceList != null)
+                        gotoResultActivity(okDeviceList);
         }
+        */
     }
 
     @Override
