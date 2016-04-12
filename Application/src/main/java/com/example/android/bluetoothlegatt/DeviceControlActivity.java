@@ -322,19 +322,19 @@ public class DeviceControlActivity extends Activity
             writeCharacter.setValue(tmpCMDResult);
             Log.i(TAG, tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(500);    //2s
+            Utils.mlcDelay(500);    //500 ms
 
             tmpCMDResult = Utils.mlcTestFunction(0x00);
             writeCharacter.setValue(tmpCMDResult);
             Log.i(TAG, tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(500);    //2s
+            Utils.mlcDelay(500);    //500 ms
 
             tmpCMDResult = Utils.mlcTestFunction(0x04);
             writeCharacter.setValue(tmpCMDResult);
             Log.i(TAG, tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(500);    //2s
+            Utils.mlcDelay(500);    //500 ms
         }
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");

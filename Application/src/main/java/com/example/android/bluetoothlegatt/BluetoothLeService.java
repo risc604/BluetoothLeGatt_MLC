@@ -330,7 +330,8 @@ public class BluetoothLeService extends Service
             {
                 mConnectionState = STATE_CONNECTING;
                 return true;
-            } else
+            }
+            else
             {
                 return false;
             }
