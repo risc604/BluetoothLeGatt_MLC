@@ -241,7 +241,7 @@ public class DeviceScanActivity extends ListActivity
                 //Utils.mlcDelay(200);
                 startActivityForResult(intent, REQUEST_TEST_FUNCTION);
             }
-            else if ((testDeviceList.size() < 1) && (okDeviceList.size() > 0))//test final to display result screen.
+            else if ((testDeviceList.size() < 1) && (okDeviceList.size() > 0))//test final to display resultActivity.
             {
                 //if (mScanning)
                 //{
@@ -406,15 +406,6 @@ public class DeviceScanActivity extends ListActivity
             return i;
         }
 
-        /*
-        public void setItemColor(int i, int color)
-        {
-            View    view;
-            view = mInflator.inflate(R.layout.listitem_device, null);
-            view.setBackgroundColor(color);
-        }
-        */
-
         @TargetApi(Build.VERSION_CODES.ECLAIR)
         @Override
         public View getView(int i, View view, ViewGroup viewGroup)
@@ -482,11 +473,6 @@ public class DeviceScanActivity extends ListActivity
                         @Override
                         public void run()
                         {
-                            //Log.d(TAG, "dev name: " + device.getName());
-                            //if(device.getName().equalsIgnoreCase("3MW1-4B"))
-                            //if (device.getName().equalsIgnoreCase(mlcDeviceName))
-                            //if(device.getName().equals(mlcDeviceName))
-                            //if (device.equals(SampleGattAttributes.MLC_BLE_SEVICE))
                             if ((device.getName() != null) && device.getName().equals(mlcDeviceName))
                             {
                                 //mLeDeviceListAdapter.addDevice(device);

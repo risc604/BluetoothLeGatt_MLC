@@ -70,8 +70,8 @@ public class BluetoothLeService extends Service
     //public final static UUID UUID_HEART_RATE_MEASUREMENT =
     //        UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
     //public final static UUID UUID_MLC_BLE_SERVICE = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE);
-    public final static UUID UUID_MLC_BLE_SERVICE_WRITE = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_WRITE);
-    public final static UUID UUID_MLC_BLE_SERVICE_READ = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE_READ);
+    public final static UUID UUID_MLC_BLE_SERVICE_WRITE = UUID.fromString(SampleGattAttributes.MLC_SERVICE_WRITE);
+    public final static UUID UUID_MLC_BLE_SERVICE_READ = UUID.fromString(SampleGattAttributes.MLC_SERVICE_READ);
 
     //private BluetoothGattDescriptor descriptor;
     // Implements callback methods for GATT events that the app cares about.  For example,
@@ -409,7 +409,6 @@ public class BluetoothLeService extends Service
         mBluetoothGatt.readCharacteristic(characteristic);
     }
 
-
     public void writeCharacteristic(BluetoothGattCharacteristic characteristic)
     {
         if (mBluetoothAdapter == null || mBluetoothGatt == null)
@@ -456,7 +455,6 @@ public class BluetoothLeService extends Service
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             mBluetoothGatt.writeDescriptor(descriptor);
         //}
-
     }
 
     /**

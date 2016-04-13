@@ -163,7 +163,6 @@ public class DeviceControlActivity extends Activity
         mDataField.setText(R.string.no_data);
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -397,41 +396,13 @@ public class DeviceControlActivity extends Activity
 
         if (state == false)
         {
-            //Intent stopServiceIntent = new Intent(DeviceControlActivity.this, BluetoothLeService.class);
-            //unbindService(mServiceConnection);
             Log.d(TAG, "Bluetooth Le service STOP!!");
-            //stopService(stopServiceIntent);
             mDataField.setText("BP Bluetooth Error !!  Restart APP.");
             Utils.mlcDelay(100);
         }
         setResult(DeviceScanActivity.REQUEST_TEST_FUNCTION, intent);
         finish();
-        //startActivity(intent);
     }
-
-    /*
-    private void serviceFailProcess()
-    {
-        //unregisterReceiver(mGattUpdateReceiver);
-
-        Intent stopServiceIntent = new Intent(DeviceControlActivity.this, BluetoothLeService.class);
-        Log.d(TAG, "Bluetooth Le service STOP!!");
-        stopService(stopServiceIntent);
-        //serviceFailFlag = true;
-        mDataField.setText("BP Bluetooth Error !!  Restart APP.");
-
-        ///Intent firstIntent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
-        ///startActivity(firstIntent);
-        ///finish();
-
-        Intent  failIntent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
-        //failIntent.putExtra("SERVICE STOP", false);
-        failIntent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
-        Log.d(TAG, "fail Address: " + mDeviceAddress);
-        setResult(DeviceScanActivity.REQUEST_SEVICE_FAIL, failIntent);
-        finish();
-    }
-    */
 
     private static IntentFilter makeGattUpdateIntentFilter()
     {
@@ -448,36 +419,4 @@ public class DeviceControlActivity extends Activity
     {
         return (rssiMap.get(deviceAddress));
     }
-
-    /*
-    // Parser BLE RSSI by Hash map info.
-    private ArrayList<String> getBleAddress(HashMap<String, Integer> rssiMap)
-    {
-        if (rssiMap == null)
-            return null;
-
-        String[]    AddressList = rssiMap.toString().split("[,]+");
-        ArrayList<String> realAddress = new ArrayList<>();
-        ArrayList<Integer> deviceRssi = new ArrayList<>();
-
-        for (int i=0; i<AddressList.length; i++)
-        {
-            AddressList[i] = AddressList[i].replace("{", "");
-            AddressList[i] = AddressList[i].replace("}", "");
-            AddressList[i] = AddressList[i].replace(" ", "");
-            //AddressList[i] = AddressList[i].
-            Log.i(TAG, "split MAP[" + i + "]: " + AddressList[i]);
-
-            String[] tmpString =  AddressList[i].split("[=]");
-            for (String item : tmpString)
-            {
-                if (item.matches("^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$"))
-                    realAddress.add(item);
-                else
-                    deviceRssi.add(Integer.parseInt(item));
-            }
-        }
-        return (realAddress);
-    }
-    */
 }
