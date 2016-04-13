@@ -57,14 +57,14 @@ public class DeviceScanActivity extends ListActivity
 
     private static final int    REQUEST_ENABLE_BT = 1;
     public static final int     REQUEST_TEST_FUNCTION = 10;
-    public static final int     REQUEST_SEVICE_FAIL = 20;
+    //public static final int     REQUEST_SEVICE_FAIL = 20;
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
     private static final String mlcDeviceName = "3MW1-4B";
     private ArrayList<String>   testDeviceList;
     private ArrayList<String>   okDeviceList;
     private HashMap<String, Integer>    rssiMapAddr;
-    private static int          ActivityCount=0;
+    //private static int          ActivityCount=0;
 
     //private boolean stopFlag = false;
 

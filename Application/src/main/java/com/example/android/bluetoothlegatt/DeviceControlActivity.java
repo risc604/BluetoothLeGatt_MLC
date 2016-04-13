@@ -55,20 +55,14 @@ public class DeviceControlActivity extends Activity
     private TextView mDataField;
     private String mDeviceName;
     private String mDeviceAddress;
-    //private boolean serviceFailFlag = false;
-    //private int     bleDevices=0;
-    //private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothLeService.LocalBinder  binder;
-    //private List<BluetoothLeService>    mBLEServiceList;
 
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
-    //private List<String>    devicesAddrList = new ArrayList<String>();
+
     private boolean mConnected = false;
-    //boolean serviceTimerOut = false;
-    private BluetoothGattCharacteristic mNotifyCharacteristic;
-    //private boolean flagOK = false;
+    //private BluetoothGattCharacteristic mNotifyCharacteristic;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
