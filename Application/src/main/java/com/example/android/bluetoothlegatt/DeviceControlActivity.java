@@ -136,7 +136,7 @@ public class DeviceControlActivity extends Activity
             {
                 //boolean timeOutState = false;
 
-                boolean serviceState = timeOutEvent(intent);
+                boolean serviceState = serviceTimeOut(intent);
                 if (serviceState)
                 {
                     Log.d(TAG, "event COUNTDOWN_BR: " + serviceState);
@@ -286,7 +286,7 @@ public class DeviceControlActivity extends Activity
         return false;
     }
 
-    private boolean timeOutEvent(Intent intent)
+    private boolean serviceTimeOut(Intent intent)
     {
         //long millisUntilFinished = intent.getLongExtra("countdown", 0);
         int lastSecand = intent.getIntExtra("countdown", 0);
@@ -295,12 +295,12 @@ public class DeviceControlActivity extends Activity
         switch (lastSecand)
         {
             case 0:
-                Log.i(TAG, "service time out.  " + lastSecand);
+                Log.d(TAG, "service time out.  " + lastSecand);
                 return true;
 
             default:
                 mConnectionState.append(" " + lastSecand);
-                Log.i(TAG, "Countdown seconds: " + lastSecand);
+                Log.d(TAG, "Countdown seconds: " + lastSecand);
                 return false;
         }
 
