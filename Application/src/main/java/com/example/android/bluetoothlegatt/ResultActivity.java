@@ -64,11 +64,14 @@ public class ResultActivity extends Activity
     protected void onResume()
     {
         super.onResume();
+        String  tmpItem;
 
         for (int i=0; i<finalBLEList.size(); i++)
         {
-            Log.d(TAG, "final BLE list [" + i + "] : " + finalBLEList.get(i));
-            tvListInfo.append(finalBLEList.get(i));
+            tmpItem = finalBLEList.get(i);
+            //Log.d(TAG, "final BLE list [" + Integer.toString(i) + "] : " + finalBLEList.get(i));
+            //Log.d(TAG, "final BLE list [" + Integer.toString(i) + "] : " + tmpItem);
+            tvListInfo.append(tmpItem);
         }
     }
 

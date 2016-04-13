@@ -64,8 +64,9 @@ public class DeviceControlActivity extends Activity
 
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
-    private List<String>    devicesAddrList = new ArrayList<String>();
+    //private List<String>    devicesAddrList = new ArrayList<String>();
     private boolean mConnected = false;
+    //boolean serviceTimerOut = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
     //private boolean flagOK = false;
 
@@ -139,8 +140,13 @@ public class DeviceControlActivity extends Activity
             }
             else if (BluetoothLeService.COUNTDOWN_BR.equals(action))
             {
-                if (updateGUI(intent))
+                boolean timeOutState = false;
+
+                timeOutState = timeOutEvent(intent);
+                if (timeOutState)
                 {
+                    Log.d(TAG, "event COUNTDOWN_BR: " + timeOutState);
+                    //serviceTimerOut = false;
                     goBackDeviceScanActivity(false);
                     //serviceFailProcess();
                     //onBackPressed();
@@ -287,19 +293,20 @@ public class DeviceControlActivity extends Activity
         return false;
     }
 
-    private boolean updateGUI(Intent intent)
+    private boolean timeOutEvent(Intent intent)
     {
         boolean serviceTimerOut = false;
 
-        if (intent.getExtras() != null)
+        if ((intent.getExtras() != null) && !serviceTimerOut)
         {
             long millisUntilFinished = intent.getLongExtra("countdown", 0);
-            mConnectionState.append(" " + String.valueOf(millisUntilFinished));
-            Log.i(TAG, "Countdown seconds remaining: " + millisUntilFinished / 1000 + "ms");
-
+            String tmpSec = String.valueOf(millisUntilFinished);
             serviceTimerOut = intent.getBooleanExtra("TimeOut", false);
-            Log.i(TAG, "Countdown Time out: " + serviceTimerOut);
+            mConnectionState.append(" " + tmpSec);
+            Log.i(TAG, "Countdown seconds: " + tmpSec + "s, time out:" + serviceTimerOut);
+            //Log.i(TAG, "service time out:" + serviceTimerOut);
         }
+
 
         return serviceTimerOut;
     }
@@ -308,6 +315,7 @@ public class DeviceControlActivity extends Activity
     {
         BluetoothGattCharacteristic     readCharacter = null;
         BluetoothGattCharacteristic     writeCharacter = null;
+        int[]  cmdflow = {0x03, 0x00, 0x04};
 
         if (gattServices == null)   return;
         // Loops to find available GATT Characteristic.
@@ -318,25 +326,42 @@ public class DeviceControlActivity extends Activity
         }
 
         mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
+        //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
         if (writeCharacter != null)
         {
+            for (int i=0; i<cmdflow.length; i++)
+            {
+                //mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
+                byte[] tmpCMDResult = Utils.mlcTestFunction(cmdflow[i]);
+                writeCharacter.setValue(tmpCMDResult);
+                Log.i(TAG, Integer.toString(cmdflow[i]) + " cmd : " + tmpCMDResult.toString());
+                mBluetoothLeService.writeCharacteristic(writeCharacter);
+                Utils.mlcDelay(100);    //500 ms
+            }
+
+
+            /*
+            //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
             byte[] tmpCMDResult = Utils.mlcTestFunction(0x03);
             writeCharacter.setValue(tmpCMDResult);
-            Log.i(TAG, tmpCMDResult.toString());
+            Log.i(TAG, "0x03 cmd : " + tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
             Utils.mlcDelay(300);    //500 ms
 
+            //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
             tmpCMDResult = Utils.mlcTestFunction(0x00);
             writeCharacter.setValue(tmpCMDResult);
-            Log.i(TAG, tmpCMDResult.toString());
+            Log.i(TAG, "0x00 cmd : " + tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
             Utils.mlcDelay(200);    //500 ms
 
+            //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
             tmpCMDResult = Utils.mlcTestFunction(0x04);
             writeCharacter.setValue(tmpCMDResult);
-            Log.i(TAG, tmpCMDResult.toString());
+            Log.i(TAG, "0x04 cmd : " + tmpCMDResult.toString());
             mBluetoothLeService.writeCharacteristic(writeCharacter);
             Utils.mlcDelay(100);    //500 ms
+            */
         }
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");
@@ -350,13 +375,14 @@ public class DeviceControlActivity extends Activity
 
         Intent  intent = new Intent(DeviceControlActivity.this, DeviceScanActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, mDeviceAddress);
-        Log.d(TAG, "DeviceAddress: " + mDeviceAddress);
         intent.putExtra(DeviceControlActivity.TEST_STATE, state);
-        Log.d(TAG, "test State: " + state);
+        Log.d(TAG, "DeviceAddress: " + mDeviceAddress);
+        Log.d(TAG,  " State:" + state);
 
         if (state == false)
         {
             //Intent stopServiceIntent = new Intent(DeviceControlActivity.this, BluetoothLeService.class);
+            //unbindService(mServiceConnection);
             Log.d(TAG, "Bluetooth Le service STOP!!");
             //stopService(stopServiceIntent);
             mDataField.setText("BP Bluetooth Error !!  Restart APP.");

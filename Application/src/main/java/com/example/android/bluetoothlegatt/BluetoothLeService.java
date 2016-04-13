@@ -57,7 +57,7 @@ public class BluetoothLeService extends Service
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
-    private static final int SERVICE_TIME_OUT = 10;     // every service connection auto time out.
+    private static final int SERVICE_TIME_OUT = 10;     // every service connection auto time out 10s.
 
     public final static String ACTION_GATT_CONNECTED = "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
     public final static String ACTION_GATT_DISCONNECTED = "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
@@ -107,8 +107,8 @@ public class BluetoothLeService extends Service
         {
             if (status == BluetoothGatt.GATT_SUCCESS)
             {
+                cdt.cancel();
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
-                cdt.cancel();   //debug
             }
             else
             {
@@ -224,12 +224,14 @@ public class BluetoothLeService extends Service
             {
                 Log.i(TAG, "Countdown second remaining: " + millisUntilFinished );
                 bi.putExtra("countdown", millisUntilFinished/1000);
+                bi.putExtra("TimeOut", false);
                 sendBroadcast(bi);
             }
 
             @Override
             public void onFinish()
             {
+                //bi.putExtra("countdown", 0);
                 bi.putExtra("TimeOut", true);
                 sendBroadcast(bi);
                 Log.i(TAG, "Timer finished");
@@ -330,7 +332,7 @@ public class BluetoothLeService extends Service
             if (mBluetoothGatt.connect())
             {
                 mConnectionState = STATE_CONNECTING;
-                cdt.onTick(SERVICE_TIME_OUT*1000);
+                //cdt.onTick(SERVICE_TIME_OUT*1000);
                 return true;
             }
             else
@@ -367,8 +369,8 @@ public class BluetoothLeService extends Service
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
-        mBluetoothGatt.disconnect();
         cdt.cancel();
+        mBluetoothGatt.disconnect();
     }
 
     /**
@@ -381,9 +383,9 @@ public class BluetoothLeService extends Service
         {
             return;
         }
+        cdt.cancel();
         mBluetoothGatt.close();
         mBluetoothGatt = null;
-        cdt.cancel();
     }
 
     /**

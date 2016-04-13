@@ -207,7 +207,7 @@ public class DeviceScanActivity extends ListActivity
                             " dBm " +
                             "  => PASS \r\n");
 
-                    Log.i(TAG, "OK address: " + testAddress + "OK list item: " + testDeviceList.size());
+                    Log.i(TAG, "OK address: " + testAddress + "  OK list item: " + testDeviceList.size());
                 }
                 else
                     Utils.mlcDelay(100);
@@ -258,41 +258,6 @@ public class DeviceScanActivity extends ListActivity
                 Log.d(TAG, "Error: " + testAddress + " :" + testState);
             }
         }
-        /*
-        else if (requestCode == REQUEST_SEVICE_FAIL)
-        {
-
-                if (mScanning)
-                {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    mScanning = false;
-                }
-
-                String failAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
-                Log.d(TAG, "Svr fail Test List : " + testDeviceList.size());
-                for (int i=0; i<testDeviceList.size(); i++)
-                {
-                    if (testDeviceList.get(i).equals(failAddress))
-                    {
-                        Log.d(TAG, "Remove fail address: " + testDeviceList.get(i));
-                        testDeviceList.remove(i);
-                        Log.d(TAG, "fail: test list items: " + testDeviceList.size());
-                    }
-                }
-
-                if (!testDeviceList.isEmpty() && (testDeviceList != null))  //go to BLE test screen
-                {
-                    //Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
-                    Intent intent = new Intent(this, DeviceControlActivity.class);
-                    //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-                    intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
-                    //Utils.mlcDelay(200);
-                    startActivityForResult(intent, REQUEST_TEST_FUNCTION);
-                }
-                else if (okDeviceList != null)
-                        gotoResultActivity(okDeviceList);
-        }
-        */
     }
 
     @Override
