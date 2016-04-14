@@ -235,7 +235,7 @@ public class BluetoothLeService extends Service
             @Override
             public void onFinish()
             {
-                bi.putExtra("countdown", 0);
+                bi.putExtra("countdown", 0L);
                 //bi.putExtra("TimeOut", true);
                 sendBroadcast(bi);
                 Log.i(TAG, "Timer finished");

@@ -289,10 +289,10 @@ public class DeviceControlActivity extends Activity
     private boolean serviceTimeOut(Intent intent)
     {
         //long millisUntilFinished = intent.getLongExtra("countdown", 0);
-        int lastSecand = intent.getIntExtra("countdown", 0);
+        long lastSecand = intent.getLongExtra("countdown", 0);
 
         //switch (millisUntilFinished)
-        switch (lastSecand)
+        switch ((int)lastSecand)
         {
             case 0:
                 Log.d(TAG, "service time out.  " + lastSecand);
