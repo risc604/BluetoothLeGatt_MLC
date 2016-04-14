@@ -33,7 +33,7 @@ public class ResultActivity extends Activity
         finalBLEList = intent.getStringArrayListExtra(RESULT_LIST);
 
         Utils.writeTolog(finalBLEList);
-        Log.d(TAG, "final BLE List: " + finalBLEList.toString());
+        Log.d(TAG, "final BLE List: " + finalBLEList.size());
 
         tvListInfo = (TextView)findViewById(R.id.textView1);
         tvListInfo.setText(" ");
@@ -64,13 +64,13 @@ public class ResultActivity extends Activity
     protected void onResume()
     {
         super.onResume();
-        String  tmpItem;
 
+        String  tmpItem;
         for (int i=0; i<finalBLEList.size(); i++)
         {
             tmpItem = finalBLEList.get(i);
             //Log.d(TAG, "final BLE list [" + Integer.toString(i) + "] : " + finalBLEList.get(i));
-            //Log.d(TAG, "final BLE list [" + Integer.toString(i) + "] : " + tmpItem);
+            Log.d(TAG, "final_list [" + i + "] : " + tmpItem);
             tvListInfo.append(tmpItem);
         }
     }

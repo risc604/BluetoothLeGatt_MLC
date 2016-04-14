@@ -307,7 +307,7 @@ public class DeviceScanActivity extends ListActivity
 
     private void gotoResultActivity(ArrayList<String> resultBLEList)
     {
-        Log.d(TAG, "Result BLE device" + resultBLEList.toString());
+        Log.d(TAG, "Result BLE device: " + resultBLEList.size());
         final Intent intent = new Intent(DeviceScanActivity.this, ResultActivity.class);
         intent.putStringArrayListExtra(ResultActivity.RESULT_LIST, resultBLEList);
         startActivityForResult(intent, REQUEST_FINAL_LIST);

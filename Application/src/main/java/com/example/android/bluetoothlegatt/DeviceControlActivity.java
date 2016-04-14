@@ -135,7 +135,6 @@ public class DeviceControlActivity extends Activity
             else if (BluetoothLeService.COUNTDOWN_BR.equals(action))
             {
                 //boolean timeOutState = false;
-
                 boolean serviceState = serviceTimeOut(intent);
                 if (serviceState)
                 {
@@ -149,7 +148,6 @@ public class DeviceControlActivity extends Activity
             }
         }
     };
-
 
     private void clearUI()
     {
@@ -175,13 +173,6 @@ public class DeviceControlActivity extends Activity
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //AlarmManager    alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        //Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        //intent.putExtra("ALARM_EVENT", true);
-        //PendingIntent alarmIntenet = PendingIntent.getBroadcast(this, 0, intent, 0);
-        //alarmManager.set(AlarmManager.RTC_WAKEUP, 20 * 60 * 1000, alarmIntenet);
-        //bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        //serviceFailFlag = false;
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
@@ -191,20 +182,12 @@ public class DeviceControlActivity extends Activity
     protected void onResume()
     {
         super.onResume();
-
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         if (mBluetoothLeService != null)
         {
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             Log.d(TAG, "Connect request result=" + result);
         }
-
-        //if (serviceFailFlag)
-        //{
-        //    Log.i(TAG, "onResume() fail : " + serviceFailFlag);
-        //    onBackPressed();
-        //}
-        //Log.i(TAG, "Service Count: " + binder.getCount());
     }
 
     @Override
