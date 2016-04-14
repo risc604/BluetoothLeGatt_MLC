@@ -132,11 +132,13 @@ public class BluetoothLeService extends Service
                                           BluetoothGattCharacteristic characteristic,
                                           int status)
         {
+            /*
             if(status == BluetoothGatt.GATT_SUCCESS)
             {
                 //if (UUID_MLC_BLE_SERVICE_WRITE.equals(characteristic.getUuid()))
                 //{}
             }
+            */
         }
 
         @Override
