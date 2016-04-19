@@ -25,6 +25,7 @@ public class Utils
 
     private static final String   sdCardPath = "/sdcard/";
     private static int     testCmdLength=0;
+    //private static String  strName = new String();
 
     public Utils()
     {
@@ -175,7 +176,6 @@ public class Utils
                     {
                         tempByte[i] = cmdByte[i+1];
                     }
-
                 }
                 break;
 

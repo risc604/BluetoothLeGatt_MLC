@@ -207,10 +207,9 @@ public class DeviceScanActivity extends ListActivity
                 if (testState)
                 {
                     //make test ok address & rssi mapping.
-                    okDeviceList.add(testAddress +
-                            "  \t" +
-                            rssiMapAddr.get(testAddress) +
-                            " dBm " +
+                    okDeviceList.add( mlcDeviceName + "\t" +
+                            testAddress + "  \t" +
+                            rssiMapAddr.get(testAddress) + " dBm " +
                             "  => PASS \r\n");
 
                     Log.i(TAG, "OK address: " + testAddress + "  OK list item: " + testDeviceList.size());
