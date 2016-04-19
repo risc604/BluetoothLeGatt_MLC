@@ -60,7 +60,8 @@ public class DeviceScanActivity extends ListActivity
     //public static final int     REQUEST_SEVICE_FAIL = 20;
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
-    private static final String mlcDeviceName = "3MW1-4B";
+    //private static final String mlcDeviceName = "3MW1-4B";
+    private static String mlcDeviceName = "3MW1-4B";
     private ArrayList<String>   testDeviceList;
     private ArrayList<String>   okDeviceList;
     private HashMap<String, Integer>    rssiMapAddr;
@@ -155,6 +156,11 @@ public class DeviceScanActivity extends ListActivity
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
         }
+
+        //mlcDeviceName = Utils.mlcGetDeviceName("mlcBleDevices.ini");
+        //if (mlcDeviceName == null)
+        if ((mlcDeviceName = Utils.mlcGetDeviceName("mlcBleDevices.ini", this)) == null)
+            mlcDeviceName = Utils.mlcGetDeviceName("mlcBleDevices.ini", this);
 
         Log.i(TAG, "onResume...");
 
