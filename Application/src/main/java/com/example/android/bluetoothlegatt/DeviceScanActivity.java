@@ -157,10 +157,9 @@ public class DeviceScanActivity extends ListActivity
             }
         }
 
-        //mlcDeviceName = Utils.mlcGetDeviceName("mlcBleDevices.ini");
-        //if (mlcDeviceName == null)
-        if ((mlcDeviceName = Utils.mlcGetDeviceName("mlcBleDevices.ini", this)) == null)
-            mlcDeviceName = Utils.mlcGetDeviceName("mlcBleDevices.ini", this);
+        // get MLC test device setting file mlcBleDevices.ini
+        if ((mlcDeviceName = Utils.mlcGetTestDevice("mlcBleDevices.ini", this)) == null)
+            mlcDeviceName = Utils.mlcGetTestDevice("mlcBleDevices.ini", this);
 
         Log.i(TAG, "onResume...");
 

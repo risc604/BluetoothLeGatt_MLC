@@ -89,7 +89,8 @@ public class Utils
         return false;
     }
 
-    public static final String mlcGetDeviceName(String fileName, Context context)
+    //public static final String mlcGetDeviceName(String fileName, Context context)
+    public static final String mlcGetTestDevice(String fileName, Context context)
     {
         File    iniFile;    //= new File(sdCardPath + fileName);;
         String  strName = new String();
@@ -126,7 +127,7 @@ public class Utils
 
             Toast.makeText(context, "no " + sdCardPath + fileName, Toast.LENGTH_SHORT).show();
 
-            Log.e(TAG, "mlcGetDeviceName():" + e);
+            Log.e(TAG, "mlcGetTestDevice():" + e);
             //e.printStackTrace();
         }
 
@@ -146,8 +147,7 @@ public class Utils
     {
         Calendar mCalendar = Calendar.getInstance();
         // int   cmdLength = 11;     //for CB2
-        final int   cmdLength = testCmdLength;     //for CB2
-        //final int   fnCMDByte = 0x00;   // for CB2 to read all data & send data/time.
+        final int   cmdLength = testCmdLength;     //for BLE device
 
         byte[] cmdByte = { 0x4d, (byte) 0xff, 0x00, 0x08, (byte)fnCMDByte,
                 (byte)(mCalendar.get(Calendar.YEAR)-2000),
@@ -158,12 +158,8 @@ public class Utils
                 (byte)(mCalendar.get(Calendar.SECOND)),
                 0x00, 0x00  };
 
-        //for (int i=0; i<(cmdLength-1); i++)     // check sum
-        //    cmdByte[cmdLength-1] += cmdByte[i];
-
         byte[] tempByte = new byte[cmdLength];
-
-        switch (cmdLength)
+        switch (cmdLength)      //just for CB2 to shift command head length high byte remove.
         {
             case 11:
                 for (int i=0; i<cmdLength; i++)
@@ -172,7 +168,7 @@ public class Utils
                     {
                         tempByte[i] = cmdByte[i];
                     }
-                    else if (i>=2)
+                    else if (i>=2)  //reject byte 2.
                     {
                         tempByte[i] = cmdByte[i+1];
                     }
@@ -186,7 +182,7 @@ public class Utils
 
         //for (int i=0; i<cmdLength; i++)
         //    tempByte[i] = cmdByte[i];
-        for (int i=0; i<(cmdLength-1); i++)     // check sum
+        for (int i=0; i<(cmdLength-1); i++)     // make check sum
             tempByte[cmdLength-1] += tempByte[i];
 
         return tempByte;
@@ -254,13 +250,13 @@ public class Utils
         }
         catch (FileNotFoundException e)
         {
-            e.printStackTrace();
+            //e.printStackTrace();
             Log.e(TAG, "Write file fail." + e.toString());
         }
         catch (IOException e)
         {
-            e.printStackTrace();
-            Log.e(TAG, "file NOT found.");
+            //e.printStackTrace();
+            Log.e(TAG, "file NOT found." + e.toString());
         }
     }
 
