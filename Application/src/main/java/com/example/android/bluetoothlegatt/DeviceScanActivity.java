@@ -61,7 +61,7 @@ public class DeviceScanActivity extends ListActivity
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
     //private static final String mlcDeviceName = "3MW1-4B";
-    private static String mlcDeviceName = "3MW1-4B";
+    private String mlcDeviceName = "3MW1-4B";
     private ArrayList<String>   testDeviceList;
     private ArrayList<String>   okDeviceList;
     private HashMap<String, Integer>    rssiMapAddr;
@@ -184,8 +184,7 @@ public class DeviceScanActivity extends ListActivity
             return;
         }
 
-        Log.d(TAG, "result code: " + resultCode);
-        Log.d(TAG, "requestCode code: " + requestCode);
+        Log.d(TAG, "result code: " + resultCode + ", requestCode code: " + requestCode);
         //Toast.makeText(this, requestCode, Toast.LENGTH_SHORT ).show();
 
         if (resultCode == this.REQUEST_TEST_FUNCTION)
@@ -199,15 +198,17 @@ public class DeviceScanActivity extends ListActivity
             //Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
             String testAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
             boolean testState = data.getBooleanExtra(DeviceControlActivity.TEST_STATE, true);
-            Log.d(TAG, "test state: " + testState);
+            Log.d(TAG, testAddress + ": test state: " + testState);
 
             if (testAddress != null)
             {
                 if (testState)
                 {
+                    //int tmpRssi= rssiMapAddr.get(testAddress).intValue();
+                    Log.d(TAG, testAddress + "  Rssi: " + rssiMapAddr.get(testAddress) );
                     //make test ok address & rssi mapping.
-                    okDeviceList.add( mlcDeviceName + "\t" +
-                            testAddress + "  \t" +
+                    okDeviceList.add(/* mlcDeviceName + " \t" +*/
+                            testAddress + " \t" +
                             rssiMapAddr.get(testAddress) + " dBm " +
                             "  => PASS \r\n");
 
@@ -289,19 +290,22 @@ public class DeviceScanActivity extends ListActivity
         final BluetoothDevice device = mLeDeviceListAdapter.getDevice(0);
         if (device == null) return;
 
-        Log.d(TAG, "Devices: " + mLeDeviceListAdapter.mLeDevices.size());
-        Log.d(TAG, "Counts: " + mLeDeviceListAdapter.getCount());
+        Log.d(TAG, "Devices: " + mLeDeviceListAdapter.mLeDevices.size() +
+                "Counts: " + mLeDeviceListAdapter.getCount());
 
         testDeviceList.clear();
         okDeviceList.clear();
+        //rssiMapAddr.clear();
 
         //tomcat add for check list item.
         for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
         {
             String tmpAddr = mLeDeviceListAdapter.getDevice(i).getAddress();
             int tmpRssi = mLeDeviceListAdapter.getRssi(tmpAddr);
+            //Log.d(TAG, "Rssi:" + tmpRssi);
             testDeviceList.add(i, tmpAddr);
             rssiMapAddr.put(tmpAddr, tmpRssi) ;
+            //Log.d(TAG, tmpAddr + ":" + tmpRssi);
         }
         final Intent intent = new Intent(DeviceScanActivity.this, DeviceControlActivity.class);
         intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
