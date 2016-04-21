@@ -19,6 +19,7 @@ public class ResultActivity extends Activity
 
     TextView    tvListInfo;
     Button      btnEmail;
+    String      testDeviceName=null;
     private ArrayList<String>   finalBLEList;
 
     @Override
@@ -30,6 +31,9 @@ public class ResultActivity extends Activity
         finalBLEList = new ArrayList<>();
         finalBLEList = null;
         Intent  intent = getIntent();
+
+        testDeviceName = intent.getStringExtra("DeviceName");
+        getActionBar().setTitle(testDeviceName);
         finalBLEList = intent.getStringArrayListExtra(RESULT_LIST);
 
         Utils.writeTolog(finalBLEList);
@@ -168,7 +172,7 @@ public class ResultActivity extends Activity
         Log.i(TAG, "sendEMail()");
         Log.i(TAG, "log file path: " + logfile);
         Intent it = new Intent(Intent.ACTION_SEND);
-        it.putExtra(Intent.EXTRA_SUBJECT, "BLE test log file." + logfile);
+        it.putExtra(Intent.EXTRA_SUBJECT,  testDeviceName + "  BLE test log file." + logfile);
         it.putExtra(Intent.EXTRA_TEXT, Uri.parse("file://" + logfile));
         it.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + logfile));
         it.setType("text/plain");
