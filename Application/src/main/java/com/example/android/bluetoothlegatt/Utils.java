@@ -59,7 +59,7 @@ public class Utils
 
     */
 
-    private static final  boolean makeDefaultFile(File fileName)
+    private static final  void makeDefaultFile(File fileName)
     {
         try
         {
@@ -79,14 +79,14 @@ public class Utils
             iniBufferWriter.newLine();
             iniBufferWriter.flush();
             iniBufferWriter.close();
-            return true;
+            //return true;
         }
         catch (IOException e)
         {
             //e.printStackTrace();
             Log.e(TAG, "makeDefaultFile():" + e);
         }
-        return false;
+        //return false;
     }
 
     //public static final String mlcGetDeviceName(String fileName, Context context)
@@ -136,10 +136,10 @@ public class Utils
 
     public static final int getCmdLength()
     {
-        if (testCmdLength != 0)
+        //if (testCmdLength != 0)
             return testCmdLength;
-        else
-            return 0;
+        //else
+        //    return 0;
     }
 
     //public static final byte[] mlcTestFunction()

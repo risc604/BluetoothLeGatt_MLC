@@ -51,6 +51,9 @@ public class DeviceScanActivity extends ListActivity
     private final String    TAG = DeviceScanActivity.class.getSimpleName();
     private LeDeviceListAdapter mLeDeviceListAdapter;
     private BluetoothAdapter    mBluetoothAdapter;
+    private ArrayList<String>   testDeviceList;
+    private ArrayList<String>   okDeviceList;
+
     private boolean mScanning;
     private Handler mHandler;
     private TextView    finalTextView;
@@ -60,11 +63,9 @@ public class DeviceScanActivity extends ListActivity
     //public static final int     REQUEST_SEVICE_FAIL = 20;
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
-    //private static final String mlcDeviceName = "3MW1-4B";
     private String mlcDeviceName = "3MW1-4B";
-    private ArrayList<String>   testDeviceList;
-    private ArrayList<String>   okDeviceList;
-    private HashMap<String, Integer>    rssiMapAddr;
+    //private static final String mlcDeviceName = "3MW1-4B";
+    //private static HashMap<String, Integer>    rssiMapAddr;
     //private static int          ActivityCount=0;
 
     //private boolean stopFlag = false;
@@ -101,7 +102,7 @@ public class DeviceScanActivity extends ListActivity
 
         testDeviceList = new ArrayList<>(); //make test Ok device quent.
         okDeviceList = new ArrayList<>();
-        rssiMapAddr = new HashMap<>();
+        //rssiMapAddr = new HashMap<>();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -198,21 +199,25 @@ public class DeviceScanActivity extends ListActivity
             //Log.d(TAG, "okDeviceAddress: " + bundle.getString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS));
             String testAddress = data.getStringExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS);
             boolean testState = data.getBooleanExtra(DeviceControlActivity.TEST_STATE, true);
-            Log.d(TAG, testAddress + ": test state: " + testState);
+            Log.d(TAG, testAddress + ", state: " + testState);
 
             if (testAddress != null)
             {
                 if (testState)
                 {
-                    //int tmpRssi= rssiMapAddr.get(testAddress).intValue();
-                    Log.d(TAG, testAddress + "  Rssi: " + rssiMapAddr.get(testAddress) );
+                    //int tmpRssi= rssiMapAddr.get(testAddress);
+                    //int tmpRssi = mLeDeviceListAdapter.getRssi(testAddress);
+
+                    Log.d(TAG,mlcDeviceName + " :" + testAddress + " :" +
+                            mLeDeviceListAdapter.getRssi(testAddress)+ " dBm" );
+                            //tmpRssi + " dBm" );
                     //make test ok address & rssi mapping.
-                    okDeviceList.add(/* mlcDeviceName + " \t" +*/
-                            testAddress + " \t" +
-                            rssiMapAddr.get(testAddress) + " dBm " +
+                    okDeviceList.add( mlcDeviceName + " \t" +
+                            testAddress + "  \t" + mLeDeviceListAdapter.getRssi(testAddress) + " dBm " +
+                            //testAddress + " \t" + tmpRssi + " dBm " +
                             "  => PASS \r\n");
 
-                    Log.i(TAG, "OK address: " + testAddress + "  OK list item: " + testDeviceList.size());
+                    Log.d(TAG, "add OK list: " + testAddress + ": " + testDeviceList.size());
                 }
                 else
                     Utils.mlcDelay(100);
@@ -301,10 +306,10 @@ public class DeviceScanActivity extends ListActivity
         for (int i=0; i<mLeDeviceListAdapter.getCount(); i++)
         {
             String tmpAddr = mLeDeviceListAdapter.getDevice(i).getAddress();
-            int tmpRssi = mLeDeviceListAdapter.getRssi(tmpAddr);
+            ///int tmpRssi = mLeDeviceListAdapter.getRssi(tmpAddr);
             //Log.d(TAG, "Rssi:" + tmpRssi);
             testDeviceList.add(i, tmpAddr);
-            rssiMapAddr.put(tmpAddr, tmpRssi) ;
+            ///rssiMapAddr.put(tmpAddr, tmpRssi) ;
             //Log.d(TAG, tmpAddr + ":" + tmpRssi);
         }
         final Intent intent = new Intent(DeviceScanActivity.this, DeviceControlActivity.class);
@@ -360,7 +365,6 @@ public class DeviceScanActivity extends ListActivity
     private class LeDeviceListAdapter extends BaseAdapter
     {
         private final ArrayList<BluetoothDevice>  mLeDevices;
-        //private final HashMap<BluetoothDevice, Integer>    rssiMap;
         private final HashMap<String, Integer>    rssiMap;
         private LayoutInflater mInflator;
         private ViewHolder viewHolder;
@@ -369,7 +373,6 @@ public class DeviceScanActivity extends ListActivity
         {
             super();
             mLeDevices = new ArrayList<BluetoothDevice>();
-            //rssiMap = new HashMap<BluetoothDevice, Integer>();
             rssiMap = new HashMap<String, Integer>();
             mInflator = DeviceScanActivity.this.getLayoutInflater();
         }
@@ -381,7 +384,7 @@ public class DeviceScanActivity extends ListActivity
             if (!mLeDevices.contains(device) )  // for MLC BP
             {
                 mLeDevices.add(device);
-                //rssiMap.put(device, rssi);
+                //if (device.getAddress() != null)
                 rssiMap.put(device.getAddress(), rssi);
             }
         }
@@ -464,7 +467,8 @@ public class DeviceScanActivity extends ListActivity
 
         public int getRssi(String deviceAddr)
         {
-            return rssiMap.get(deviceAddr);
+            Log.d(TAG, "getRssi(): " + rssiMap.get(deviceAddr));
+            return rssiMap.get(deviceAddr).intValue();
         }
     }
 
