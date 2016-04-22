@@ -280,7 +280,7 @@ public class DeviceScanActivity extends ListActivity
     {
         super.onPause();
         scanLeDevice(false);
-        //mLeDeviceListAdapter.clear();
+        mLeDeviceListAdapter.clear();
         //testDeviceList.clear();
         //okDeviceList.clear();
     }
@@ -418,14 +418,14 @@ public class DeviceScanActivity extends ListActivity
         public void clear()
         {
             mLeDevices.clear();
-            TextView devName = (TextView)mInflator.inflate(R.layout.listitem_device, null).
-                    findViewById(R.id.device_name);
+            TextView devName = (TextView)mInflator.inflate(
+                    R.layout.listitem_device, null).findViewById(R.id.device_name);
             devName.setText("");
-            TextView devAddr= (TextView) mInflator.inflate(R.layout.listitem_device, null).
-                    findViewById(R.id.device_address);
+            TextView devAddr= (TextView)mInflator.inflate(
+                    R.layout.listitem_device, null).findViewById(R.id.device_address);
             devAddr.setText("");
-            TextView devRssi= (TextView)mInflator.inflate(R.layout.listitem_device, null).
-                    findViewById(R.id.device_rssi);
+            TextView devRssi= (TextView)mInflator.inflate(
+                    R.layout.listitem_device, null).findViewById(R.id.device_rssi);
             devRssi.setText("");
         }
 
