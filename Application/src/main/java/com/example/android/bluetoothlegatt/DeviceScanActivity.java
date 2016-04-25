@@ -24,6 +24,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -64,6 +65,9 @@ public class DeviceScanActivity extends ListActivity
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
     private String mlcDeviceName = "3MW1-4B";
+    private int     versionCode=0;
+    private String  versionName="";
+
     //private static final String mlcDeviceName = "3MW1-4B";
     //private static HashMap<String, Integer>    rssiMapAddr;
     //private static int          ActivityCount=0;
@@ -76,6 +80,17 @@ public class DeviceScanActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
         getActionBar().setTitle(R.string.title_devices);
+
+        try
+        {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionCode = packageInfo.versionCode;
+            versionName = packageInfo.versionName;
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
+            e.printStackTrace();
+        }
 
         mHandler = new Handler();
         // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -167,7 +182,9 @@ public class DeviceScanActivity extends ListActivity
         Log.i(TAG, "onResume...");
 
         //getActionBar().setTitle(R.string.title_devices+mlcDeviceName);
-        getActionBar().setTitle(getActionBar().getTitle() + " " + mlcDeviceName);
+        //getActionBar().setTitle( "v" + String.valueOf(versionCode) + " " + getActionBar().getTitle() + " " + mlcDeviceName);
+        // set software version name/code on title.
+        getActionBar().setTitle( "v" + versionName + " \t" + getActionBar().getTitle() + " " + mlcDeviceName);
         // Initializes list view adapter.
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
