@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:17:1-69:12
+ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:17:1-69:15
 	package
 		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:17:11-56
 	android:versionName
@@ -36,7 +36,7 @@ ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidMan
 	android:name
 		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:39:22-77
 application
-ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:41:5-67:19
+ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:41:5-67:18
 MERGED from [com.android.support:support-v4:23.1.0] D:\java_workspace\BluetoothLeGatt_MLC\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:support-v13:23.1.0] D:\java_workspace\BluetoothLeGatt_MLC\Application\build\intermediates\exploded-aar\com.android.support\support-v13\23.1.0\AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:support-v4:23.1.0] D:\java_workspace\BluetoothLeGatt_MLC\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\AndroidManifest.xml:22:5-20
@@ -72,17 +72,17 @@ ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidMan
 	android:name
 		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:57:19-56
 service#com.example.android.bluetoothlegatt.BluetoothLeService
-ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:60:9-62:37
+ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:60:1-62:25
 	android:enabled
-		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:62:13-35
+		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:62:1-23
 	android:name
-		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:61:13-47
+		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:61:1-35
 activity#com.example.android.bluetoothlegatt.ResultActivity
-ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:64:9-66:20
+ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:64:1-66:15
 	android:screenOrientation
-		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:65:19-55
+		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:65:11-47
 	android:name
-		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:64:19-49
+		ADDED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml:64:11-41
 uses-sdk
 INJECTED from D:\java_workspace\BluetoothLeGatt_MLC\Application\src\main\AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.android.support:support-v4:23.1.0] D:\java_workspace\BluetoothLeGatt_MLC\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\AndroidManifest.xml:20:5-43

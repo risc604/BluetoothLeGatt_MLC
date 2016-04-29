@@ -57,13 +57,13 @@
         <activity android:name=".DeviceControlActivity"
                   android:screenOrientation="nosensor"/>
 
-        <service
-            android:name=".BluetoothLeService"
-            android:enabled="true"/>
+<service
+android:name=".BluetoothLeService"
+android:enabled="true"/>
 
-        <activity android:name=".ResultActivity"
-                  android:screenOrientation="nosensor">
-        </activity>
-    </application>
+<activity android:name=".ResultActivity"
+          android:screenOrientation="nosensor">
+   </activity>
+   </application>
 
-</manifest>
+   </manifest>
