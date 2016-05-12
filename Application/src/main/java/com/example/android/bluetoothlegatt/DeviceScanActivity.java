@@ -79,6 +79,15 @@ public class DeviceScanActivity extends ListActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        //doAlertDialog();    //debug
+
+        /*
+        new AlertDialog.Builder(DeviceScanActivity.this).
+                setTitle("選擇一台機器").
+                setMessage("BLE測試程式").
+                show();
+        */
         getActionBar().setTitle(R.string.title_devices);
 
         try
@@ -352,6 +361,18 @@ public class DeviceScanActivity extends ListActivity
         //startActivity(intent);
         //finish();
     }
+
+
+    /*
+    private void doAlertDialog()
+    {
+        new AlertDialog.Builder(DeviceScanActivity.this).
+                setTitle("選擇一台機器").
+                setMessage("BLE測試程式").
+                show();
+    }
+    */
+
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void scanLeDevice(final boolean enable)

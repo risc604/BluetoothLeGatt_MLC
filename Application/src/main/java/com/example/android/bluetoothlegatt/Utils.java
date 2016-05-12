@@ -77,6 +77,11 @@ public class Utils
             iniBufferWriter.newLine();
             iniBufferWriter.write("#Length=12");
             iniBufferWriter.newLine();
+
+            iniBufferWriter.write("#Name=BP3GT1-6B");
+            iniBufferWriter.newLine();
+            iniBufferWriter.write("#Length=12");
+            iniBufferWriter.newLine();
             iniBufferWriter.flush();
             iniBufferWriter.close();
             //return true;

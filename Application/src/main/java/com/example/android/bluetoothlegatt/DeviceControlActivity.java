@@ -53,7 +53,7 @@ public class DeviceControlActivity extends Activity
 
     private TextView mConnectionState;
     private TextView mDataField;
-    private String mDeviceName;
+    private static String mDeviceName;
     private String mDeviceAddress;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothLeService.LocalBinder  binder;
@@ -257,12 +257,32 @@ public class DeviceControlActivity extends Activity
     //private void displayData(String data)
     private boolean displayData(String data)
     {
+        byte[] headData = data.getBytes();
+
+        for (int i=0; i<headData.length; i++)
+        {
+            Log.d(TAG, headData.length + "   [" + i + "] = " + "0x" +
+                  //Integer.toString(headData[i], 16) + "  ");
+                  //Integer.toHexString(headData[i]) + "  ");
+                    String.format("%02x", headData[i]) + "  ");
+        }
+
         if (data != null)
         {
             mDataField.setText(data);
-            if (data.matches("M0") || (data != null));
+            // check BP reply to APP data format. form CB2, A6BT, A6BT(R8C)
+            //if ((headData[4] == 0x00) && (data.matches("M0") || data.matches("M1") ||
+            //     data.matches("M2") || data.matches("M3") || data.matches("M4") ||
+            //     data.matches("M5") || data.matches("M6") || data.matches("M7")))
+            //if ((data != null) && (data.matches("M0")));
+            //if ((headData[0] == 'M') || data.matches("M0") || data.matches("M1") /*&& (headData[]*/);
+            //if (((headData[4] == 0x00) && (headData[0]=='M')) && ((headData[1] == 0x30) ||
+            //     (headData[1] == 0x31) || (headData[1] == 0x32) || (headData[1] == 0x33) ||
+            //     (headData[1] == 0x34) || (headData[1] == 0x35) || (headData[1] == 0x36) ||
+            //     (headData[1] == 0x37)))
+            if ((headData[4]==0x03) && (headData[0]=='M'))
             {
-                Utils.mlcDelay(200);
+                Utils.mlcDelay(100);
                 return true;
             }
         }
@@ -307,9 +327,11 @@ public class DeviceControlActivity extends Activity
     {
         BluetoothGattCharacteristic     readCharacter = null;
         BluetoothGattCharacteristic     writeCharacter = null;
-        int[]  cmdFlow = {0x03, 0x00, 0x04};
+        int[]  cmdFlow = {0x03/*, 0x00, 0x04*/};
 
         if (gattServices == null)   return;
+        mConnectionState.setText(R.string.connected);   //for Service state info.
+
         // Loops to find available GATT Characteristic.
         for (BluetoothGattService gattService : gattServices)
         {
@@ -319,6 +341,7 @@ public class DeviceControlActivity extends Activity
 
         mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
         //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
+
         if (writeCharacter != null)
         {
             for (int i=0; i<cmdFlow.length; i++)
@@ -326,9 +349,18 @@ public class DeviceControlActivity extends Activity
                 //mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
                 byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[i]);
                 writeCharacter.setValue(tmpCMDResult);
-                Log.i(TAG, Integer.toString(cmdFlow[i]) + " cmd : " + tmpCMDResult.toString());
+                //Log.i(TAG, cmdFlow[i]+ " cmd : " +  String.format("%02x", tmpCMDResult) );
+                Log.i(TAG, " cmd : " + cmdFlow[i]);  //debug
+                for (int j=0; j<tmpCMDResult.length; j++)
+                {
+                    Log.i(TAG, String.format("[%02d] = %02X", j, tmpCMDResult[j]));
+                }
+
                 mBluetoothLeService.writeCharacteristic(writeCharacter);
-                //Utils.mlcDelay(200);    //200 ms
+                if((mDeviceName != null) && mDeviceName.matches("BP3GT1-6B") && (cmdFlow[i] == 0x03))
+                    Utils.mlcDelay(1000);    //1 s
+                else
+                    Utils.mlcDelay(300);    // 300ms
             }
 
 
