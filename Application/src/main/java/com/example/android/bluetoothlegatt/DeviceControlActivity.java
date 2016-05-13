@@ -126,8 +126,10 @@ public class DeviceControlActivity extends Activity
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
             {
                 boolean nextBLEFlag = false;
+                final byte[] dataStr = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                 //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
-                nextBLEFlag = displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                //nextBLEFlag = displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                nextBLEFlag = displayData(dataStr);
 
                 if (nextBLEFlag)
                     goBackDeviceScanActivity(true);
@@ -255,21 +257,24 @@ public class DeviceControlActivity extends Activity
     }
 
     //private void displayData(String data)
-    private boolean displayData(String data)
+    //private boolean displayData(String data)
+    private boolean displayData(byte[] data)
     {
-        byte[] headData = data.getBytes();
+        //debugFunction(data);
+        int csCheck = 0;
 
-        for (int i=0; i<headData.length; i++)
+        for (int i=0; i<(data.length-1); i++)
         {
-            Log.d(TAG, headData.length + "   [" + i + "] = " + "0x" +
-                  //Integer.toString(headData[i], 16) + "  ");
-                  //Integer.toHexString(headData[i]) + "  ");
-                    String.format("%02x", headData[i]) + "  ");
+            csCheck += data[i];
         }
+        Log.d(TAG, "raw data: " + data + "CS: " + csCheck);
 
         if (data != null)
         {
-            mDataField.setText(data);
+            StringBuilder tmpText =  new StringBuilder();
+            for (int i=0; i<data.length; i++)
+                tmpText.append(String.format("%02X ", data[i]));
+            mDataField.setText(tmpText);
             // check BP reply to APP data format. form CB2, A6BT, A6BT(R8C)
             //if ((headData[4] == 0x00) && (data.matches("M0") || data.matches("M1") ||
             //     data.matches("M2") || data.matches("M3") || data.matches("M4") ||
@@ -280,11 +285,13 @@ public class DeviceControlActivity extends Activity
             //     (headData[1] == 0x31) || (headData[1] == 0x32) || (headData[1] == 0x33) ||
             //     (headData[1] == 0x34) || (headData[1] == 0x35) || (headData[1] == 0x36) ||
             //     (headData[1] == 0x37)))
-            if ((headData[4]==0x03) && (headData[0]=='M'))
+            if ((data[4]==0x00) && (data[0]=='M') && (data[data.length-1] == csCheck))
             {
                 Utils.mlcDelay(100);
                 return true;
             }
+            else
+                Log.d(TAG, "String: " + tmpText + "CS: " + csCheck);
         }
         return false;
     }
@@ -427,5 +434,19 @@ public class DeviceControlActivity extends Activity
     private Integer getBleRssi(HashMap<String, Integer> rssiMap, ArrayList<String> deviceAddress)
     {
         return (rssiMap.get(deviceAddress));
+    }
+
+    private void debugFunction(byte[] data)
+    {
+        byte[] headData = new byte[data.length];
+        headData = data;
+
+        for (int i=0; i<headData.length; i++)
+        {
+            Log.d(TAG, data.length + "   [" + i + "] = " + "0x" +
+                    //Integer.toString(headData[i], 16) + "  ");
+                    //Integer.toHexString(headData[i]) + "  ");
+                    String.format("%02x", headData[i]) + "  ");
+        }
     }
 }

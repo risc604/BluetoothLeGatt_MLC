@@ -33,6 +33,7 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -186,20 +187,27 @@ public class BluetoothLeService extends Service
         //{
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();
-            if (data != null && data.length > 0)
+            if ((data != null) && (data.length > 0))
             {
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
+                //final StringBuilder stringBuilder = new StringBuilder(data.length);
+                //final String dataStr = new String(data);
                 //for (byte byteChar : data)
+                /*
                 for(int i=0; i<data.length; i++)
                 {
-                    Log.d(TAG, "data[" + i + "] = " + String.format("%02X ", data[i]));
+                    Log.d(TAG, data.length + " : data[" + i + "] = " + String.format("%02X ", data[i]));
                     //stringBuilder.append(String.format("%02X ", byteChar));
                     stringBuilder.append(String.format("%02X ", data[i]));
+                    Log.d(TAG, "stringBuilder: " + stringBuilder.toString());
                 }
-                    intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+                */
+                //intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+                intent.putExtra(EXTRA_DATA, (Serializable) data);
+                //intent.putExtra(EXTRA_DATA, dataStr.toString());
+                sendBroadcast(intent);
             }
         //}
-        sendBroadcast(intent);
+        //sendBroadcast(intent);
     }
 
     public class LocalBinder extends Binder
