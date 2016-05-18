@@ -57,10 +57,11 @@ public class DeviceControlActivity extends Activity
     private String mDeviceAddress;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothLeService.LocalBinder  binder;
-    private static int bpHeadDataLeng=0;
-    private static boolean keepReadFlag = false;
+    private int bpHeaderLeng=0;
+    //private static boolean keepReadFlag = false;
     private byte[] headerData = new byte[40];
-    private static int stopIndex=0;
+    private int hIndex = 0;
+    //private static int stopIndex=0;
 
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
@@ -68,8 +69,8 @@ public class DeviceControlActivity extends Activity
     private boolean mConnected = false;
     //private BluetoothGattCharacteristic mNotifyCharacteristic;
 
-    private final String LIST_NAME = "NAME";
-    private final String LIST_UUID = "UUID";
+    //private final String LIST_NAME = "NAME";
+    //private final String LIST_UUID = "UUID";
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection()
@@ -133,11 +134,16 @@ public class DeviceControlActivity extends Activity
                 final byte[] dataStr = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                 //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
                 //nextBLEFlag = displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+
+                //if (dataStr[4]==0x00)
                 nextBLEFlag = displayData(dataStr);
+                //else
+                //    displayData(dataStr);
 
                 if (nextBLEFlag)
                 {
-                    Utils.mlcDelay(600);
+                    nextBLEFlag = false;
+                    //Utils.mlcDelay(0);
                     goBackDeviceScanActivity(true);
                 }
             }
@@ -173,7 +179,7 @@ public class DeviceControlActivity extends Activity
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-        keepReadFlag = false;
+        //keepReadFlag = false;
 
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress); //set device mac address to UI
@@ -285,6 +291,17 @@ public class DeviceControlActivity extends Activity
                 tmpText.append(String.format("%02X ", data[i]));
             mDataField.setText(tmpText);
 
+            if (data[0] == 'M')
+                bpHeaderLeng = headerLength(data);
+            Log.d(TAG, "Header size: " + bpHeaderLeng +
+                    ", hIndex: " + hIndex +
+                    ", data[4]: " + String.format("0x%02X", data[4]));
+
+            //debugFunction(headerData, datalength);
+
+            //if ((data[0] == 'M') && (datalength >= 30))
+            //return true;
+
             /*
             if ((data[0] == 'M') && (bpHeadDataLeng ==0))     // read header
             {
@@ -299,7 +316,6 @@ public class DeviceControlActivity extends Activity
             {
                 keepReadFlag = false;
             }
-
 
              int i=0;
             //for (int i = 0; ((i < bpHeadDataLeng) && (stopIndex < bpHeadDataLeng)); i++)
@@ -332,23 +348,56 @@ public class DeviceControlActivity extends Activity
             //     (headData[1] == 0x34) || (headData[1] == 0x35) || (headData[1] == 0x36) ||
             //     (headData[1] == 0x37)))
 
-
+            for (int i=0; i<data.length; i++)
+                headerData[hIndex++] = data[i];
             switch (data[4])      // BP command process
             {
                 case 0x00:      //
-                    if ((data[0] == 'M') && (data[data.length-1] == csCheck))
+                    //for (int i=0; i<data.length; i++)
+                    //    headerData[hIndex++] = data[i];
+                    debugFunction(headerData, hIndex);
+                    Log.d(TAG, "0x00 (hIndex-4): " + (hIndex-4) +
+                            ", bpHeaderLeng: " + bpHeaderLeng);
+
+                    if ((hIndex-4) == bpHeaderLeng)
                     {
-                        return true;
+                        hIndex-=1;      // pointer last address.
+
+                        int csSum = csSum(headerData, hIndex);
+                        //for (int i=0; i<(hIndex); i++)
+                        //{
+                        //    csSum += headerData[i];
+                        //}
+                        Log.d(TAG, "csSum = " + String.format("%02XH", csSum) +
+                                ", headData[" + (hIndex) + "] = " +
+                                String.format("%02XH", headerData[hIndex]));
+
+                        if (csSum == headerData[hIndex])
+                        {
+                            hIndex = 0;
+                            return true;
+                        }
+
                     }
+                    break;
 
                 case (byte) 0x81:
                 case 0x03:      //
-                   // debugFunction(data, data.length);
+                    int csSUM = csSum(headerData, hIndex-1);
+                    if ((bpHeaderLeng < 20) && (csSUM == headerData[hIndex-1]))
+                    {
+                        hIndex = 0;
+                    }
+                    // debugFunction(data, data.length);
 
                 default:
                     Log.d(TAG, "String: " + tmpText + "CS: " + csCheck);
                     break;
             }
+
+            Log.d(TAG, "0xff bpHeaderLeng: " + bpHeaderLeng +
+                    ",  (hIndex-3):" + (hIndex-3));
+
 
             /*
             if ((data[4]==0x00) && (data[0]=='M') && (data[data.length-1] == csCheck))
@@ -361,6 +410,15 @@ public class DeviceControlActivity extends Activity
             */
         }
         return false;
+    }
+
+    private int csSum(byte[] data, int length)
+    {
+        int tmp = 0;
+        for (int i=0; i<length; i++)
+            tmp += data[i];
+        Log.d(TAG, "csSum(): " + String.format("%04XH", tmp));
+        return tmp;
     }
 
     private boolean serviceTimeOut(Intent intent)
@@ -424,7 +482,7 @@ public class DeviceControlActivity extends Activity
                 byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[i]);
                 writeCharacter.setValue(tmpCMDResult);
                 //Log.i(TAG, cmdFlow[i]+ " cmd : " +  String.format("%02x", tmpCMDResult) );
-                Log.i(TAG, " cmd : " + cmdFlow[i]);  //debug
+                Log.d(TAG, " cmd : " + cmdFlow[i]);  //debug
                 /*
                 for (int j=0; j<tmpCMDResult.length; j++)
                 {
@@ -435,7 +493,7 @@ public class DeviceControlActivity extends Activity
                 if((mDeviceName != null) && mDeviceName.matches("BP3GT1-6B") && (cmdFlow[i] == 0x03))
                     Utils.mlcDelay(1000);    //1 s
                 else
-                    Utils.mlcDelay(30);    // 300ms
+                    Utils.mlcDelay(100);    // 200ms
             }
 
 
