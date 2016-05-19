@@ -125,7 +125,6 @@ public class DeviceControlActivity extends Activity
             }
             else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
             {
-                //displayGattServices(mBluetoothLeService.getSupportedGattServices());
                 sendCommandToDevice(mBluetoothLeService.getSupportedGattServices());  // MLC test command.
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
