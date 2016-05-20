@@ -61,12 +61,17 @@ public class DeviceControlActivity extends Activity
     //private static boolean keepReadFlag = false;
     private byte[] headerData = new byte[40];
     private int hIndex = 0;
+    private byte mlcCommand;
     //private static int stopIndex=0;
 
-    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
-            new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+    //private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
+    //        new ArrayList<>();
 
+    private ArrayList<BluetoothGattCharacteristic> mGattCharacList;
+
+    //private ArrayList<BluetoothGattCharacteristic> bleGattCharates = new ArrayList<>();
     private boolean mConnected = false;
+    private boolean waitDataFlag = false;
     //private BluetoothGattCharacteristic mNotifyCharacteristic;
 
     //private final String LIST_NAME = "NAME";
@@ -87,6 +92,7 @@ public class DeviceControlActivity extends Activity
             // Automatically connects to the device upon successful start-up initialization.
             mBluetoothLeService.connect(mDeviceAddress);
             binder = (BluetoothLeService.LocalBinder) service;
+            //findGattCharate(mBluetoothLeService.getSupportedGattServices());    //tomcat add
         }
 
         @Override
@@ -125,7 +131,14 @@ public class DeviceControlActivity extends Activity
             }
             else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action))
             {
-                sendCommandToDevice(mBluetoothLeService.getSupportedGattServices());  // MLC test command.
+                //if (mGattCharacList == null)
+                if (mGattCharacList.isEmpty())
+                    findGattCharate(mBluetoothLeService.getSupportedGattServices());
+
+                //if(!waitDataFlag)
+                    sendCommandToDevice(getCommand());  // MLC test command.
+
+                    //sendCommandToDevice(mBluetoothLeService.getSupportedGattServices());  // MLC test command.
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
             {
@@ -188,6 +201,9 @@ public class DeviceControlActivity extends Activity
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mGattCharacList = new ArrayList<BluetoothGattCharacteristic>();
+        mGattCharacList.clear();
+        //mGattCharacList = null;
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
@@ -197,11 +213,14 @@ public class DeviceControlActivity extends Activity
     protected void onResume()
     {
         super.onResume();
+        waitDataFlag = false;
+        setCommand((byte) 0x03);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         if (mBluetoothLeService != null)
         {
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             Log.d(TAG, "Connect request result=" + result);
+            //findGattCharate(mBluetoothLeService.getSupportedGattServices());    //tomcat add.
         }
     }
 
@@ -244,6 +263,7 @@ public class DeviceControlActivity extends Activity
         {
             case R.id.menu_connect:
                 mBluetoothLeService.connect(mDeviceAddress);
+                //findGattCharate(mBluetoothLeService.getSupportedGattServices());    //tomcat add
                 return true;
 
             case R.id.menu_disconnect:
@@ -374,6 +394,8 @@ public class DeviceControlActivity extends Activity
                         if (csSum == headerData[hIndex])
                         {
                             hIndex = 0;
+                            setWaitBLEData(false);
+                            setCommand((byte) 0x04);
                             return true;
                         }
 
@@ -386,6 +408,8 @@ public class DeviceControlActivity extends Activity
                     if ((bpHeaderLeng < 20) && (csSUM == headerData[hIndex-1]))
                     {
                         hIndex = 0;
+                        setWaitBLEData(false);
+                        setCommand((byte)0x00);
                     }
                     // debugFunction(data, data.length);
 
@@ -454,34 +478,97 @@ public class DeviceControlActivity extends Activity
         */
     }
 
-    private void sendCommandToDevice(List<BluetoothGattService> gattServices)
+
+    //find Bluetooth gatt characteristic
+    private void findGattCharate(List<BluetoothGattService> gattServices)
     {
+        /*
         BluetoothGattCharacteristic     readCharacter = null;
         BluetoothGattCharacteristic     writeCharacter = null;
-        int[]  cmdFlow = {0x03, 0x00, 0x04};
+
+        Log.d(TAG, " 1 fGCh(): rGatt" + readCharacter.getUuid().toString());
+        Log.d(TAG, " 1 fGCh(): wGatt" + writeCharacter.getUuid().toString());
+        */
 
         if (gattServices == null)   return;
+        ///mConnectionState.setText(R.string.connected);   //for Service state info.
+
+        Log.d(TAG, "find Gatt characteristic.");
+        // Loops to find available GATT Characteristic to save global variable
+        for (BluetoothGattService gattService : gattServices)
+        {
+            //readCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
+            //writeCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
+            mGattCharacList.add(0, gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ));
+            mGattCharacList.add(1, gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE));
+        }
+
+        Log.d(TAG, "fGCh(): rGatt" + mGattCharacList.get(0).getUuid().toString());
+        Log.d(TAG, "fGCh(): wGatt" + mGattCharacList.get(1).getUuid().toString());
+
+        /*
+        Log.d(TAG, "fGCh(): rGatt" + readCharacter.getUuid().toString());
+        Log.d(TAG, "fGCh(): wGatt" + writeCharacter.getUuid().toString());
+
+        if (readCharacter != null)
+            mGattCharacList.add(readCharacter);
+        else
+            Log.e(TAG, "Error! no read character");
+
+        if (writeCharacter != null)
+            mGattCharacList.add(writeCharacter);
+        else
+            Log.e(TAG, "Error! no read character");
+
+        */
+        //Log.d(TAG, "findGattCharate(): " + mGattCharacList); //debug
+
+        //bleGattCharates
+    }
+
+
+    ///private void sendCommandToDevice(List<BluetoothGattService> gattServices)
+    private void sendCommandToDevice(byte command)
+    {
+        Log.d(TAG, "sCTD() rGatt: " + mGattCharacList.get(0).getUuid().toString());
+        Log.d(TAG, "sCTD() wGatt: " + mGattCharacList.get(1).getUuid().toString());
+
+        BluetoothGattCharacteristic     readCharacter = mGattCharacList.get(0);
+        BluetoothGattCharacteristic     writeCharacter = mGattCharacList.get(1);
+        //BluetoothGattCharacteristic     readCharacter = null;
+        //BluetoothGattCharacteristic     writeCharacter = null;
+        int[]  cmdFlow = {0x03, 0x00, 0x04};
+
+        //if (gattServices == null)   return;
         mConnectionState.setText(R.string.connected);   //for Service state info.
 
         // Loops to find available GATT Characteristic.
-        for (BluetoothGattService gattService : gattServices)
-        {
-            readCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
-            writeCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
-        }
+        ///for (BluetoothGattService gattService : gattServices)
+        ///{
+        ///    readCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
+        ///    writeCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
+        ///}
+
+        //readCharacter =gattServices.equals(BluetoothLeService.UUID_MLC_BLE_SERVICE) .getCharacteristic(SampleGattAttributes.MLC_SERVICE_READ);
+        //Log.d(TAG, "Rgatt findGattCharate(): " + readCharacter.getUuid().toString());
+        //Log.d(TAG, "Wgatt findGattCharate(): " + (writeCharacter.getUuid().toString()));
 
         mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
         //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
 
+        // read gatt characteristic
         if (writeCharacter != null)
         {
             for (int i=0; i<cmdFlow.length; i++)
             {
                 //mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
                 byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[i]);
+                //byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[cmdIdx]);
+                //byte[]  tmpCMDResult = Utils.mlcTestFunction(command);
                 writeCharacter.setValue(tmpCMDResult);
                 //Log.i(TAG, cmdFlow[i]+ " cmd : " +  String.format("%02x", tmpCMDResult) );
                 Log.d(TAG, " cmd : " + cmdFlow[i]);  //debug
+                //Log.d(TAG, " cmd : " + command);  //debug
                 /*
                 for (int j=0; j<tmpCMDResult.length; j++)
                 {
@@ -494,33 +581,30 @@ public class DeviceControlActivity extends Activity
                 else
                     Utils.mlcDelay(100);    // 200ms
             }
-
-
-            /*
-            //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
-            byte[] tmpCMDResult = Utils.mlcTestFunction(0x03);
-            writeCharacter.setValue(tmpCMDResult);
-            Log.i(TAG, "0x03 cmd : " + tmpCMDResult.toString());
-            mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(300);    //300 ms
-
-            //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
-            tmpCMDResult = Utils.mlcTestFunction(0x00);
-            writeCharacter.setValue(tmpCMDResult);
-            Log.i(TAG, "0x00 cmd : " + tmpCMDResult.toString());
-            mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(200);    //200 ms
-
-            //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
-            tmpCMDResult = Utils.mlcTestFunction(0x04);
-            writeCharacter.setValue(tmpCMDResult);
-            Log.i(TAG, "0x04 cmd : " + tmpCMDResult.toString());
-            mBluetoothLeService.writeCharacteristic(writeCharacter);
-            Utils.mlcDelay(100);    //100 ms
-            */
+            //setWaitBLEData(true);
         }
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");
+    }
+
+    private void setWaitBLEData(boolean Flag)
+    {
+        this.waitDataFlag = Flag;
+    }
+
+    public boolean getWaitBLEData()
+    {
+        return this.waitDataFlag;
+    }
+
+    public void setCommand(byte command)
+    {
+        mlcCommand = command;
+    }
+
+    private byte getCommand()
+    {
+        return mlcCommand;
     }
 
     //private void goBackDeviceScanActivity()

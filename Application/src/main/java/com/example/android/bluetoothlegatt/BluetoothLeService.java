@@ -70,7 +70,7 @@ public class BluetoothLeService extends Service
 
     //public final static UUID UUID_HEART_RATE_MEASUREMENT =
     //        UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
-    //public final static UUID UUID_MLC_BLE_SERVICE = UUID.fromString(SampleGattAttributes.MLC_BLE_SEVICE);
+    public final static UUID UUID_MLC_BLE_SERVICE = UUID.fromString(SampleGattAttributes.MLC_SERVICE);
     public final static UUID UUID_MLC_BLE_SERVICE_WRITE = UUID.fromString(SampleGattAttributes.MLC_SERVICE_WRITE);
     public final static UUID UUID_MLC_BLE_SERVICE_READ = UUID.fromString(SampleGattAttributes.MLC_SERVICE_READ);
 
@@ -459,17 +459,22 @@ public class BluetoothLeService extends Service
             return;
         }
 
-        mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+        //mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+        boolean success = mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+        if (!success)
+        {
+            Log.e("-----", "Setting proper notification state for characteristic failed!");
+        }
 
-        // This is specific to Heart Rate Measurement.
-        //if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid()))
-        //{
-
-            BluetoothGattDescriptor  descriptor = characteristic.getDescriptor(
-                    UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        BluetoothGattDescriptor  descriptor = characteristic.getDescriptor(
+                UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
+        //descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        if (descriptor != null)
+        {
+            byte[] val = enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;
+            descriptor.setValue(val);
             mBluetoothGatt.writeDescriptor(descriptor);
-        //}
+        }
     }
 
     /**
