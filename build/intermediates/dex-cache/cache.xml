@@ -26,14 +26,14 @@
         jar="D:\java_workspace\BluetoothLeGatt_MLC\Application\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         revision="23.0.2"
-        sha1="15a5c53ca34020025b3ade64cbf9012babbf0ac4">
+        sha1="dc7be07808b3af9a9399f9d6c28a5b2331251601">
         <dex dex="D:\java_workspace\BluetoothLeGatt_MLC\Application\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_240d2be0a5cefd71a8e9cbec36860bb67758e987\classes.dex" />
     </item>
     <item
         jar="D:\java_workspace\BluetoothLeGatt_MLC\Application\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         revision="23.0.2"
-        sha1="13bb8b63887e2f460a81370e95183b0f8bcaeff0">
+        sha1="b9322838c2fb579a890baf44028e39e7a84c0dea">
         <dex dex="D:\java_workspace\BluetoothLeGatt_MLC\Application\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_d26520647357aa8c32430a6ae703134af0216120\classes.dex" />
     </item>
     <item

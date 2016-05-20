@@ -150,7 +150,8 @@ public class BluetoothLeService extends Service
         }
     };
 
-    private void broadcastUpdate(final String action)
+    public void broadcastUpdate(final String action)
+    //private void broadcastUpdate(final String action)
     {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);

@@ -138,6 +138,9 @@ public class DeviceControlActivity extends Activity
                 //if(!waitDataFlag)
                     sendCommandToDevice(getCommand());  // MLC test command.
 
+                    if (getCommand() == 4)
+                        goBackDeviceScanActivity(true);
+
                     //sendCommandToDevice(mBluetoothLeService.getSupportedGattServices());  // MLC test command.
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action))
@@ -149,12 +152,13 @@ public class DeviceControlActivity extends Activity
 
                 //if (dataStr[4]==0x00)
                 nextBLEFlag = displayData(dataStr);
+                Log.d(TAG, "nextBLEFlag: " + nextBLEFlag);
                 //else
                 //    displayData(dataStr);
 
                 if (nextBLEFlag)
                 {
-                    nextBLEFlag = false;
+                    //nextBLEFlag = false;
                     //Utils.mlcDelay(0);
                     goBackDeviceScanActivity(true);
                 }
@@ -296,13 +300,6 @@ public class DeviceControlActivity extends Activity
         //debugFunction(data);
         int csCheck = 0;
 
-        /*
-        for (int i=0; i<(data.length-1); i++)
-        {
-            csCheck += data[i];
-        }
-        Log.d(TAG, "raw data: " + data + "CS: " + csCheck);
-        */
         if (data != null)
         {
             StringBuilder tmpText =  new StringBuilder();
@@ -316,60 +313,13 @@ public class DeviceControlActivity extends Activity
                     ", hIndex: " + hIndex +
                     ", data[4]: " + String.format("0x%02X", data[4]));
 
-            //debugFunction(headerData, datalength);
-
-            //if ((data[0] == 'M') && (datalength >= 30))
-            //return true;
-
-            /*
-            if ((data[0] == 'M') && (bpHeadDataLeng ==0))     // read header
-            {
-                bpHeadDataLeng  = headerLength(data);
-                Log.d(TAG, "bpHeadDataLeng: " + bpHeadDataLeng);
-                if (bpHeadDataLeng > 20)   keepReadFlag = true;
-                stopIndex = 0;
-                for (int i=0; i<bpHeadDataLeng; i++)
-                    headerData[i] = 0;
-            }
-            else
-            {
-                keepReadFlag = false;
-            }
-
-             int i=0;
-            //for (int i = 0; ((i < bpHeadDataLeng) && (stopIndex < bpHeadDataLeng)); i++)
-            Log.d(TAG, "1 Stop Index: " + stopIndex);
-
-
-            //while((stopIndex<bpHeadDataLeng))
-            //{
-            //    headerData[stopIndex++] = data[i++];
-            //}
-
-            Log.d(TAG, "2 Stop Index: " + stopIndex);
-
-            Log.d(TAG, "Data");
-            debugFunction(data, bpHeadDataLeng);
-            Log.d(TAG, "header Data");
-            debugFunction(headerData, bpHeadDataLeng);
-
-            if (stopIndex==bpHeadDataLeng)  bpHeadDataLeng = 0;
-
-            */
-            // check BP reply to APP data format. form CB2, A6BT, A6BT(R8C)
-            //if ((headData[4] == 0x00) && (data.matches("M0") || data.matches("M1") ||
-            //     data.matches("M2") || data.matches("M3") || data.matches("M4") ||
-            //     data.matches("M5") || data.matches("M6") || data.matches("M7")))
-            //if ((data != null) && (data.matches("M0")));
-            //if ((headData[0] == 'M') || data.matches("M0") || data.matches("M1") /*&& (headData[]*/);
-            //if (((headData[4] == 0x00) && (headData[0]=='M')) && ((headData[1] == 0x30) ||
-            //     (headData[1] == 0x31) || (headData[1] == 0x32) || (headData[1] == 0x33) ||
-            //     (headData[1] == 0x34) || (headData[1] == 0x35) || (headData[1] == 0x36) ||
-            //     (headData[1] == 0x37)))
-
             for (int i=0; i<data.length; i++)
                 headerData[hIndex++] = data[i];
-            switch (data[4])      // BP command process
+            //switch (data[4])      // BP command process
+
+            byte    command = getCommand();
+            Log.d(TAG, "dD() cmd : " + command);  //debug
+            switch (command)
             {
                 case 0x00:      //
                     //for (int i=0; i<data.length; i++)
@@ -387,15 +337,19 @@ public class DeviceControlActivity extends Activity
                         //{
                         //    csSum += headerData[i];
                         //}
-                        Log.d(TAG, "csSum = " + String.format("%02XH", csSum) +
+                        Log.d(TAG, "csSum = " + String.format("%04XH", csSum) +
                                 ", headData[" + (hIndex) + "] = " +
-                                String.format("%02XH", headerData[hIndex]));
+                                String.format("%04XH", headerData[hIndex]));
 
-                        if (csSum == headerData[hIndex])
+                        if ((csSum & 0x00ff) == (headerData[hIndex] & 0x00ff))
                         {
                             hIndex = 0;
                             setWaitBLEData(false);
                             setCommand((byte) 0x04);
+                            //binder.getService().initialize();
+                            binder.getService().broadcastUpdate(
+                                    BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+
                             return true;
                         }
 
@@ -410,16 +364,24 @@ public class DeviceControlActivity extends Activity
                         hIndex = 0;
                         setWaitBLEData(false);
                         setCommand((byte)0x00);
+                        binder.getService().broadcastUpdate(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+                        //BluetoothLeService.broadcastUpdate(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+
                     }
+                    break;
                     // debugFunction(data, data.length);
+
+
+                case 0x04:
+                    return (true);
 
                 default:
                     Log.d(TAG, "String: " + tmpText + "CS: " + csCheck);
                     break;
             }
 
-            Log.d(TAG, "0xff bpHeaderLeng: " + bpHeaderLeng +
-                    ",  (hIndex-3):" + (hIndex-3));
+            //Log.d(TAG, "0xbpHeaderLeng: " + bpHeaderLeng +
+            //        ",  (hIndex-3):" + (hIndex-3));
 
 
             /*
@@ -527,6 +489,51 @@ public class DeviceControlActivity extends Activity
     }
 
 
+    private void sendCommandToDevice(byte command)
+    {
+        Log.d(TAG, "sCTD() rGatt: " + mGattCharacList.get(0).getUuid().toString());
+        Log.d(TAG, "sCTD() wGatt: " + mGattCharacList.get(1).getUuid().toString());
+
+        BluetoothGattCharacteristic     readCharacter = mGattCharacList.get(0);
+        BluetoothGattCharacteristic     writeCharacter = mGattCharacList.get(1);
+        //int[]  cmdFlow = {0x03, 0x00, 0x04};
+
+        mConnectionState.setText(R.string.connected);   //for Service state info.
+
+        mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
+        //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
+
+        // read gatt characteristic
+        if (writeCharacter != null)
+        {
+            //for (int i=0; i<cmdFlow.length; i++)
+            //{
+                //byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[i]);
+                //byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[cmdIdx]);
+                byte[]  tmpCMDResult = Utils.mlcTestFunction(command);
+                writeCharacter.setValue(tmpCMDResult);
+                //Log.i(TAG, cmdFlow[i]+ " cmd : " +  String.format("%02x", tmpCMDResult) );
+                //Log.d(TAG, " cmd : " + cmdFlow[i]);  //debug
+                Log.d(TAG, "sCTD cmd : " + command);  //debug
+                //for (int j=0; j<tmpCMDResult.length; j++)
+                //{
+                //    Log.i(TAG, String.format("[%02d] = %02X", j, tmpCMDResult[j]));
+                //}
+
+                mBluetoothLeService.writeCharacteristic(writeCharacter);
+                //if((mDeviceName != null) && mDeviceName.matches("BP3GT1-6B") && (cmdFlow[i] == 0x03))
+                //    Utils.mlcDelay(1000);    //1 s
+                //else
+                //    Utils.mlcDelay(100);    // 200ms
+            //}
+            //setWaitBLEData(true);
+        }
+        else
+            Log.e(TAG, "Error, No mlc BP write Charactics");
+
+    }
+
+    /*
     ///private void sendCommandToDevice(List<BluetoothGattService> gattServices)
     private void sendCommandToDevice(byte command)
     {
@@ -535,23 +542,9 @@ public class DeviceControlActivity extends Activity
 
         BluetoothGattCharacteristic     readCharacter = mGattCharacList.get(0);
         BluetoothGattCharacteristic     writeCharacter = mGattCharacList.get(1);
-        //BluetoothGattCharacteristic     readCharacter = null;
-        //BluetoothGattCharacteristic     writeCharacter = null;
         int[]  cmdFlow = {0x03, 0x00, 0x04};
 
-        //if (gattServices == null)   return;
         mConnectionState.setText(R.string.connected);   //for Service state info.
-
-        // Loops to find available GATT Characteristic.
-        ///for (BluetoothGattService gattService : gattServices)
-        ///{
-        ///    readCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_READ);
-        ///    writeCharacter = gattService.getCharacteristic(BluetoothLeService.UUID_MLC_BLE_SERVICE_WRITE);
-        ///}
-
-        //readCharacter =gattServices.equals(BluetoothLeService.UUID_MLC_BLE_SERVICE) .getCharacteristic(SampleGattAttributes.MLC_SERVICE_READ);
-        //Log.d(TAG, "Rgatt findGattCharate(): " + readCharacter.getUuid().toString());
-        //Log.d(TAG, "Wgatt findGattCharate(): " + (writeCharacter.getUuid().toString()));
 
         mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
         //mBluetoothLeService.setCharacteristicNotification(writeCharacter, true);
@@ -561,7 +554,6 @@ public class DeviceControlActivity extends Activity
         {
             for (int i=0; i<cmdFlow.length; i++)
             {
-                //mBluetoothLeService.setCharacteristicNotification(readCharacter, true);
                 byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[i]);
                 //byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[cmdIdx]);
                 //byte[]  tmpCMDResult = Utils.mlcTestFunction(command);
@@ -569,12 +561,11 @@ public class DeviceControlActivity extends Activity
                 //Log.i(TAG, cmdFlow[i]+ " cmd : " +  String.format("%02x", tmpCMDResult) );
                 Log.d(TAG, " cmd : " + cmdFlow[i]);  //debug
                 //Log.d(TAG, " cmd : " + command);  //debug
-                /*
-                for (int j=0; j<tmpCMDResult.length; j++)
-                {
-                    Log.i(TAG, String.format("[%02d] = %02X", j, tmpCMDResult[j]));
-                }
-                */
+                //for (int j=0; j<tmpCMDResult.length; j++)
+                //{
+                //    Log.i(TAG, String.format("[%02d] = %02X", j, tmpCMDResult[j]));
+                //}
+
                 mBluetoothLeService.writeCharacteristic(writeCharacter);
                 if((mDeviceName != null) && mDeviceName.matches("BP3GT1-6B") && (cmdFlow[i] == 0x03))
                     Utils.mlcDelay(1000);    //1 s
@@ -586,6 +577,7 @@ public class DeviceControlActivity extends Activity
         else
             Log.e(TAG, "Error, No mlc BP write Charactics");
     }
+    */
 
     private void setWaitBLEData(boolean Flag)
     {
@@ -600,6 +592,7 @@ public class DeviceControlActivity extends Activity
     public void setCommand(byte command)
     {
         mlcCommand = command;
+        Log.d(TAG, "setC(): " + mlcCommand);
     }
 
     private byte getCommand()
