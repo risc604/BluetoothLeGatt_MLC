@@ -433,6 +433,7 @@ public class BluetoothLeService extends Service
             return;
         }
 
+
         try
         {
             Thread.sleep(200);
@@ -441,6 +442,7 @@ public class BluetoothLeService extends Service
         {
             e.printStackTrace();
         }
+
 
         mBluetoothGatt.writeCharacteristic(characteristic);
     }

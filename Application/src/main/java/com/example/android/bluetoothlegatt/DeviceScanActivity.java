@@ -270,26 +270,13 @@ public class DeviceScanActivity extends ListActivity
             {
                 //Log.d(TAG, "testOKDEviceList is Not Empty: " +  ActivityCount++);
                 Intent intent = new Intent(this, DeviceControlActivity.class);
-                //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, mlcDeviceName);
                 intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, testDeviceList.get(0));
 
-                //if (mScanning)
-                //{
-                //    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                //    mScanning = false;
-                //}
-
-                //Utils.mlcDelay(200);
                 startActivityForResult(intent, REQUEST_TEST_FUNCTION);
             }
             else if ((testDeviceList.size() < 1) && (okDeviceList.size() > 0))//test final to display resultActivity.
             {
-                //if (mScanning)
-                //{
-                //    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                //    mScanning = false;
-                //}
-
                 Log.d(TAG, "Test List : " + testDeviceList.size());
                 if (okDeviceList != null)
                     gotoResultActivity(okDeviceList);
@@ -307,8 +294,6 @@ public class DeviceScanActivity extends ListActivity
         super.onPause();
         scanLeDevice(false);
         mLeDeviceListAdapter.clear();
-        //testDeviceList.clear();
-        //okDeviceList.clear();
     }
 
     @Override

@@ -53,8 +53,8 @@ public class DeviceControlActivity extends Activity
 
     private TextView mConnectionState;
     private TextView mDataField;
-    private static String mDeviceName;
-    private String mDeviceAddress;
+    private String mDeviceName=null;
+    private String mDeviceAddress = null;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothLeService.LocalBinder  binder;
     private int bpHeaderLeng=0;
@@ -116,6 +116,7 @@ public class DeviceControlActivity extends Activity
         {
             final String action = intent.getAction();
 
+            //Log.d("onReceive()", " action state " + binder.getService().toString());
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action))
             {
                 mConnected = true;
@@ -137,6 +138,7 @@ public class DeviceControlActivity extends Activity
 
                 //if(!waitDataFlag)
                     sendCommandToDevice(getCommand());  // MLC test command.
+                Log.d(TAG, "after sCTD().");
 
                     if (getCommand() == 4)
                         goBackDeviceScanActivity(true);
@@ -208,6 +210,7 @@ public class DeviceControlActivity extends Activity
         mGattCharacList = new ArrayList<BluetoothGattCharacteristic>();
         mGattCharacList.clear();
         //mGattCharacList = null;
+
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
@@ -297,23 +300,27 @@ public class DeviceControlActivity extends Activity
     //private boolean displayData(String data)
     private boolean displayData(byte[] data)
     {
-        //debugFunction(data);
         int csCheck = 0;
-
         if (data != null)
         {
+            debugFunction(data, data.length);  //debug
+
             StringBuilder tmpText =  new StringBuilder();
             for (int i=0; i<data.length; i++)
                 tmpText.append(String.format("%02X ", data[i]));
             mDataField.setText(tmpText);
 
             if (data[0] == 'M')
+            {
                 bpHeaderLeng = headerLength(data);
+                hIndex = 0; //debug
+            }
+
             Log.d(TAG, "Header size: " + bpHeaderLeng +
                     ", hIndex: " + hIndex +
                     ", data[4]: " + String.format("0x%02X", data[4]));
 
-            for (int i=0; i<data.length; i++)
+            for (int i=0; (i<data.length); i++)
                 headerData[hIndex++] = data[i];
             //switch (data[4])      // BP command process
 
@@ -325,10 +332,22 @@ public class DeviceControlActivity extends Activity
                     //for (int i=0; i<data.length; i++)
                     //    headerData[hIndex++] = data[i];
                     debugFunction(headerData, hIndex);
-                    Log.d(TAG, "0x00 (hIndex-4): " + (hIndex-4) +
+
+                    int adjustLength = 0;
+                    if (mDeviceName.equals("3MW1-4B"))
+                    {
+                        adjustLength = 3;
+                    }
+                    else
+                    {
+                        adjustLength = 4;
+                    }
+
+
+                    Log.d(TAG, "0x00 (hIndex-adjustLength): " + (hIndex-adjustLength) +
                             ", bpHeaderLeng: " + bpHeaderLeng);
 
-                    if ((hIndex-4) == bpHeaderLeng)
+                    if ((hIndex-adjustLength) == bpHeaderLeng)
                     {
                         hIndex-=1;      // pointer last address.
 
@@ -343,34 +362,32 @@ public class DeviceControlActivity extends Activity
 
                         if ((csSum & 0x00ff) == (headerData[hIndex] & 0x00ff))
                         {
-                            hIndex = 0;
+                            ///hIndex = 0;
                             setWaitBLEData(false);
                             setCommand((byte) 0x04);
                             //binder.getService().initialize();
-                            binder.getService().broadcastUpdate(
-                                    BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+                            ///binder.getService().broadcastUpdate(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
 
                             return true;
                         }
-
                     }
                     break;
 
                 case (byte) 0x81:
                 case 0x03:      //
                     int csSUM = csSum(headerData, hIndex-1);
-                    if ((bpHeaderLeng < 20) && (csSUM == headerData[hIndex-1]))
+                    if (((bpHeaderLeng < 20) &&
+                            (csSUM == headerData[hIndex-1])) ||
+                            mDeviceName.equals("3MW1-4B"))
                     {
-                        hIndex = 0;
+                        ///hIndex = 0;
                         setWaitBLEData(false);
                         setCommand((byte)0x00);
                         binder.getService().broadcastUpdate(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
                         //BluetoothLeService.broadcastUpdate(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
-
                     }
                     break;
                     // debugFunction(data, data.length);
-
 
                 case 0x04:
                     return (true);
@@ -393,6 +410,17 @@ public class DeviceControlActivity extends Activity
             else
                 Log.d(TAG, "String: " + tmpText + "CS: " + csCheck);
             */
+        }
+        else
+        {
+            if (mDeviceName.equals("3MW1-4B"))
+            {
+                ///hIndex = 0;
+                setWaitBLEData(false);
+                setCommand((byte) 0x00);
+                binder.getService().broadcastUpdate(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+            }
+            Log.d(TAG, "dD() No data");
         }
         return false;
     }
@@ -440,14 +468,12 @@ public class DeviceControlActivity extends Activity
         */
     }
 
-
     //find Bluetooth gatt characteristic
     private void findGattCharate(List<BluetoothGattService> gattServices)
     {
         /*
         BluetoothGattCharacteristic     readCharacter = null;
         BluetoothGattCharacteristic     writeCharacter = null;
-
         Log.d(TAG, " 1 fGCh(): rGatt" + readCharacter.getUuid().toString());
         Log.d(TAG, " 1 fGCh(): wGatt" + writeCharacter.getUuid().toString());
         */
@@ -471,23 +497,10 @@ public class DeviceControlActivity extends Activity
         /*
         Log.d(TAG, "fGCh(): rGatt" + readCharacter.getUuid().toString());
         Log.d(TAG, "fGCh(): wGatt" + writeCharacter.getUuid().toString());
-
-        if (readCharacter != null)
-            mGattCharacList.add(readCharacter);
-        else
-            Log.e(TAG, "Error! no read character");
-
-        if (writeCharacter != null)
-            mGattCharacList.add(writeCharacter);
-        else
-            Log.e(TAG, "Error! no read character");
-
         */
         //Log.d(TAG, "findGattCharate(): " + mGattCharacList); //debug
-
         //bleGattCharates
     }
-
 
     private void sendCommandToDevice(byte command)
     {
@@ -496,7 +509,6 @@ public class DeviceControlActivity extends Activity
 
         BluetoothGattCharacteristic     readCharacter = mGattCharacList.get(0);
         BluetoothGattCharacteristic     writeCharacter = mGattCharacList.get(1);
-        //int[]  cmdFlow = {0x03, 0x00, 0x04};
 
         mConnectionState.setText(R.string.connected);   //for Service state info.
 
@@ -506,26 +518,15 @@ public class DeviceControlActivity extends Activity
         // read gatt characteristic
         if (writeCharacter != null)
         {
-            //for (int i=0; i<cmdFlow.length; i++)
-            //{
-                //byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[i]);
-                //byte[] tmpCMDResult = Utils.mlcTestFunction(cmdFlow[cmdIdx]);
-                byte[]  tmpCMDResult = Utils.mlcTestFunction(command);
-                writeCharacter.setValue(tmpCMDResult);
-                //Log.i(TAG, cmdFlow[i]+ " cmd : " +  String.format("%02x", tmpCMDResult) );
-                //Log.d(TAG, " cmd : " + cmdFlow[i]);  //debug
-                Log.d(TAG, "sCTD cmd : " + command);  //debug
-                //for (int j=0; j<tmpCMDResult.length; j++)
-                //{
-                //    Log.i(TAG, String.format("[%02d] = %02X", j, tmpCMDResult[j]));
-                //}
+            byte[]  tmpCMDResult = Utils.mlcTestFunction(command);
+            writeCharacter.setValue(tmpCMDResult);
+            Log.d(TAG, "sCTD cmd : " + command);  //debug
+            mBluetoothLeService.writeCharacteristic(writeCharacter);
 
-                mBluetoothLeService.writeCharacteristic(writeCharacter);
-                //if((mDeviceName != null) && mDeviceName.matches("BP3GT1-6B") && (cmdFlow[i] == 0x03))
-                //    Utils.mlcDelay(1000);    //1 s
-                //else
-                //    Utils.mlcDelay(100);    // 200ms
-            //}
+            if (mDeviceName.equals("3MW1-4B"))
+            {
+                binder.getService().broadcastUpdate(BluetoothLeService.ACTION_DATA_AVAILABLE);
+            }
             //setWaitBLEData(true);
         }
         else
@@ -656,13 +657,25 @@ public class DeviceControlActivity extends Activity
     {
         int tmp =0;
 
-        tmp |= data[2];
-        Log.d(TAG, "1 tmp : " + tmp);
-        tmp <<= 8;
-        Log.d(TAG, "2 tmp : " + tmp);
-        tmp |= data[3];
-        Log.d(TAG, "3 tmp: " + tmp);
-
+        if (mDeviceName.equals("3MW1-4B"))
+        {
+            Log.d(TAG, "3MW1-4B");
+            tmp |= data[3];
+            Log.d(TAG, "1 tmp : " + tmp);
+            tmp <<= 8;
+            Log.d(TAG, "2 tmp : " + tmp);
+            tmp |= data[2];
+            Log.d(TAG, "3 tmp : " + tmp);
+        }
+        else
+        {
+            tmp |= data[2];
+            Log.d(TAG, "1 tmp : " + tmp);
+            tmp <<= 8;
+            Log.d(TAG, "2 tmp : " + tmp);
+            tmp |= data[3];
+            Log.d(TAG, "3 tmp: " + tmp);
+        }
         return tmp;
     }
 }
