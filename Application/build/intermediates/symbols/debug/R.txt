@@ -59,10 +59,11 @@ int string menu_disconnect 0x7f07000b
 int string menu_scan 0x7f07000c
 int string menu_stop 0x7f07000d
 int string no_data 0x7f07000e
-int string title_devices 0x7f07000f
-int string unknown_characteristic 0x7f070010
-int string unknown_device 0x7f070011
-int string unknown_service 0x7f070012
+int string selectDevice 0x7f07000f
+int string title_devices 0x7f070010
+int string unknown_characteristic 0x7f070011
+int string unknown_device 0x7f070012
+int string unknown_service 0x7f070013
 int style AppTheme 0x7f050002
 int style CardView 0x7f050003
 int style CardView_Dark 0x7f050004

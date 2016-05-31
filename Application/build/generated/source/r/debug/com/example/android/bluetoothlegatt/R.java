@@ -178,10 +178,11 @@ containing a value of this type.
         public static final int menu_scan=0x7f07000c;
         public static final int menu_stop=0x7f07000d;
         public static final int no_data=0x7f07000e;
-        public static final int title_devices=0x7f07000f;
-        public static final int unknown_characteristic=0x7f070010;
-        public static final int unknown_device=0x7f070011;
-        public static final int unknown_service=0x7f070012;
+        public static final int selectDevice=0x7f07000f;
+        public static final int title_devices=0x7f070010;
+        public static final int unknown_characteristic=0x7f070011;
+        public static final int unknown_device=0x7f070012;
+        public static final int unknown_service=0x7f070013;
     }
     public static final class style {
         public static final int AppTheme=0x7f050002;

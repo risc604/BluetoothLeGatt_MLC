@@ -18,11 +18,13 @@ package com.example.android.bluetoothlegatt;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -42,6 +44,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -58,13 +63,13 @@ public class DeviceScanActivity extends ListActivity
 
     private boolean mScanning;
     private Handler mHandler;
-    private TextView    finalTextView;
+    //private TextView    finalTextView;
 
     private static final int    REQUEST_ENABLE_BT = 1;
     public static final int     REQUEST_TEST_FUNCTION = 10;
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
-    private String mlcDeviceName = "3MW1-4B";
+    private String mlcDeviceName = "";//"3MW1-4B";
     private int     versionCode=0;
     private String  versionName="";
 
@@ -79,7 +84,7 @@ public class DeviceScanActivity extends ListActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
+        showDeviceAlertDialog();    // mlc
         //doAlertDialog();    //debug
 
         /*
@@ -89,6 +94,8 @@ public class DeviceScanActivity extends ListActivity
                 show();
         */
         getActionBar().setTitle(R.string.title_devices);
+
+        //showDeviceAlertDialog();    // mlc
 
         try
         {
@@ -106,7 +113,7 @@ public class DeviceScanActivity extends ListActivity
         // selectively disable BLE-related features.
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE))
         {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.ble_not_supported, LENGTH_SHORT).show();
             finish();
         }
 
@@ -119,7 +126,7 @@ public class DeviceScanActivity extends ListActivity
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null)
         {
-            Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_bluetooth_not_supported, LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -185,15 +192,16 @@ public class DeviceScanActivity extends ListActivity
         }
 
         // get MLC test device setting file mlcBleDevices.ini
-        if ((mlcDeviceName = Utils.mlcGetTestDevice("mlcBleDevices.ini", this)) == null)
-            mlcDeviceName = Utils.mlcGetTestDevice("mlcBleDevices.ini", this);
+        ///if ((mlcDeviceName = Utils.mlcGetTestDevice("mlcBleDevices.ini", this)) == null)
+        ///    mlcDeviceName = Utils.mlcGetTestDevice("mlcBleDevices.ini", this);
 
+        //showDeviceAlertDialog();    // mlc
         Log.i(TAG, "onResume...");
 
         //getActionBar().setTitle(R.string.title_devices+mlcDeviceName);
         //getActionBar().setTitle( "v" + String.valueOf(versionCode) + " " + getActionBar().getTitle() + " " + mlcDeviceName);
         // set software version name/code on title.
-        getActionBar().setTitle( "v" + versionName + " \t" + getActionBar().getTitle() + " " + mlcDeviceName);
+        ///getActionBar().setTitle( "v" + versionName + " \t" + getActionBar().getTitle() + " " + mlcDeviceName);
         // Initializes list view adapter.
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
@@ -347,7 +355,6 @@ public class DeviceScanActivity extends ListActivity
         //finish();
     }
 
-
     /*
     private void doAlertDialog()
     {
@@ -357,7 +364,6 @@ public class DeviceScanActivity extends ListActivity
                 show();
     }
     */
-
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void scanLeDevice(final boolean enable)
@@ -391,6 +397,48 @@ public class DeviceScanActivity extends ListActivity
         }
         invalidateOptionsMenu();
     }
+
+    // MCL make function.
+    // AlertDialog function.
+    protected void showDeviceAlertDialog()
+    {
+        //final List<String> DataList =  new ArrayList<>(getDataInfo());
+        final String[]  DataList = {"3MW1-4B","A6 BT", "BP3GT1-6B", "BP3GU1-7B"};
+        AlertDialog adBuilder = new AlertDialog.Builder(this)
+                         .setTitle("Select a device for test")
+                         .setSingleChoiceItems(DataList, 0, new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                //final String tmp = DataList.get(which).toString();
+                                //Toast.makeText(this, tmp, LENGTH_SHORT).show();
+                                mlcDeviceName = DataList[which];
+                                getActionBar().setTitle("v" + versionName + " \t" +getActionBar().getTitle() + " " + mlcDeviceName);
+                                Toast.makeText(getApplicationContext(), mlcDeviceName, Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                                //adBuilder.setPositiveButton("OK", ));
+                            }
+                        })
+                //.setNegativeButton("Cancel", null)
+                .show();
+        //get Device list form mlcDevice.ini file.
+
+
+    }
+
+    private final List<String> getDataInfo()
+    {
+        List<String>    deviceList = new ArrayList<>();
+
+        deviceList.add("3MW1-4B");
+        deviceList.add("A6 BT");
+        deviceList.add("BP3GT1-6B");
+        deviceList.add("BP3GU1-7B");
+
+        return deviceList;
+    }
+
 
     // Adapter for holding devices found through scanning.
     private class LeDeviceListAdapter extends BaseAdapter

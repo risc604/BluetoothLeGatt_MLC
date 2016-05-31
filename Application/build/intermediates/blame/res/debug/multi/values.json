@@ -560,8 +560,27 @@
                     "startLine": 41,
                     "startColumn": 4,
                     "startOffset": 2456,
+                    "endColumn": 54,
+                    "endOffset": 2506
+                },
+                "from": {
+                    "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 38,
+                        "startColumn": 4,
+                        "startOffset": 1705,
+                        "endColumn": 54,
+                        "endOffset": 1755
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 42,
+                    "startColumn": 4,
+                    "startOffset": 2511,
                     "endColumn": 47,
-                    "endOffset": 2499
+                    "endOffset": 2554
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\strings.xml",
@@ -576,11 +595,11 @@
             },
             {
                 "to": {
-                    "startLine": 42,
+                    "startLine": 43,
                     "startColumn": 4,
-                    "startOffset": 2504,
+                    "startOffset": 2559,
                     "endColumn": 73,
-                    "endOffset": 2573
+                    "endOffset": 2628
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\strings.xml",
@@ -595,11 +614,11 @@
             },
             {
                 "to": {
-                    "startLine": 43,
+                    "startLine": 44,
                     "startColumn": 4,
-                    "startOffset": 2578,
+                    "startOffset": 2633,
                     "endColumn": 57,
-                    "endOffset": 2631
+                    "endOffset": 2686
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\strings.xml",
@@ -614,11 +633,11 @@
             },
             {
                 "to": {
-                    "startLine": 44,
+                    "startLine": 45,
                     "startColumn": 4,
-                    "startOffset": 2636,
+                    "startOffset": 2691,
                     "endColumn": 59,
-                    "endOffset": 2691
+                    "endOffset": 2746
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\strings.xml",
@@ -633,11 +652,11 @@
             },
             {
                 "to": {
-                    "startLine": 45,
+                    "startLine": 46,
                     "startColumn": 4,
-                    "startOffset": 2696,
+                    "startOffset": 2751,
                     "endColumn": 50,
-                    "endOffset": 2742
+                    "endOffset": 2797
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\template-styles.xml",
@@ -652,12 +671,12 @@
             },
             {
                 "to": {
-                    "startLine": 46,
+                    "startLine": 47,
                     "startColumn": 4,
-                    "startOffset": 2747,
-                    "endLine": 53,
+                    "startOffset": 2802,
+                    "endLine": 54,
                     "endColumn": 12,
-                    "endOffset": 3208
+                    "endOffset": 3263
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\cardview-v7\\23.1.0\\res\\values\\values.xml",
@@ -673,12 +692,12 @@
             },
             {
                 "to": {
-                    "startLine": 54,
+                    "startLine": 55,
                     "startColumn": 4,
-                    "startOffset": 3213,
-                    "endLine": 56,
+                    "startOffset": 3268,
+                    "endLine": 57,
                     "endColumn": 12,
-                    "endOffset": 3334
+                    "endOffset": 3389
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\cardview-v7\\23.1.0\\res\\values\\values.xml",
@@ -694,12 +713,12 @@
             },
             {
                 "to": {
-                    "startLine": 57,
+                    "startLine": 58,
                     "startColumn": 4,
-                    "startOffset": 3339,
-                    "endLine": 59,
+                    "startOffset": 3394,
+                    "endLine": 60,
                     "endColumn": 12,
-                    "endOffset": 3462
+                    "endOffset": 3517
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\exploded-aar\\com.android.support\\cardview-v7\\23.1.0\\res\\values\\values.xml",
@@ -715,11 +734,11 @@
             },
             {
                 "to": {
-                    "startLine": 60,
+                    "startLine": 61,
                     "startColumn": 4,
-                    "startOffset": 3467,
+                    "startOffset": 3522,
                     "endColumn": 59,
-                    "endOffset": 3522
+                    "endOffset": 3577
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\template-styles.xml",
@@ -734,11 +753,11 @@
             },
             {
                 "to": {
-                    "startLine": 61,
+                    "startLine": 62,
                     "startColumn": 4,
-                    "startOffset": 3527,
+                    "startOffset": 3582,
                     "endColumn": 52,
-                    "endOffset": 3575
+                    "endOffset": 3630
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\template-styles.xml",
@@ -753,11 +772,11 @@
             },
             {
                 "to": {
-                    "startLine": 62,
+                    "startLine": 63,
                     "startColumn": 4,
-                    "startOffset": 3580,
+                    "startOffset": 3635,
                     "endColumn": 26,
-                    "endOffset": 3602
+                    "endOffset": 3657
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\template-styles.xml",
@@ -772,12 +791,12 @@
             },
             {
                 "to": {
-                    "startLine": 63,
+                    "startLine": 64,
                     "startColumn": 4,
-                    "startOffset": 3607,
-                    "endLine": 66,
+                    "startOffset": 3662,
+                    "endLine": 67,
                     "endColumn": 12,
-                    "endOffset": 3798
+                    "endOffset": 3853
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\template-styles.xml",
@@ -793,12 +812,12 @@
             },
             {
                 "to": {
-                    "startLine": 67,
+                    "startLine": 68,
                     "startColumn": 4,
-                    "startOffset": 3803,
-                    "endLine": 72,
+                    "startOffset": 3858,
+                    "endLine": 73,
                     "endColumn": 12,
-                    "endOffset": 4076
+                    "endOffset": 4131
                 },
                 "from": {
                     "file": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\values\\template-styles.xml",

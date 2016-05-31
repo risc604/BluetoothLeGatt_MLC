@@ -59,7 +59,7 @@ public class Utils
 
     */
 
-    private static final  void makeDefaultFile(File fileName)
+    private static final void makeDefaultFile(File fileName)
     {
         try
         {
