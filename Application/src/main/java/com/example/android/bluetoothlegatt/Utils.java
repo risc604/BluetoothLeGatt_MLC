@@ -1,19 +1,18 @@
 package com.example.android.bluetoothlegatt;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Properties;
+import java.util.List;
 
 /**
  * Created by tomcat on 2016/3/9.
@@ -44,6 +43,108 @@ public class Utils
         }
     }
 
+    public static void createDefaultFile(String fileName)
+    {
+        try
+        {
+            BufferedWriter outputText = new BufferedWriter(new FileWriter(fileName));
+            outputText.write("3MW1-4B,11 ");
+            outputText.newLine();
+            outputText.write("A6 BT, 12");
+            outputText.newLine();
+            outputText.write("BP3GT1-6B, 12 ");
+            outputText.newLine();
+
+            outputText.close();
+        }
+        catch (IOException ioError)
+        {
+            ioError.printStackTrace();
+        }
+    }
+
+    public static boolean readTextFile(String fileName, List<String> deviceList)
+    {
+        try
+        {
+            BufferedReader inputText = new BufferedReader(new FileReader(fileName));
+            String	tmpInfo = null;
+
+            while((tmpInfo = inputText.readLine()) != null )
+            {
+                deviceList.add(tmpInfo);
+            }
+            inputText.close();
+            return true;
+        }
+        catch(IOException ioError)
+        {
+            ioError.printStackTrace();
+            //System.out.println("file not exist. to create default mlcDevice.txt by default devices !!");
+            //createDefaultFile(fileName);
+            return false;
+        }
+    }
+
+    public static List<String> getDeviceNameList(List<String> deviceList)
+    {
+        List<String>	nameList = new ArrayList<>();
+        //List<Integer>	lengthList = new ArrayList<>();
+        String[]		tmpStr=null;
+
+        if(deviceList.isEmpty())
+            return null;
+
+        for(int i=0; i<deviceList.size(); i++)
+        {
+            tmpStr = deviceList.get(i).split(",");
+            nameList.add(tmpStr[0].replaceAll("\\s+", ""));
+            LengthList.add(Integer.decode(tmpStr[1].replaceAll("\\s+", "")));
+        }
+
+        System.out.println("get Device name:  ");
+        displayList(nameList);
+        return(nameList);
+    }
+
+    public static void displayList(List<String> listData)
+    {
+        if(listData.isEmpty())
+            return;
+
+        for(int i=0; i<listData.size(); i++)
+        {
+            //System.out.println("Data[" + i + "]= " + listData.get(i));
+            Log.d(TAG, "Int[" + i + "]= " + listData.get(i));
+        }
+    }
+
+    public static List<Integer> getCommandLengthList()
+    {
+        if(LengthList.isEmpty())
+        {
+            System.out.println("Error, No command length number is in List.");
+            return null;
+        }
+
+        return LengthList;
+    }
+
+
+    public static void displayInt(List<Integer> listData)
+    {
+        if(listData.isEmpty())
+            return;
+
+        for(int i=0; i<listData.size(); i++)
+        {
+            //System.out.println("Int[" + i + "]= " + listData.get(i));
+            Log.d(TAG, "Int[" + i + "]= " + listData.get(i));
+        }
+    }
+
+
+
     /*
     public static final byte[] makeDateTimeString()
     {
@@ -59,6 +160,7 @@ public class Utils
 
     */
 
+    /*
     private static final void makeDefaultFile(File fileName)
     {
         try
@@ -93,6 +195,7 @@ public class Utils
         }
         //return false;
     }
+
 
     //public static final String mlcGetDeviceName(String fileName, Context context)
     public static final String mlcGetTestDevice(String fileName, Context context)
@@ -139,6 +242,7 @@ public class Utils
         return strName;
     }
 
+
     public static final int getCmdLength()
     {
         //if (testCmdLength != 0)
@@ -146,6 +250,7 @@ public class Utils
         //else
         //    return 0;
     }
+    */
 
     //public static final byte[] mlcTestFunction()
     public static final byte[] mlcTestFunction(int fnCMDByte)
