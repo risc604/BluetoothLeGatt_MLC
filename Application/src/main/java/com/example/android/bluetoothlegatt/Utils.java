@@ -26,9 +26,16 @@ public class Utils
     private static int     testCmdLength=0;
     //private static String  strName = new String();
 
+    //private static List<String>     deviceList = new ArrayList<>();
+    private static List<String>     nameList = new ArrayList<>();
+    private static List<Integer>    lengthList = new ArrayList<>();
+
     public Utils()
     {
         txtFileName = null;
+        //deviceList = null;
+        nameList = null;
+        lengthList = null;
     }
 
     public static void mlcDelay(int mSecand)
@@ -48,11 +55,11 @@ public class Utils
         try
         {
             BufferedWriter outputText = new BufferedWriter(new FileWriter(fileName));
-            outputText.write("3MW1-4B,11 ");
+            outputText.write("3MW1-4B, 11");
             outputText.newLine();
             outputText.write("A6 BT, 12");
             outputText.newLine();
-            outputText.write("BP3GT1-6B, 12 ");
+            outputText.write("BP3GT1-6B, 12");
             outputText.newLine();
 
             outputText.close();
@@ -63,8 +70,11 @@ public class Utils
         }
     }
 
-    public static boolean readTextFile(String fileName, List<String> deviceList)
+    //public static boolean readTextFile(String fileName, List<String> deviceList)
+    public static boolean readINIFile(String fileName)
     {
+        List<String>     deviceList = new ArrayList<>();
+
         try
         {
             BufferedReader inputText = new BufferedReader(new FileReader(fileName));
@@ -75,39 +85,63 @@ public class Utils
                 deviceList.add(tmpInfo);
             }
             inputText.close();
+
+            Log.d(TAG, "Read ini file.");
+            displayList(deviceList);    //debug
+            separateNameLength(deviceList);
             return true;
         }
         catch(IOException ioError)
         {
             ioError.printStackTrace();
             //System.out.println("file not exist. to create default mlcDevice.txt by default devices !!");
-            //createDefaultFile(fileName);
+            createDefaultFile(fileName);
             return false;
         }
     }
 
-    public static List<String> getDeviceNameList(List<String> deviceList)
+    public static boolean separateNameLength(List<String> list)
     {
-        List<String>	nameList = new ArrayList<>();
+        //List<String>	nameList = new ArrayList<>();
         //List<Integer>	lengthList = new ArrayList<>();
         String[]		tmpStr=null;
+        if(list.isEmpty())
+            return false;
 
-        if(deviceList.isEmpty())
-            return null;
-
-        for(int i=0; i<deviceList.size(); i++)
+        nameList.clear();
+        lengthList.clear();
+        for(int i=0; i<list.size(); i++)
         {
-            tmpStr = deviceList.get(i).split(",");
-            nameList.add(tmpStr[0].replaceAll("\\s+", ""));
-            LengthList.add(Integer.decode(tmpStr[1].replaceAll("\\s+", "")));
+            tmpStr = list.get(i).split(",");
+            //nameList.add(tmpStr[0].replaceAll("\\s+", ""));
+            nameList.add(tmpStr[0]);
+            lengthList.add(Integer.decode(tmpStr[1].replaceAll("\\s+", "")));
         }
 
-        System.out.println("get Device name:  ");
-        displayList(nameList);
-        return(nameList);
+        Log.d(TAG, "get Device name List.");
+        //System.out.println("get Device name:  ");
+        displayList(nameList);  //debug
+        displayList(lengthList);
+        return(true);
     }
 
-    public static void displayList(List<String> listData)
+    public static ArrayList<String> getDeviceNameList()
+    {
+        return (ArrayList<String>) nameList;
+    }
+
+    public static List<Integer> getLengthList()
+    {
+        return lengthList;
+    }
+
+    public static void setCommandIndex(int cmdIndex)
+    {
+        testCmdLength = lengthList.get(cmdIndex);
+    }
+
+    //public static void displayList(List<String> listData)
+    public static void displayList(List<?> listData)
     {
         if(listData.isEmpty())
             return;
@@ -115,22 +149,11 @@ public class Utils
         for(int i=0; i<listData.size(); i++)
         {
             //System.out.println("Data[" + i + "]= " + listData.get(i));
-            Log.d(TAG, "Int[" + i + "]= " + listData.get(i));
+            Log.d(TAG, "list[" + i + "]= " + listData.get(i));
         }
     }
 
-    public static List<Integer> getCommandLengthList()
-    {
-        if(LengthList.isEmpty())
-        {
-            System.out.println("Error, No command length number is in List.");
-            return null;
-        }
-
-        return LengthList;
-    }
-
-
+    /*
     public static void displayInt(List<Integer> listData)
     {
         if(listData.isEmpty())
@@ -142,7 +165,7 @@ public class Utils
             Log.d(TAG, "Int[" + i + "]= " + listData.get(i));
         }
     }
-
+    */
 
 
     /*

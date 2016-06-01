@@ -69,9 +69,12 @@ public class DeviceScanActivity extends ListActivity
     public static final int     REQUEST_TEST_FUNCTION = 10;
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
+    private static final String DEVICEFILENAME = "/sdcard/mlcDevices.ini";
+    ArrayList<String>    deviceNameList = new ArrayList<>();
     private String mlcDeviceName = "";//"3MW1-4B";
     private int     versionCode=0;
     private String  versionName="";
+    private String  titleString="";
 
     //private static final String mlcDeviceName = "3MW1-4B";
     //private static HashMap<String, Integer>    rssiMapAddr;
@@ -84,7 +87,14 @@ public class DeviceScanActivity extends ListActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        showDeviceAlertDialog();    // mlc
+
+        //read mlcDevices.ini
+        if(!Utils.readINIFile(DEVICEFILENAME))
+            Utils.readINIFile(DEVICEFILENAME);   //read default file
+
+        deviceNameList.clear();
+        deviceNameList = Utils.getDeviceNameList();
+        showDeviceAlertDialog(deviceNameList);    // mlc
         //doAlertDialog();    //debug
 
         /*
@@ -93,7 +103,7 @@ public class DeviceScanActivity extends ListActivity
                 setMessage("BLE測試程式").
                 show();
         */
-        getActionBar().setTitle(R.string.title_devices);
+       // getActionBar().setTitle(R.string.title_devices);
 
         //showDeviceAlertDialog();    // mlc
 
@@ -102,6 +112,8 @@ public class DeviceScanActivity extends ListActivity
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             versionCode = packageInfo.versionCode;
             versionName = packageInfo.versionName;
+            titleString = "v" + versionName +  " \tScan " + getActionBar().getTitle(); //mlcDeviceName;
+            getActionBar().setTitle(titleString);
         }
         catch (PackageManager.NameNotFoundException e)
         {
@@ -178,7 +190,7 @@ public class DeviceScanActivity extends ListActivity
     protected void onResume()
     {
         super.onResume();
-        getActionBar().setTitle(R.string.title_devices);
+        //getActionBar().setTitle(R.string.title_devices);
 
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
@@ -203,6 +215,7 @@ public class DeviceScanActivity extends ListActivity
         // set software version name/code on title.
         ///getActionBar().setTitle( "v" + versionName + " \t" + getActionBar().getTitle() + " " + mlcDeviceName);
         // Initializes list view adapter.
+        getActionBar().setTitle(titleString);
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
         scanLeDevice(true);
@@ -400,10 +413,14 @@ public class DeviceScanActivity extends ListActivity
 
     // MCL make function.
     // AlertDialog function.
-    protected void showDeviceAlertDialog()
+    protected void showDeviceAlertDialog(ArrayList<String> nameList)
     {
+        String[] tmpList = new String[nameList.size()];
+        for (int i=0; i<nameList.size(); i++)
+            tmpList[i] = nameList.get(i);
         //final List<String> DataList =  new ArrayList<>(getDataInfo());
-        final String[]  DataList = {"3MW1-4B","A6 BT", "BP3GT1-6B", "BP3GU1-7B"};
+        //final String[]  DataList = {"3MW1-4B","A6 BT", "BP3GT1-6B", "BP3GU1-7B"};
+        final String[]  DataList = tmpList;
         AlertDialog adBuilder = new AlertDialog.Builder(this)
                          .setTitle("Select a device for test")
                          .setSingleChoiceItems(DataList, 0, new DialogInterface.OnClickListener()
@@ -414,7 +431,9 @@ public class DeviceScanActivity extends ListActivity
                                 //final String tmp = DataList.get(which).toString();
                                 //Toast.makeText(this, tmp, LENGTH_SHORT).show();
                                 mlcDeviceName = DataList[which];
-                                getActionBar().setTitle("v" + versionName + " \t" +getActionBar().getTitle() + " " + mlcDeviceName);
+                                Utils.setCommandIndex(which);
+                                //titleString = "v" + versionName + " \t" +getActionBar().getTitle() + " " + mlcDeviceName;
+                                getActionBar().setTitle(mlcDeviceName);
                                 Toast.makeText(getApplicationContext(), mlcDeviceName, Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                                 //adBuilder.setPositiveButton("OK", ));
