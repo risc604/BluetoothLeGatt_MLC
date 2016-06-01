@@ -17,3 +17,10 @@ Application/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhan
 Application/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/com/example/android/bluetoothlegatt/DeviceScanActivity$override.class
 Application/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/com/example/android/bluetoothlegatt/DeviceScanActivity$LeDeviceListAdapter$override.class
 Application/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/com/example/android/bluetoothlegatt/DeviceScanActivity$ViewHolder$override.class
+.idea/misc.xml
+Application/build/intermediates/classes/debug/com/example/android/bluetoothlegatt/DeviceScanActivity$2.class
+*.class
+Application/build/intermediates/classes/debug/com/example/android/bluetoothlegatt/DeviceScanActivity$1.class
+*.class
+.idea/.name
+*.dex

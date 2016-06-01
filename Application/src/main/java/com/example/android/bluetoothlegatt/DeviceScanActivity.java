@@ -30,6 +30,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,7 +45,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -69,11 +69,12 @@ public class DeviceScanActivity extends ListActivity
     public static final int     REQUEST_TEST_FUNCTION = 10;
     public static final int     REQUEST_FINAL_LIST = 200;
     private static final long   SCAN_PERIOD = 10000;    // Stop scanning after 10s.
-    private static final String DEVICEFILENAME = "/sdcard/mlcDevices.ini";
+    //private final String DEVICEFILENAME = "/sdcard/mlcDevices.ini";
+    private final String DEVICEFILENAME = Environment.getExternalStorageDirectory().getPath() +
+                                            "/mlcDevices.ini";
     ArrayList<String>    deviceNameList = new ArrayList<>();
-    private String mlcDeviceName = "";//"3MW1-4B";
+    private String  mlcDeviceName = "";//"3MW1-4B";
     private int     versionCode=0;
-    private String  versionName="";
     private String  titleString="";
 
     //private static final String mlcDeviceName = "3MW1-4B";
@@ -88,13 +89,7 @@ public class DeviceScanActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
 
-        //read mlcDevices.ini
-        if(!Utils.readINIFile(DEVICEFILENAME))
-            Utils.readINIFile(DEVICEFILENAME);   //read default file
-
-        deviceNameList.clear();
-        deviceNameList = Utils.getDeviceNameList();
-        showDeviceAlertDialog(deviceNameList);    // mlc
+        Log.d(TAG, "file path: " + DEVICEFILENAME);
         //doAlertDialog();    //debug
 
         /*
@@ -103,22 +98,17 @@ public class DeviceScanActivity extends ListActivity
                 setMessage("BLE測試程式").
                 show();
         */
-       // getActionBar().setTitle(R.string.title_devices);
+        //getActionBar().setTitle(R.string.title_devices);
+        titleString = versionInfo();
+        //getActionBar().setTitle(titleString);
 
-        //showDeviceAlertDialog();    // mlc
+        //read mlcDevices.ini
+        if(!Utils.readINIFile(DEVICEFILENAME))
+            Utils.readINIFile(DEVICEFILENAME);   //read default file
 
-        try
-        {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            versionCode = packageInfo.versionCode;
-            versionName = packageInfo.versionName;
-            titleString = "v" + versionName +  " \tScan " + getActionBar().getTitle(); //mlcDeviceName;
-            getActionBar().setTitle(titleString);
-        }
-        catch (PackageManager.NameNotFoundException e)
-        {
-            e.printStackTrace();
-        }
+        deviceNameList.clear();
+        deviceNameList = Utils.getDeviceNameList();
+        showDeviceAlertDialog(deviceNameList);    // mlc
 
         mHandler = new Handler();
         // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -260,7 +250,7 @@ public class DeviceScanActivity extends ListActivity
                     //int tmpRssi = mLeDeviceListAdapter.getRssi(testAddress);
                     int tmpRssi = rssiMapList.get(testAddress);
 
-                    Log.d(TAG,mlcDeviceName + " :" + testAddress + " :" +
+                    Log.d(TAG, mlcDeviceName + " :" + testAddress + " :" +
                             //mLeDeviceListAdapter.getRssi(testAddress)+ " dBm" );
                             tmpRssi + " dBm" );
                     //make test ok address & rssi mapping.
@@ -432,8 +422,9 @@ public class DeviceScanActivity extends ListActivity
                                 //Toast.makeText(this, tmp, LENGTH_SHORT).show();
                                 mlcDeviceName = DataList[which];
                                 Utils.setCommandIndex(which);
-                                //titleString = "v" + versionName + " \t" +getActionBar().getTitle() + " " + mlcDeviceName;
-                                getActionBar().setTitle(mlcDeviceName);
+                                titleString = titleString + " \tScan " + mlcDeviceName;
+                                getActionBar().setTitle(titleString);
+                                //getActionBar().setTitle(mlcDeviceName);
                                 Toast.makeText(getApplicationContext(), mlcDeviceName, Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                                 //adBuilder.setPositiveButton("OK", ));
@@ -441,11 +432,29 @@ public class DeviceScanActivity extends ListActivity
                         })
                 //.setNegativeButton("Cancel", null)
                 .show();
-        //get Device list form mlcDevice.ini file.
-
-
     }
 
+    private String versionInfo()
+    {
+        //String barTitle = new String();
+        try
+        {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionCode = packageInfo.versionCode;
+            String versionName = packageInfo.versionName;
+            //barTitle = "v" + versionName + getActionBar().getTitle(); //mlcDeviceName;
+            //barTitle = "v" + versionName;
+            //getActionBar().setTitle(barTitle);
+            //return barTitle;
+            return ("v" + versionName);
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /*
     private final List<String> getDataInfo()
     {
         List<String>    deviceList = new ArrayList<>();
@@ -457,7 +466,7 @@ public class DeviceScanActivity extends ListActivity
 
         return deviceList;
     }
-
+    */
 
     // Adapter for holding devices found through scanning.
     private class LeDeviceListAdapter extends BaseAdapter

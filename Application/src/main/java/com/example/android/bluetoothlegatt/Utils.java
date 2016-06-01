@@ -78,11 +78,13 @@ public class Utils
         try
         {
             BufferedReader inputText = new BufferedReader(new FileReader(fileName));
-            String	tmpInfo = null;
+            String	tmpLine = null;
 
-            while((tmpInfo = inputText.readLine()) != null )
+            while(((tmpLine = inputText.readLine()) != null) )
             {
-                deviceList.add(tmpInfo);
+                // check space and this line has text word.
+                if ((tmpLine.length()>0) && (!tmpLine.trim().isEmpty()))
+                    deviceList.add(tmpLine);
             }
             inputText.close();
 
@@ -110,6 +112,7 @@ public class Utils
 
         nameList.clear();
         lengthList.clear();
+        Log.d(TAG, "device list size:" + list.size());
         for(int i=0; i<list.size(); i++)
         {
             tmpStr = list.get(i).split(",");
