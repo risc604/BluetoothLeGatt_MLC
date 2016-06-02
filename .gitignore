@@ -28,3 +28,5 @@ Application/build/intermediates/classes/debug/com/example/android/bluetoothlegat
 *.jar
 *.class
 Application/build/intermediates/classes/debug/com/example/android/bluetoothlegatt/DeviceScanActivity$1.class
+.idea/misc.xml
+*.class
