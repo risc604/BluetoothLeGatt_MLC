@@ -1,7 +1,8 @@
 .gradle
 .idea
 SI
-Application/build/intermediates/
+Application/build
+build
 *.dex
 *.class
 *.jar
