@@ -70,7 +70,6 @@ public class Utils
         }
     }
 
-    //public static boolean readTextFile(String fileName, List<String> deviceList)
     public static boolean readINIFile(String fileName)
     {
         List<String>     deviceList = new ArrayList<>();
@@ -289,7 +288,7 @@ public class Utils
                 (byte)(mCalendar.get(Calendar.YEAR)-2000),
                 (byte)(mCalendar.get(Calendar.MONTH)+1),
                 (byte)(mCalendar.get(Calendar.DATE)),
-                (byte)(mCalendar.get(Calendar.HOUR)),
+                (byte)(mCalendar.get(Calendar.HOUR_OF_DAY)),
                 (byte)(mCalendar.get(Calendar.MINUTE)),
                 (byte)(mCalendar.get(Calendar.SECOND)),
                 0x00, 0x00  };

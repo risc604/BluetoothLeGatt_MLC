@@ -4,6 +4,14 @@
         "source": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\layout\\listitem_device.xml"
     },
     {
+        "merged": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\layout\\actionbar_indeterminate_progress.xml",
+        "source": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\layout\\actionbar_indeterminate_progress.xml"
+    },
+    {
+        "merged": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\layout\\activity_result.xml",
+        "source": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\layout\\activity_result.xml"
+    },
+    {
         "merged": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\layout\\activity_result.xml",
         "source": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\layout\\activity_result.xml"
     },
@@ -12,7 +20,15 @@
         "source": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\layout\\actionbar_indeterminate_progress.xml"
     },
     {
+        "merged": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\layout\\gatt_services_characteristics.xml",
+        "source": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\layout\\gatt_services_characteristics.xml"
+    },
+    {
         "merged": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\layout\\gatt_services_characteristics.xml",
         "source": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\layout\\gatt_services_characteristics.xml"
+    },
+    {
+        "merged": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\layout\\listitem_device.xml",
+        "source": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\layout\\listitem_device.xml"
     }
 ]
