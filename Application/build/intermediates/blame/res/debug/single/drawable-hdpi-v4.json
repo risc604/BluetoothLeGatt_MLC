@@ -6,13 +6,5 @@
     {
         "merged": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\tile.9.png",
         "source": "D:\\GitRepository\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\drawable-hdpi\\tile.9.png"
-    },
-    {
-        "merged": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\ic_launcher.png",
-        "source": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\drawable-hdpi\\ic_launcher.png"
-    },
-    {
-        "merged": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\tile.9.png",
-        "source": "D:\\java_workspace\\BluetoothLeGatt_MLC\\Application\\src\\main\\res\\drawable-hdpi\\tile.9.png"
     }
 ]
