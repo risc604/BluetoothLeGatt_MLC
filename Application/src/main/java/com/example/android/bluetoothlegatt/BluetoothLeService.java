@@ -205,10 +205,10 @@ public class BluetoothLeService extends Service
                 //intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
                 intent.putExtra(EXTRA_DATA, (Serializable) data);
                 //intent.putExtra(EXTRA_DATA, dataStr.toString());
-                sendBroadcast(intent);
+                //sendBroadcast(intent);
             }
         //}
-        //sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
     public class LocalBinder extends Binder

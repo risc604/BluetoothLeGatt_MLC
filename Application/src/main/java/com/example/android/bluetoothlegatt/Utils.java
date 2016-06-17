@@ -52,16 +52,17 @@ public class Utils
 
     public static void createDefaultFile(String fileName)
     {
+        final String[]  deviceListInit = {"3MW1-4B, 11", "A6 BT, 12", "BP3GT1-6B, 12", "BP3GU1-6B, 12"};
+
         try
         {
             BufferedWriter outputText = new BufferedWriter(new FileWriter(fileName));
-            outputText.write("3MW1-4B, 11");
-            outputText.newLine();
-            outputText.write("A6 BT, 12");
-            outputText.newLine();
-            outputText.write("BP3GT1-6B, 12");
-            outputText.newLine();
 
+            for (int i=0; i<deviceListInit.length; i++)
+            {
+                outputText.write(deviceListInit[i]);
+                outputText.newLine();
+            }
             outputText.close();
         }
         catch (IOException ioError)
@@ -177,7 +178,7 @@ public class Utils
         byte[]  tmpBytep = {(byte)(mCalendar.get(Calendar.YEAR)-2000),
                 (byte)(mCalendar.get(Calendar.MONTH)+1),
                 (byte)(mCalendar.get(Calendar.DATE)),
-                (byte)(mCalendar.get(Calendar.HOUR)),
+                (byte)(mCalendar.get(Calendar.HOUR_OF_DAY)),
                 (byte)(mCalendar.get(Calendar.MINUTE)),
                 (byte)(mCalendar.get(Calendar.SECOND))
         };
@@ -338,7 +339,8 @@ public class Utils
         }
         catch (FileNotFoundException e)
         {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.d(TAG, e.toString());
         }
         catch (IOException e)
         {
@@ -399,7 +401,5 @@ public class Utils
     {
         return txtFileName;
     }
-
 }
-
 
