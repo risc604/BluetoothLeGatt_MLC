@@ -7,3 +7,5 @@ build
 *.class
 *.jar
 *.log
+*.class
+Application/build/intermediates/manifests/full/debug/AndroidManifest.xml
