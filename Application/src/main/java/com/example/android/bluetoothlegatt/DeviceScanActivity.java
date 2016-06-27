@@ -74,8 +74,8 @@ public class DeviceScanActivity extends ListActivity
                                             "/mlcDevices.ini";
     ArrayList<String>    deviceNameList = new ArrayList<>();
     private String  mlcDeviceName = "";//"3MW1-4B";
-    private int     versionCode=0;
-    private String  titleString="";
+    //private int     versionCode=0;
+    private String  titleString= appVersion();
 
     //private static final String mlcDeviceName = "3MW1-4B";
     //private static HashMap<String, Integer>    rssiMapAddr;
@@ -99,7 +99,7 @@ public class DeviceScanActivity extends ListActivity
                 show();
         */
         //getActionBar().setTitle(R.string.title_devices);
-        titleString = versionInfo();
+        //titleString = appVersion();
         //getActionBar().setTitle(titleString);
 
         //read mlcDevices.ini
@@ -434,19 +434,13 @@ public class DeviceScanActivity extends ListActivity
                 .show();
     }
 
-    private String versionInfo()
+    private String appVersion()
     {
         //String barTitle = new String();
         try
         {
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            versionCode = packageInfo.versionCode;
-            String versionName = packageInfo.versionName;
-            //barTitle = "v" + versionName + getActionBar().getTitle(); //mlcDeviceName;
-            //barTitle = "v" + versionName;
-            //getActionBar().setTitle(barTitle);
-            //return barTitle;
-            return ("v" + versionName);
+            return ("v" + packageInfo.versionName + "." + packageInfo.versionCode);
         }
         catch (PackageManager.NameNotFoundException e)
         {

@@ -16,8 +16,8 @@
 -->
 <manifest package="com.example.android.bluetoothlegatt"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="1"
-          android:versionName="1.1">
+          android:versionCode="2"
+          android:versionName="1.0">
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle -->
 
