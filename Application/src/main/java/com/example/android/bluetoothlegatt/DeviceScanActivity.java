@@ -90,18 +90,6 @@ public class DeviceScanActivity extends ListActivity
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "file path: " + DEVICEFILENAME);
-        //doAlertDialog();    //debug
-
-        /*
-        new AlertDialog.Builder(DeviceScanActivity.this).
-                setTitle("選擇一台機器").
-                setMessage("BLE測試程式").
-                show();
-        */
-        //getActionBar().setTitle(R.string.title_devices);
-        //titleString = appVersion();
-        //getActionBar().setTitle(titleString);
-
         //read mlcDevices.ini
         if(!Utils.readINIFile(DEVICEFILENAME))
             Utils.readINIFile(DEVICEFILENAME);   //read default file
@@ -193,18 +181,7 @@ public class DeviceScanActivity extends ListActivity
             }
         }
 
-        // get MLC test device setting file mlcBleDevices.ini
-        ///if ((mlcDeviceName = Utils.mlcGetTestDevice("mlcBleDevices.ini", this)) == null)
-        ///    mlcDeviceName = Utils.mlcGetTestDevice("mlcBleDevices.ini", this);
-
-        //showDeviceAlertDialog();    // mlc
         Log.i(TAG, "onResume...");
-
-        //getActionBar().setTitle(R.string.title_devices+mlcDeviceName);
-        //getActionBar().setTitle( "v" + String.valueOf(versionCode) + " " + getActionBar().getTitle() + " " + mlcDeviceName);
-        // set software version name/code on title.
-        ///getActionBar().setTitle( "v" + versionName + " \t" + getActionBar().getTitle() + " " + mlcDeviceName);
-        // Initializes list view adapter.
         getActionBar().setTitle(titleString);
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
@@ -357,16 +334,6 @@ public class DeviceScanActivity extends ListActivity
         //startActivity(intent);
         //finish();
     }
-
-    /*
-    private void doAlertDialog()
-    {
-        new AlertDialog.Builder(DeviceScanActivity.this).
-                setTitle("選擇一台機器").
-                setMessage("BLE測試程式").
-                show();
-    }
-    */
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void scanLeDevice(final boolean enable)
