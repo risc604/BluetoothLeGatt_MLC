@@ -75,7 +75,7 @@ public class DeviceScanActivity extends ListActivity
     ArrayList<String>    deviceNameList = new ArrayList<>();
     private String  mlcDeviceName = "";//"3MW1-4B";
     //private int     versionCode=0;
-    private String  titleString= appVersion();
+    private String  titleString= "";    //appVersion();
 
     //private static final String mlcDeviceName = "3MW1-4B";
     //private static HashMap<String, Integer>    rssiMapAddr;
@@ -89,6 +89,7 @@ public class DeviceScanActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
 
+        titleString = appVersion();
         Log.d(TAG, "file path: " + DEVICEFILENAME);
         //read mlcDevices.ini
         if(!Utils.readINIFile(DEVICEFILENAME))
