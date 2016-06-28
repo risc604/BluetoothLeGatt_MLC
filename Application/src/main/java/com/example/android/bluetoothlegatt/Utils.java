@@ -52,7 +52,8 @@ public class Utils
 
     public static void createDefaultFile(String fileName)
     {
-        final String[]  deviceListInit = {"3MW1-4B, 11", "A6 BT, 12", "BP3GT1-6B, 12", "BP3GU1-6B, 12"};
+        final String[]  deviceListInit = {"3MW1-4B, 11", "A6 BT, 12", "A6 Basis Plus BT, 12",
+                "BP3GT1-6B, 12", "TBD, 12"};
 
         try
         {

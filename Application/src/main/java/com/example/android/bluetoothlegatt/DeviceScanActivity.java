@@ -376,8 +376,6 @@ public class DeviceScanActivity extends ListActivity
         String[] tmpList = new String[nameList.size()];
         for (int i=0; i<nameList.size(); i++)
             tmpList[i] = nameList.get(i);
-        //final List<String> DataList =  new ArrayList<>(getDataInfo());
-        //final String[]  DataList = {"3MW1-4B","A6 BT", "BP3GT1-6B", "BP3GU1-7B"};
         final String[]  DataList = tmpList;
         AlertDialog adBuilder = new AlertDialog.Builder(this)
                          .setTitle("Select a device for test")
@@ -386,25 +384,20 @@ public class DeviceScanActivity extends ListActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which)
                             {
-                                //final String tmp = DataList.get(which).toString();
                                 //Toast.makeText(this, tmp, LENGTH_SHORT).show();
                                 mlcDeviceName = DataList[which];
                                 Utils.setCommandIndex(which);
                                 titleString = titleString + " \tScan " + mlcDeviceName;
                                 getActionBar().setTitle(titleString);
-                                //getActionBar().setTitle(mlcDeviceName);
                                 Toast.makeText(getApplicationContext(), mlcDeviceName, Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                                 //adBuilder.setPositiveButton("OK", ));
                             }
-                        })
-                //.setNegativeButton("Cancel", null)
-                .show();
+                        }).show();
     }
 
     private String appVersion()
     {
-        //String barTitle = new String();
         try
         {
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -416,6 +409,7 @@ public class DeviceScanActivity extends ListActivity
         }
         return null;
     }
+
     /*
     private final List<String> getDataInfo()
     {
