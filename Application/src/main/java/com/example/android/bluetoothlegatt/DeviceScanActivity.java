@@ -376,24 +376,24 @@ public class DeviceScanActivity extends ListActivity
         String[] tmpList = new String[nameList.size()];
         for (int i=0; i<nameList.size(); i++)
             tmpList[i] = nameList.get(i);
-        final String[]  DataList = tmpList;
+        final String[]  DataList = tmpList.clone();
         AlertDialog adBuilder = new AlertDialog.Builder(this)
-                         .setTitle("Select a device for test")
-                         .setSingleChoiceItems(DataList, 0, new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                //Toast.makeText(this, tmp, LENGTH_SHORT).show();
-                                mlcDeviceName = DataList[which];
-                                Utils.setCommandIndex(which);
-                                titleString = titleString + " \tScan " + mlcDeviceName;
-                                getActionBar().setTitle(titleString);
-                                Toast.makeText(getApplicationContext(), mlcDeviceName, Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
-                                //adBuilder.setPositiveButton("OK", ));
-                            }
-                        }).show();
+                .setTitle("Select a device for test")
+                .setSingleChoiceItems(DataList, 0, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        //Toast.makeText(this, tmp, LENGTH_SHORT).show();
+                        mlcDeviceName = DataList[which];
+                        Utils.setCommandIndex(which);
+                        titleString = titleString + " \tScan " + mlcDeviceName;
+                        getActionBar().setTitle(titleString);
+                        Toast.makeText(getApplicationContext(), mlcDeviceName, Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        //adBuilder.setPositiveButton("OK", ));
+                    }
+                }).show();
     }
 
     private String appVersion()
