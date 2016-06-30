@@ -97,7 +97,7 @@ public class DeviceScanActivity extends ListActivity
 
         deviceNameList.clear();
         deviceNameList = Utils.getDeviceNameList();
-        showDeviceAlertDialog(deviceNameList);    // mlc
+        //showDeviceAlertDialog(deviceNameList);    // mlc
 
         mHandler = new Handler();
         // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -126,6 +126,20 @@ public class DeviceScanActivity extends ListActivity
         okDeviceList = new ArrayList<>();
         rssiMapList = new HashMap<>();
         //rssiMapAddr = new HashMap<>();
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
+        //read mlcDevices.ini
+        //if(!Utils.readINIFile(DEVICEFILENAME))
+        //    Utils.readINIFile(DEVICEFILENAME);   //read default file
+
+        //deviceNameList.clear();
+        //deviceNameList = Utils.getDeviceNameList();
+        showDeviceAlertDialog(deviceNameList);    // mlc
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
