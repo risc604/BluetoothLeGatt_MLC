@@ -17,6 +17,7 @@
 package com.example.android.bluetoothlegatt;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -74,14 +75,7 @@ public class DeviceScanActivity extends ListActivity
                                             "/mlcDevices.ini";
     ArrayList<String>    deviceNameList = new ArrayList<>();
     private String  mlcDeviceName = "";//"3MW1-4B";
-    //private int     versionCode=0;
     private String  titleString= "";    //appVersion();
-
-    //private static final String mlcDeviceName = "3MW1-4B";
-    //private static HashMap<String, Integer>    rssiMapAddr;
-    //private static int          ActivityCount=0;
-
-    //private boolean stopFlag = false;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
@@ -97,7 +91,7 @@ public class DeviceScanActivity extends ListActivity
 
         deviceNameList.clear();
         deviceNameList = Utils.getDeviceNameList();
-        //showDeviceAlertDialog(deviceNameList);    // mlc
+        showDeviceAlertDialog(deviceNameList);    // mlc
 
         mHandler = new Handler();
         // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -126,20 +120,6 @@ public class DeviceScanActivity extends ListActivity
         okDeviceList = new ArrayList<>();
         rssiMapList = new HashMap<>();
         //rssiMapAddr = new HashMap<>();
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-
-        //read mlcDevices.ini
-        //if(!Utils.readINIFile(DEVICEFILENAME))
-        //    Utils.readINIFile(DEVICEFILENAME);   //read default file
-
-        //deviceNameList.clear();
-        //deviceNameList = Utils.getDeviceNameList();
-        showDeviceAlertDialog(deviceNameList);    // mlc
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -184,6 +164,7 @@ public class DeviceScanActivity extends ListActivity
     {
         super.onResume();
         //getActionBar().setTitle(R.string.title_devices);
+        getActionBar().setTitle(titleString);
 
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
@@ -409,6 +390,7 @@ public class DeviceScanActivity extends ListActivity
                     }
                 }).show();
     }
+
 
     private String appVersion()
     {
